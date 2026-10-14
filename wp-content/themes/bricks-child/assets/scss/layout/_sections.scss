@@ -760,3 +760,73 @@ $bubbles:
 		}
 	}
 }
+
+// Back to top (added by main.js); the ring fills as the page is scrolled
+.cc-to-top {
+	--cc-scroll: 0;
+
+	position: fixed;
+	right: clamp(1rem, 2.5vw, 2rem);
+	bottom: clamp(1rem, 2.5vw, 2rem);
+	z-index: 95;
+	display: grid;
+	place-items: center;
+	width: 3.25rem;
+	height: 3.25rem;
+	padding: 0;
+	border: 0;
+	border-radius: 50%;
+	background: conic-gradient(var(--cc-color-accent) calc(var(--cc-scroll) * 1turn), rgb(255 255 255 / 0.35) 0);
+	box-shadow: var(--cc-shadow-l);
+	cursor: pointer;
+	opacity: 0;
+	visibility: hidden;
+	transform: translateY(1rem) scale(0.9);
+	transition: opacity 0.35s var(--cc-ease), transform 0.35s var(--cc-ease), visibility 0s 0.35s;
+
+	&::before {
+		content: "";
+		position: absolute;
+		inset: 3px;
+		border-radius: 50%;
+		background: var(--cc-color-ink);
+		transition: background-color var(--cc-transition);
+	}
+
+	&::after {
+		content: "";
+		position: relative;
+		width: 1.1rem;
+		height: 1.1rem;
+		background: var(--cc-arrow-white) center / contain no-repeat;
+		transform: rotate(-90deg);
+		transition: transform var(--cc-transition);
+	}
+
+	&.is-visible {
+		opacity: 1;
+		visibility: visible;
+		transform: none;
+		transition-delay: 0s;
+	}
+
+	&:hover {
+		&::before {
+			background: var(--cc-color-primary);
+		}
+
+		&::after {
+			transform: rotate(-90deg) translateX(3px);
+		}
+	}
+
+	&:focus-visible {
+		@include focus-ring;
+	}
+
+	@include down(md) {
+		bottom: calc(5rem + env(safe-area-inset-bottom));
+		width: 2.85rem;
+		height: 2.85rem;
+	}
+}

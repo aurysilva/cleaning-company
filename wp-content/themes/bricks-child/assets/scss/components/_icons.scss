@@ -60,6 +60,7 @@ $icons: (
 	--cc-icon-arrow: #{icon-url(map.get($icons, "arrow"), 2.5)};
 	--cc-icon-check: #{icon-url(map.get($icons, "check"), 3)};
 	--cc-icon-plus: #{icon-url(map.get($icons, "plus"), 2.5)};
+	--cc-icon-phone: #{icon-url(map.get($icons, "phone"))};
 	// Pre-coloured variants for use as background images
 	--cc-arrow-primary: #{icon-url(map.get($icons, "arrow"), 2.5, "#0b7189")};
 	--cc-arrow-white: #{icon-url(map.get($icons, "arrow"), 2.5, "white")};

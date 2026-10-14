@@ -68,9 +68,13 @@
 		flex-wrap: nowrap;
 		align-items: center;
 		gap: var(--cc-space-m);
-		width: min(100% - 2 * var(--cc-space-m), 82rem);
 		min-height: 4.75rem;
 		transition: min-height var(--cc-transition);
+
+		// Same width as the top bar (overrides the generic .cc-container width)
+		&.cc-container {
+			width: min(100% - 2 * var(--cc-space-m), 82rem);
+		}
 
 		.cc-scrolled & {
 			min-height: 4rem;
@@ -103,7 +107,25 @@
 		margin-left: auto;
 	}
 
-	@media (max-width: 1440px) {
+	// Round phone icon; the number itself is in the top bar
+	&__call {
+		display: grid;
+		place-items: center;
+		width: 3rem;
+		height: 3rem;
+		padding: 0;
+		font-size: 0;
+
+		&::after {
+			content: "";
+			width: 1.15rem;
+			height: 1.15rem;
+			background: currentColor;
+			mask: var(--cc-icon-phone) center / contain no-repeat;
+		}
+	}
+
+	@media (max-width: 1200px) {
 		&__call {
 			display: none;
 		}
@@ -253,12 +275,25 @@
 			border-radius: var(--cc-radius-m);
 			background: var(--cc-color-surface);
 			box-shadow: var(--cc-shadow-l);
+			font-size: 0.95rem;
+			// Bricks sets a tall line-height on the nav to centre top-level links
+			line-height: 1.35;
+
+			// Long lists (services, areas) in two columns
+			&:has(> li:nth-child(7)) {
+				display: grid;
+				grid-template-columns: repeat(2, minmax(0, 1fr));
+				column-gap: 0.25rem;
+				min-width: 32rem;
+			}
 
 			a {
 				display: block;
-				padding: 0.45rem 0.75rem;
+				padding: 0.55rem 0.75rem;
 				border-radius: var(--cc-radius-s);
 				color: var(--cc-color-text);
+				font-weight: 500;
+				line-height: inherit;
 				text-decoration: none;
 				white-space: nowrap;
 

@@ -416,6 +416,7 @@ final class Site_Command {
 		$add_page( 'landlords', 'Landlords' );
 		$add_page( 'business', 'Business' );
 		$add_page( 'about', 'About' );
+		$add_page( 'guides', 'Blog' );
 		$add_page( 'contact' );
 
 		WP_CLI::success( 'Menu ready.' );

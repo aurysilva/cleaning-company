@@ -1,0 +1,150 @@
+@use "../abstracts/mixins" as *;
+
+// Horizontal card row that runs off the edges of the screen (home page services)
+.cc-carousel {
+	// Distance from the container edge to the screen edge (matches .cc-container's width)
+	--cc-bleed: max(var(--cc-space-m), (100vw - var(--cc-content-width)) / 2);
+
+	display: flex;
+	flex-direction: column;
+	gap: var(--cc-space-m);
+
+	&__track {
+		display: grid;
+		grid-auto-flow: column;
+		grid-auto-columns: clamp(16rem, 22vw, 19.5rem);
+		gap: var(--cc-space-m);
+		margin-inline: calc(-1 * var(--cc-bleed));
+		padding: 0.75rem var(--cc-bleed) 1.75rem;
+		overflow-x: auto;
+		overscroll-behavior-x: contain;
+		scroll-snap-type: x mandatory;
+		scroll-padding-inline: var(--cc-bleed);
+		scrollbar-width: none;
+		cursor: grab;
+
+		&::-webkit-scrollbar {
+			display: none;
+		}
+
+		> * {
+			scroll-snap-align: start;
+		}
+
+		&:focus-visible {
+			outline: none;
+
+			> :first-child {
+				@include focus-ring;
+			}
+		}
+
+		// Set by main.js while dragging with a mouse
+		&.is-dragging {
+			cursor: grabbing;
+			scroll-snap-type: none;
+			user-select: none;
+
+			a {
+				pointer-events: none;
+			}
+		}
+
+		@include down(md) {
+			grid-auto-columns: min(82%, 20rem);
+			gap: var(--cc-space-s);
+		}
+	}
+
+	&__nav {
+		display: flex;
+		align-items: center;
+		gap: var(--cc-space-s);
+		margin-top: calc(-1 * var(--cc-space-s));
+	}
+
+	&__progress {
+		flex: 1;
+		height: 4px;
+		overflow: hidden;
+		border-radius: var(--cc-radius-pill);
+		background: var(--cc-color-border);
+
+		span {
+			display: block;
+			width: 30%;
+			height: 100%;
+			border-radius: inherit;
+			background: var(--cc-gradient-brand);
+			transition: transform 0.15s linear;
+		}
+	}
+
+	&__btn {
+		display: grid;
+		flex-shrink: 0;
+		place-items: center;
+		width: 3.25rem;
+		height: 3.25rem;
+		padding: 0;
+		border: 1.5px solid var(--cc-color-border);
+		border-radius: 50%;
+		background: var(--cc-color-surface);
+		box-shadow: var(--cc-shadow-s);
+		cursor: pointer;
+		transition: background-color var(--cc-transition), border-color var(--cc-transition), transform var(--cc-transition), opacity var(--cc-transition);
+
+		&::after {
+			content: "";
+			width: 1.15rem;
+			height: 1.15rem;
+			background: var(--cc-arrow-primary) center / contain no-repeat;
+			transition: transform var(--cc-transition);
+		}
+
+		&--prev::after {
+			transform: scaleX(-1);
+		}
+
+		&:hover:not(:disabled) {
+			border-color: var(--cc-color-primary);
+			background: var(--cc-color-primary);
+
+			&::after {
+				background-image: var(--cc-arrow-white);
+				transform: translateX(3px);
+			}
+		}
+
+		&--prev:hover:not(:disabled)::after {
+			transform: scaleX(-1) translateX(3px);
+		}
+
+		&:focus-visible {
+			@include focus-ring;
+		}
+
+		&:disabled {
+			cursor: default;
+			opacity: 0.4;
+			box-shadow: none;
+		}
+	}
+
+	@include down(sm) {
+		&__nav .cc-btn {
+			padding: 0.75em 1.1em;
+			font-size: var(--cc-text-s);
+		}
+
+		&__btn {
+			width: 2.75rem;
+			height: 2.75rem;
+		}
+	}
+}
+
+// 100vw includes the scrollbar, so stop the bleed creating a sideways page scroll
+.cc-section:has(.cc-carousel) {
+	overflow-x: clip;
+}

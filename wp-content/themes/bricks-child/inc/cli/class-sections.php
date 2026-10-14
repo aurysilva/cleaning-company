@@ -423,8 +423,7 @@ final class Sections {
 			T::section( '', [
 				T::container( '', [
 					self::intro( 'Our services', 'Cleaning services for every home and business', 'From weekly house cleaning to end of tenancy and office contracts — all with fixed quotes and the same high standard.' ),
-					T::block( '{cc_service_cards}', 'Service cards' ),
-					T::div( 'cc-actions cc-actions--center', [ T::button( 'View all services', '/services/', 'cc-btn cc-btn--outline' ) ] ),
+					T::block( '{cc_service_carousel}', 'Service carousel' ),
 				] ),
 			], 'Services' ),
 			T::section( 'cc-section--alt', [

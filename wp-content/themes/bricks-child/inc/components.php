@@ -535,6 +535,26 @@ function cc_service_cards_html( string $group = '', int $limit = -1 ): string {
 	return '<div class="cc-grid cc-grid--cards">' . implode( '', array_map( 'cc_service_card', $services ) ) . '</div>';
 }
 
+function cc_service_carousel_html(): string {
+	$services = cc_services();
+	if ( ! $services ) {
+		return '';
+	}
+	$hub = get_page_by_path( 'services', OBJECT, 'page' );
+
+	return '<div class="cc-carousel" data-cc-carousel>'
+		. '<div class="cc-carousel__track" role="region" aria-label="Cleaning services" tabindex="0">'
+		. implode( '', array_map( 'cc_service_card', $services ) )
+		. '</div>'
+		. '<div class="cc-carousel__nav">'
+		. ( $hub ? '<a class="cc-btn cc-btn--outline" href="' . esc_url( get_permalink( $hub ) ) . '">View all services</a>' : '' )
+		. '<div class="cc-carousel__progress" aria-hidden="true"><span></span></div>'
+		. '<button type="button" class="cc-carousel__btn cc-carousel__btn--prev" data-dir="-1" aria-label="Previous services"></button>'
+		. '<button type="button" class="cc-carousel__btn" data-dir="1" aria-label="More services"></button>'
+		. '</div>'
+		. '</div>';
+}
+
 function cc_service_groups_html(): string {
 	$terms = get_terms( [ 'taxonomy' => 'cc_service_group', 'hide_empty' => true, 'orderby' => 'term_id' ] );
 	if ( is_wp_error( $terms ) || ! $terms ) {

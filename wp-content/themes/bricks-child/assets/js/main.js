@@ -1,5 +1,6 @@
 /**
- * Front-end motion: scroll reveals, counters, header state, hero parallax and the mobile CTA bar.
+ * Front-end motion: scroll reveals, counters, header state, hero parallax, the mobile CTA bar,
+ * back-to-top button and card carousels.
  * Everything is progressive: without this script all content is visible and static.
  */
 (() => {
@@ -12,9 +13,23 @@
 	const hero = document.querySelector('.cc-hero, .cc-page-hero');
 	let ticking = false;
 
+	const toTop = document.createElement('button');
+	toTop.type = 'button';
+	toTop.className = 'cc-to-top';
+	toTop.setAttribute('aria-label', 'Back to top');
+	toTop.addEventListener('click', () => {
+		window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
+		document.querySelector('#brx-header a')?.focus({ preventScroll: true });
+	});
+	document.body.appendChild(toTop);
+
 	const onScroll = () => {
 		const y = window.scrollY;
 		root.classList.toggle('cc-scrolled', y > 24);
+
+		const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+		toTop.classList.toggle('is-visible', y > Math.min(600, window.innerHeight));
+		toTop.style.setProperty('--cc-scroll', scrollable > 0 ? (y / scrollable).toFixed(3) : '0');
 
 		if (mobileCta) {
 			const threshold = hero ? hero.offsetTop + hero.offsetHeight - 80 : 400;
@@ -151,4 +166,92 @@
 		}, { threshold: 0.6 });
 		counters.forEach((el) => counterObserver.observe(el));
 	}
+
+	/* Carousels ----------------------------------------------------------- */
+
+	document.querySelectorAll('[data-cc-carousel]').forEach((carousel) => {
+		const track = carousel.querySelector('.cc-carousel__track');
+		const bar = carousel.querySelector('.cc-carousel__progress span');
+		const buttons = carousel.querySelectorAll('.cc-carousel__btn');
+		if (!track) {
+			return;
+		}
+
+		const update = () => {
+			const max = track.scrollWidth - track.clientWidth;
+			buttons.forEach((btn) => {
+				btn.disabled = btn.dataset.dir === '-1' ? track.scrollLeft <= 2 : track.scrollLeft >= max - 2;
+			});
+			if (bar) {
+				bar.style.width = `${Math.min(100, (track.clientWidth / track.scrollWidth) * 100)}%`;
+				bar.style.transform = `translateX(${(track.scrollLeft / track.clientWidth) * 100}%)`;
+			}
+		};
+
+		// One "page" = as many whole cards as fit in the container
+		const pageWidth = () => {
+			const card = track.firstElementChild;
+			if (!card) {
+				return track.clientWidth;
+			}
+			const step = card.getBoundingClientRect().width + (parseFloat(getComputedStyle(track).columnGap) || 0);
+			return step * Math.max(1, Math.floor((carousel.clientWidth + 1) / step));
+		};
+
+		buttons.forEach((btn) => {
+			btn.addEventListener('click', () => {
+				track.scrollBy({ left: pageWidth() * Number(btn.dataset.dir), behavior: reduceMotion ? 'auto' : 'smooth' });
+			});
+		});
+
+		let frame = 0;
+		track.addEventListener('scroll', () => {
+			cancelAnimationFrame(frame);
+			frame = requestAnimationFrame(update);
+		}, { passive: true });
+		window.addEventListener('resize', update);
+		update();
+
+		// Drag to scroll with a mouse (touch and trackpads scroll natively)
+		let startX = 0;
+		let startLeft = 0;
+		let dragged = false;
+
+		track.addEventListener('pointerdown', (e) => {
+			if (e.pointerType !== 'mouse' || e.button !== 0) {
+				return;
+			}
+			startX = e.clientX;
+			startLeft = track.scrollLeft;
+			dragged = false;
+
+			const move = (ev) => {
+				const dx = ev.clientX - startX;
+				if (!dragged && Math.abs(dx) > 6) {
+					dragged = true;
+					track.classList.add('is-dragging');
+				}
+				if (dragged) {
+					track.scrollLeft = startLeft - dx;
+				}
+			};
+			const up = () => {
+				window.removeEventListener('pointermove', move);
+				window.removeEventListener('pointerup', up);
+				track.classList.remove('is-dragging');
+			};
+			window.addEventListener('pointermove', move);
+			window.addEventListener('pointerup', up);
+		});
+
+		// A drag shouldn't count as a click on the card underneath
+		track.addEventListener('click', (e) => {
+			if (dragged) {
+				e.preventDefault();
+				e.stopPropagation();
+				dragged = false;
+			}
+		}, true);
+		track.addEventListener('dragstart', (e) => e.preventDefault());
+	});
 })();
