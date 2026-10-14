@@ -15,6 +15,8 @@ return [
 		'fields' => [
 			'hero_heading'   => 'Cleaners in Hull',
 			'postcodes'      => 'HU1–HU9',
+			'region'         => 'hull',
+			'featured'       => true,
 			'intro'          => '<p>We\'re a Hull cleaning company, and our cleaners live and work across the city. From Victorian terraces in the Avenues and student lets off Newland Avenue to new-build homes in Kingswood and offices in the city centre and Marina, we clean homes and businesses in every corner of Hull.</p><p>Whether you need a weekly house clean, an end of tenancy clean before you hand back your keys, or a reliable office cleaning contract, our local team can usually start within days — and every clean is backed by our re-clean guarantee.</p>',
 			'neighbourhoods' => [ 'City Centre', 'The Avenues', 'Newland Park', 'Hessle Road', 'Holderness Road', 'Sutton-on-Hull', 'Kingswood', 'Bransholme', 'Garden Village', 'Marfleet', 'Orchard Park', 'West Hull' ],
 			'local_notes'    => '<p>Hull\'s hard water means limescale builds up quickly on taps, showers and kettles, so we include descaling in every deep and end of tenancy clean. We also know the city\'s rental market well — many of our end of tenancy cleans are for student and HMO properties near the university.</p>',
@@ -34,6 +36,8 @@ return [
 		'fields' => [
 			'hero_heading'   => 'Cleaners in Beverley',
 			'postcodes'      => 'HU17',
+			'region'         => 'wolds',
+			'featured'       => true,
 			'intro'          => '<p>From period townhouses near the Minster to family homes in Molescroft and Woodhall Way, we provide reliable house cleaning, deep cleaning and end of tenancy cleaning across Beverley.</p><p>Our Beverley customers love having the same trusted cleaner every visit. We also clean offices and shops in the town centre, and holiday lets in the surrounding villages.</p>',
 			'neighbourhoods' => [ 'Town Centre', 'Molescroft', 'Woodhall Way', 'Swinemoor', 'Grovehill', 'Westwood', 'Tickton', 'Walkington', 'Bishop Burton' ],
 			'local_notes'    => '<p>Many Beverley homes are older properties with original features — we take extra care with period fireplaces, wooden floors and delicate surfaces.</p>',
@@ -52,6 +56,8 @@ return [
 		'fields' => [
 			'hero_heading'   => 'Cleaners in Cottingham',
 			'postcodes'      => 'HU16',
+			'region'         => 'hull',
+			'featured'       => true,
 			'intro'          => '<p>We clean homes throughout Cottingham, from family houses near the village centre to student properties close to the university halls. Our regular cleaners know the area well and can usually start within a week.</p><p>End of tenancy cleans are especially popular here in early summer, so book your move-out date as soon as you know it.</p>',
 			'neighbourhoods' => [ 'Village Centre', 'Thwaite', 'Snuff Mill Lane', 'Northgate', 'Harland Way', 'Skidby' ],
 			'local_notes'    => '<p>Cottingham has a busy student rental market. We work with local landlords and letting agents on summer turnarounds and can handle several properties on the same day.</p>',
@@ -69,6 +75,8 @@ return [
 		'fields' => [
 			'hero_heading'   => 'Cleaners in Hessle',
 			'postcodes'      => 'HU13',
+			'region'         => 'hull',
+			'featured'       => true,
 			'intro'          => '<p>From the town centre to homes near the Humber Bridge and Hessle Foreshore, we provide regular house cleaning, deep cleans and end of tenancy cleaning across Hessle.</p><p>We also clean offices and commercial units on the business parks around Hessle and the A63 corridor.</p>',
 			'neighbourhoods' => [ 'Town Centre', 'Hessle Foreshore', 'Woodfield Lane', 'Boothferry Estate', 'Livingstone Road' ],
 			'local_notes'    => '<p>Hessle is a short hop from our Hull team, so we can often fit in one-off and short-notice cleans here.</p>',
@@ -84,6 +92,8 @@ return [
 		'fields' => [
 			'hero_heading'   => 'Cleaners in Anlaby, Willerby & Kirk Ella',
 			'postcodes'      => 'HU10',
+			'region'         => 'hull',
+			'featured'       => false,
 			'intro'          => '<p>We look after homes across Anlaby, Willerby, Kirk Ella and West Ella with regular cleaning, deep cleans, oven cleaning and carpet cleaning.</p><p>Many of our customers here book a weekly or fortnightly clean with a seasonal deep clean — ask about combining services for a better price.</p>',
 			'neighbourhoods' => [ 'Anlaby', 'Anlaby Common', 'Willerby', 'Kirk Ella', 'West Ella', 'Wolfreton' ],
 			'local_notes'    => '<p>Larger family homes are common in HU10, so we\'ll always confirm your price based on the size of your home rather than a one-size-fits-all rate.</p>',
@@ -99,6 +109,8 @@ return [
 		'fields' => [
 			'hero_heading'   => 'Cleaners in Brough',
 			'postcodes'      => 'HU15',
+			'region'         => 'west',
+			'featured'       => false,
 			'intro'          => '<p>Brough and Elloughton have grown fast, and we clean many of the new-build homes here — from regular weekly cleans to after builders cleans for new owners and extensions.</p><p>We also cover nearby villages including Welton, South Cave and North Ferriby.</p>',
 			'neighbourhoods' => [ 'Brough', 'Elloughton', 'Welton', 'South Cave', 'North Ferriby', 'Melton' ],
 			'local_notes'    => '<p>New-build homes often need a thorough snagging and builders\' dust clean before you move in — ask about our move-in and after builders packages.</p>',
@@ -114,6 +126,8 @@ return [
 		'fields' => [
 			'hero_heading'   => 'Cleaners in Hedon',
 			'postcodes'      => 'HU12',
+			'region'         => 'hull',
+			'featured'       => false,
 			'intro'          => '<p>We provide house cleaning, end of tenancy cleaning and oven cleaning in Hedon and the surrounding Holderness villages, including Preston and Paull.</p>',
 			'neighbourhoods' => [ 'Hedon', 'Preston', 'Paull', 'Thorngumbald', 'Keyingham' ],
 			'local_notes'    => '<p>We also clean offices and welfare facilities for businesses around Saltend and the east Hull industrial area.</p>',
@@ -129,6 +143,8 @@ return [
 		'fields' => [
 			'hero_heading'   => 'Cleaners in Bridlington',
 			'postcodes'      => 'YO15, YO16',
+			'region'         => 'coast',
+			'featured'       => true,
 			'intro'          => '<p>Bridlington is one of the busiest holiday let markets on the Yorkshire coast. We provide reliable changeover cleaning, linen management and deep cleans between seasons for holiday homes and Airbnbs, as well as regular house cleaning for local residents.</p>',
 			'neighbourhoods' => [ 'Old Town', 'Town Centre', 'Sewerby', 'Flamborough', 'Bessingby', 'Hilderthorpe' ],
 			'local_notes'    => '<p>Saturday changeovers fill up fast in summer — holiday let owners should get in touch early in the year to secure regular slots.</p>',
@@ -144,6 +160,8 @@ return [
 		'fields' => [
 			'hero_heading'   => 'Cleaners in Driffield',
 			'postcodes'      => 'YO25',
+			'region'         => 'wolds',
+			'featured'       => false,
 			'intro'          => '<p>We clean homes in Driffield and the surrounding Wolds villages — regular house cleaning, deep cleans, end of tenancy cleans and holiday cottage changeovers.</p>',
 			'neighbourhoods' => [ 'Driffield', 'Nafferton', 'Wansford', 'Hutton Cranswick', 'Kirkburn' ],
 			'local_notes'    => '<p>Rural properties sometimes need a little extra travel time; we\'ll always include it clearly in your quote.</p>',
@@ -159,6 +177,8 @@ return [
 		'fields' => [
 			'hero_heading'   => 'Cleaners in Hornsea',
 			'postcodes'      => 'HU18',
+			'region'         => 'coast',
+			'featured'       => false,
 			'intro'          => '<p>From seafront holiday lets to family homes near Hornsea Mere, we offer house cleaning, deep cleaning and holiday let changeovers across Hornsea.</p>',
 			'neighbourhoods' => [ 'Hornsea', 'Seaton', 'Atwick', 'Mappleton' ],
 			'local_notes'    => '<p>Sea air brings salt and sand indoors — we pay extra attention to windows, sills and floors in coastal homes.</p>',
@@ -174,6 +194,8 @@ return [
 		'fields' => [
 			'hero_heading'   => 'Cleaners in Withernsea',
 			'postcodes'      => 'HU19',
+			'region'         => 'coast',
+			'featured'       => false,
 			'intro'          => '<p>We provide house cleaning, end of tenancy cleaning and holiday let changeovers in Withernsea and nearby villages along the Holderness coast.</p>',
 			'neighbourhoods' => [ 'Withernsea', 'Patrington', 'Hollym', 'Easington' ],
 			'local_notes'    => '<p>We schedule Withernsea and Holderness cleans on set days each week to keep travel costs down for customers.</p>',
@@ -189,6 +211,8 @@ return [
 		'fields' => [
 			'hero_heading'   => 'Cleaners in Goole',
 			'postcodes'      => 'DN14',
+			'region'         => 'west',
+			'featured'       => false,
 			'intro'          => '<p>We clean homes, rental properties and commercial premises in Goole and Howden, including office and welfare cleaning for businesses near the docks and the M62.</p>',
 			'neighbourhoods' => [ 'Goole', 'Old Goole', 'Hook', 'Airmyn', 'Howden', 'Rawcliffe' ],
 			'local_notes'    => '<p>For commercial sites in Goole we provide full compliance paperwork and out-of-hours cleaning.</p>',
@@ -204,6 +228,8 @@ return [
 		'fields' => [
 			'hero_heading'   => 'Cleaners in Market Weighton',
 			'postcodes'      => 'YO43',
+			'region'         => 'wolds',
+			'featured'       => false,
 			'intro'          => '<p>We provide regular and one-off house cleaning, deep cleans and end of tenancy cleaning in Market Weighton and nearby villages including Holme-on-Spalding-Moor.</p>',
 			'neighbourhoods' => [ 'Market Weighton', 'Holme-on-Spalding-Moor', 'Shiptonthorpe', 'Sancton' ],
 			'local_notes'    => '',
@@ -219,6 +245,8 @@ return [
 		'fields' => [
 			'hero_heading'   => 'Cleaners in Pocklington',
 			'postcodes'      => 'YO42',
+			'region'         => 'wolds',
+			'featured'       => false,
 			'intro'          => '<p>From the town centre to the villages at the foot of the Wolds, we clean homes and holiday cottages in and around Pocklington.</p>',
 			'neighbourhoods' => [ 'Pocklington', 'Barmby Moor', 'Millington', 'Nunburnholme', 'Bielby' ],
 			'local_notes'    => '',

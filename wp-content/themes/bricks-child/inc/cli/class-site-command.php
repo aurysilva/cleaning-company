@@ -582,8 +582,11 @@ final class Site_Command {
 		}
 
 		$areas = $add_page( 'areas', 'Areas' );
-		foreach ( cc_areas() as $post ) {
+		foreach ( cc_featured_areas() as $post ) {
 			$add_post( $post, $areas );
+		}
+		if ( count( cc_featured_areas() ) < count( cc_areas() ) ) {
+			$add_page( 'areas', 'All areas', $areas );
 		}
 
 		$add_page( 'pricing' );

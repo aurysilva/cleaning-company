@@ -46,19 +46,18 @@
 			grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr));
 		}
 
-		// Large feature tiles so 13 or 14 towns fill complete rows of four
 		@include up(lg) {
 			&:has(.cc-area-card--media) {
 				grid-template-columns: repeat(4, minmax(0, 1fr));
+			}
 
-				> :first-child,
-				&:has(> :nth-child(14):last-child) > :nth-child(2) {
-					grid-column: span 2;
-					grid-row: span 2;
+			// Featured towns: one large tile, so five towns fill two complete rows of four
+			&.cc-grid--featured:has(.cc-area-card--media) > :first-child {
+				grid-column: span 2;
+				grid-row: span 2;
 
-					.cc-area-card__name {
-						font-size: var(--cc-h3);
-					}
+				.cc-area-card__name {
+					font-size: var(--cc-h3);
 				}
 			}
 		}
@@ -357,6 +356,12 @@
 	display: grid;
 	grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
 	gap: var(--cc-space-m);
+
+	&--3 {
+		@include up(md) {
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+		}
+	}
 
 	&--compact {
 		grid-template-columns: repeat(2, minmax(0, 1fr));

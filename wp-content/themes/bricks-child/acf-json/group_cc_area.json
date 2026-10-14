@@ -70,6 +70,54 @@
             "placeholder": "HU17"
         },
         {
+            "key": "field_cc_area_region",
+            "label": "Region",
+            "name": "region",
+            "aria-label": "",
+            "type": "select",
+            "instructions": "Groups this town in the area lists. To add a region, add a choice here (value : Label); the order of choices is the order regions are shown.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "hull": "Hull & nearby villages",
+                "wolds": "Beverley & the Wolds",
+                "coast": "The East Yorkshire coast",
+                "west": "West of Hull to Goole"
+            },
+            "default_value": false,
+            "allow_null": 1,
+            "multiple": 0,
+            "ui": 0,
+            "return_format": "value",
+            "ajax": 0,
+            "placeholder": ""
+        },
+        {
+            "key": "field_cc_area_featured",
+            "label": "Featured town",
+            "name": "featured",
+            "aria-label": "",
+            "type": "true_false",
+            "instructions": "Show as a photo card on the home page and in the menu and footer. Five featured towns fill the home page grid best.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "message": "",
+            "default_value": 0,
+            "ui": 1,
+            "ui_on_text": "",
+            "ui_off_text": ""
+        },
+        {
             "key": "field_cc_area_intro",
             "label": "Intro",
             "name": "intro",
@@ -390,5 +438,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1792000000
+    "modified": 1792100000
 }

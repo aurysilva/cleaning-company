@@ -271,4 +271,68 @@
 		}, { rootMargin: '-120px 0px -55% 0px' });
 		headings.forEach((h) => observer.observe(h));
 	}
+
+	/* "Do we cover you?" town / postcode finder -------------------------- */
+
+	document.querySelectorAll('[data-cc-area-finder]').forEach((finder) => {
+		const input = finder.querySelector('.cc-area-finder__input');
+		const result = finder.querySelector('.cc-area-finder__result');
+		let areas = [];
+		try {
+			areas = JSON.parse(finder.querySelector('.cc-area-finder__data').textContent);
+		} catch (e) {
+			return;
+		}
+		if (!input || !result) {
+			return;
+		}
+
+		const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+		let matches = [];
+
+		const search = (raw) => {
+			const compact = raw.toUpperCase().replace(/\s+/g, '');
+			if (/^[A-Z]{1,2}\d/.test(compact)) {
+				// Postcode district: the part before the space, or a full postcode minus its last 3 characters
+				const parts = raw.trim().toUpperCase().split(/\s+/);
+				const district = parts.length > 1 ? parts[0] : (compact.length >= 5 ? compact.slice(0, -3) : compact);
+				return areas.filter((a) => a.codes.includes(district)).map((area) => ({ area }));
+			}
+			const q = raw.trim().toLowerCase();
+			const found = [];
+			areas.forEach((area) => {
+				if (area.name.toLowerCase().includes(q)) {
+					found.push({ area, rank: area.name.toLowerCase().startsWith(q) ? 0 : 1 });
+					return;
+				}
+				const place = area.places.find((p) => p.toLowerCase().includes(q));
+				if (place) {
+					found.push({ area, place, rank: place.toLowerCase().startsWith(q) ? 2 : 3 });
+				}
+			});
+			return found.sort((a, b) => a.rank - b.rank).slice(0, 5);
+		};
+
+		input.addEventListener('input', () => {
+			const raw = input.value.trim();
+			matches = raw.length >= 2 ? search(raw) : [];
+			if (raw.length < 2) {
+				result.innerHTML = '';
+			} else if (matches.length) {
+				result.innerHTML = '<p class="cc-area-finder__yes">Yes, we cover that area</p><ul class="cc-area-finder__matches">'
+					+ matches.map((m) => `<li><a href="${esc(m.area.url)}">${m.place ? `${esc(m.place)} <span>covered by our ${esc(m.area.name)} team</span>` : `Cleaners in ${esc(m.area.name)}`}</a></li>`).join('')
+					+ '</ul>';
+			} else {
+				result.innerHTML = `<p class="cc-area-finder__no">We don't list “${esc(raw)}” yet, but we may still be able to help.</p>`
+					+ `<a class="cc-area-finder__ask" href="${esc(finder.dataset.contact || '/contact/')}">Ask us about your area</a>`;
+			}
+		});
+
+		finder.querySelector('form')?.addEventListener('submit', (e) => {
+			e.preventDefault();
+			if (matches.length === 1) {
+				window.location.href = matches[0].area.url;
+			}
+		});
+	});
 })();

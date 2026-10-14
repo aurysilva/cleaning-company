@@ -349,7 +349,7 @@ final class Sections {
 			self::faqs_section( 'Cleaning in {post_title}: FAQs' ),
 			T::section( '', [
 				T::container( '', [
-					self::intro( 'Coverage', 'Other areas we cover' ),
+					self::intro( 'Coverage', 'Nearby areas we cover' ),
 					T::block( '{cc_area_links}', 'Areas' ),
 				] ),
 			], 'Other areas' ),
@@ -475,7 +475,7 @@ final class Sections {
 			T::section( '', [
 				T::container( '', [
 					self::intro( 'Areas we cover', 'Local cleaners across Hull & East Yorkshire', 'Our cleaners live locally, so we can offer reliable regular slots and quick one-off cleans.' ),
-					T::block( '{cc_area_links:cards}', 'Areas' ),
+					T::block( '{cc_area_directory}', 'Areas' ),
 				] ),
 			], 'Areas' ),
 			self::filled_section( '{cc_latest_guides}', 'cc-section--alt', [
@@ -500,7 +500,7 @@ final class Sections {
 			self::page_hero( 'Areas we cover', 'Our local cleaners work across Hull and East Yorkshire — from the city to the coast and the Wolds.', 'Coverage' ),
 			T::section( '', [
 				T::container( '', [
-					T::block( '{cc_area_links:cards}', 'Area cards' ),
+					T::block( '{cc_area_links:hub}', 'Areas by region' ),
 					T::text( 'Don\'t see your town? We may still be able to help — get in touch and ask.', 'cc-lead cc-text-center' ),
 				] ),
 			], 'Areas' ),
@@ -610,7 +610,7 @@ final class Sections {
 						T::heading( 'Opening hours', 'h2', 'cc-h3' ),
 						T::block( '{cc_opening_hours}', 'Opening hours' ),
 						T::heading( 'Areas we cover', 'h2', 'cc-h3' ),
-						T::block( '{cc_area_links}', 'Areas' ),
+						T::block( '{cc_area_links:regions}', 'Areas' ),
 					] ),
 				] ),
 			], 'Contact' ),
@@ -628,14 +628,15 @@ final class Sections {
 						[ 'clock', 'Fast turnarounds', 'Same-week and weekend cleans to cut void periods between tenancies.' ],
 						[ 'key', 'Key collection', 'We collect and return keys from your office or key safe.' ],
 						[ 'receipt', 'Invoicing to suit you', 'Invoice the landlord, the agent or the tenant — with monthly statements for portfolios.' ],
-					] ),
+						[ 'rotate', 'Re-clean guarantee', 'If the inventory clerk flags anything we cleaned, we come back and put it right free of charge.' ],
+						[ 'shield', 'Insured & vetted', 'Every cleaner is DBS-checked and covered by public liability insurance, so your properties are in safe hands.' ],
+					], 'cc-features--3' ),
 				] ),
 			], 'Benefits' ),
 			T::section( 'cc-section--alt', [
 				T::container( '', [
 					self::intro( 'Services', 'Services for landlords & hosts' ),
-					T::block( '{cc_service_cards:landlords-hosts}', 'Landlord services' ),
-					T::block( '{cc_service_cards:moving-property}', 'Moving services' ),
+					T::block( '{cc_service_cards:landlords-hosts,moving-property}', 'Landlord services' ),
 				] ),
 			], 'Services' ),
 			self::cta_band( 'Managing several properties?', 'Ask about account pricing and priority booking for letting agents and portfolio landlords.' ),
@@ -653,7 +654,9 @@ final class Sections {
 						[ 'users', 'Dedicated team', 'The same vetted cleaners every visit, with a named account manager.' ],
 						[ 'clipboard', 'Compliance included', 'RAMS, COSHH data sheets, insurance certificates and cleaning logs.' ],
 						[ 'building', 'Fixed monthly price', 'A clear specification and one predictable invoice each month.' ],
-					] ),
+						[ 'shield', 'Insured & DBS-checked', 'Public liability insurance and vetted, DBS-checked cleaners on every contract as standard.' ],
+						[ 'sparkles', 'Equipment included', 'We bring professional equipment and eco-friendly products, so there\'s nothing for you to buy.' ],
+					], 'cc-features--3' ),
 				] ),
 			], 'Benefits' ),
 			T::section( 'cc-section--alt', [

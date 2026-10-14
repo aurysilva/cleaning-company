@@ -527,16 +527,20 @@ function cc_service_card( WP_Post $service, string $url = '' ): string {
 	);
 }
 
-function cc_service_cards_html( string $group = '', int $limit = -1 ): string {
-	$args = [ 'posts_per_page' => $limit ];
-	if ( $group ) {
-		$args['tax_query'] = [ [ 'taxonomy' => 'cc_service_group', 'field' => 'slug', 'terms' => $group ] ];
+/**
+ * @param string|string[] $groups Service group slug(s); services in more than one group are listed once.
+ */
+function cc_service_cards_html( $groups = '', int $limit = -1, string $class = '' ): string {
+	$args   = [ 'posts_per_page' => $limit ];
+	$groups = array_filter( (array) $groups );
+	if ( $groups ) {
+		$args['tax_query'] = [ [ 'taxonomy' => 'cc_service_group', 'field' => 'slug', 'terms' => $groups ] ];
 	}
 	$services = cc_services( $args );
 	if ( ! $services ) {
 		return '';
 	}
-	return '<div class="cc-grid cc-grid--cards">' . implode( '', array_map( 'cc_service_card', $services ) ) . '</div>';
+	return '<div class="cc-grid cc-grid--cards' . ( $class ? ' ' . esc_attr( $class ) : '' ) . '">' . implode( '', array_map( 'cc_service_card', $services ) ) . '</div>';
 }
 
 function cc_service_carousel_html(): string {
@@ -597,31 +601,191 @@ function cc_service_group_label( WP_Term $term ): string {
 	return $labels[ $term->slug ] ?? $term->name;
 }
 
+/**
+ * @param string $style chips (nearby towns on an area page, all towns elsewhere) | cards | regions | hub
+ */
 function cc_area_links_html( string $style = 'chips', int $exclude = 0 ): string {
-	$areas = array_filter( cc_areas(), fn( $area ) => $area->ID !== $exclude );
+	switch ( $style ) {
+		case 'cards':
+			return cc_area_cards_html( cc_areas() );
+		case 'regions':
+			return cc_area_region_list_html();
+		case 'hub':
+			return cc_area_hub_html();
+	}
+
+	$areas = $exclude ? cc_nearby_areas( $exclude ) : cc_areas();
 	if ( ! $areas ) {
 		return '';
-	}
-	if ( $style === 'cards' ) {
-		$out = '<div class="cc-grid cc-grid--areas">';
-		foreach ( $areas as $area ) {
-			$image = cc_card_image_html( (int) get_post_thumbnail_id( $area ), '(max-width: 640px) 50vw, 300px' );
-			$out  .= sprintf(
-				'<a class="cc-area-card%s" href="%s">%s<span class="cc-area-card__body"><span class="cc-area-card__name">%s</span><span class="cc-area-card__postcodes">%s</span></span></a>',
-				$image ? ' cc-area-card--media' : '',
-				esc_url( get_permalink( $area ) ),
-				$image ? '<span class="cc-area-card__media">' . $image . '</span>' : '',
-				esc_html( get_the_title( $area ) ),
-				esc_html( (string) cc_get( 'postcodes', $area->ID ) )
-			);
-		}
-		return $out . '</div>';
 	}
 	$out = '<ul class="cc-chips">';
 	foreach ( $areas as $area ) {
 		$out .= sprintf( '<li><a href="%s">%s</a></li>', esc_url( get_permalink( $area ) ), esc_html( get_the_title( $area ) ) );
 	}
+	$hub = get_page_by_path( 'areas', OBJECT, 'page' );
+	if ( $hub && count( $areas ) < count( cc_areas() ) ) {
+		$out .= sprintf( '<li class="cc-chips__more"><a href="%s">All %d areas</a></li>', esc_url( get_permalink( $hub ) ), count( cc_areas() ) );
+	}
 	return $out . '</ul>';
+}
+
+/* Areas: regions, featured towns and the "Do we cover you?" finder ------- */
+
+/** Region value => label, in display order (the choices of the area Region field). */
+function cc_area_regions(): array {
+	$field = function_exists( 'acf_get_field' ) ? acf_get_field( 'field_cc_area_region' ) : null;
+	return (array) ( $field['choices'] ?? [] );
+}
+
+/**
+ * Areas grouped by region, in region order. Towns without a region go last, under "Other areas".
+ *
+ * @return array<string, array{label: string, areas: WP_Post[]}>
+ */
+function cc_areas_by_region( ?array $areas = null ): array {
+	$groups = [];
+	foreach ( cc_area_regions() as $key => $label ) {
+		$groups[ $key ] = [ 'label' => $label, 'areas' => [] ];
+	}
+	foreach ( $areas ?? cc_areas() as $area ) {
+		$key = (string) cc_get( 'region', $area->ID );
+		if ( ! isset( $groups[ $key ] ) || 'other' === $key ) {
+			$key              = 'other';
+			$groups['other'] ??= [ 'label' => 'Other areas', 'areas' => [] ];
+		}
+		$groups[ $key ]['areas'][] = $area;
+	}
+	return array_filter( $groups, fn( $group ) => $group['areas'] );
+}
+
+/** Towns ticked as featured (photo cards, menu, footer); the first five towns if none are. */
+function cc_featured_areas(): array {
+	$featured = array_values( array_filter( cc_areas(), fn( $area ) => (bool) cc_get( 'featured', $area->ID ) ) );
+	return $featured ?: array_slice( cc_areas(), 0, 5 );
+}
+
+/** Other towns in the same region, topped up with featured towns so there are always a few links. */
+function cc_nearby_areas( int $area_id, int $min = 6 ): array {
+	$region = (string) cc_get( 'region', $area_id );
+	$nearby = [];
+	foreach ( cc_areas() as $area ) {
+		if ( $area->ID !== $area_id && $region && cc_get( 'region', $area->ID ) === $region ) {
+			$nearby[ $area->ID ] = $area;
+		}
+	}
+	foreach ( cc_featured_areas() as $area ) {
+		if ( count( $nearby ) >= $min ) {
+			break;
+		}
+		if ( $area->ID !== $area_id ) {
+			$nearby[ $area->ID ] = $area;
+		}
+	}
+	return array_values( $nearby );
+}
+
+function cc_area_card_html( WP_Post $area ): string {
+	$image = cc_card_image_html( (int) get_post_thumbnail_id( $area ), '(max-width: 640px) 50vw, 300px' );
+	return sprintf(
+		'<a class="cc-area-card%s" href="%s">%s<span class="cc-area-card__body"><span class="cc-area-card__name">%s</span><span class="cc-area-card__postcodes">%s</span></span></a>',
+		$image ? ' cc-area-card--media' : '',
+		esc_url( get_permalink( $area ) ),
+		$image ? '<span class="cc-area-card__media">' . $image . '</span>' : '',
+		esc_html( get_the_title( $area ) ),
+		esc_html( (string) cc_get( 'postcodes', $area->ID ) )
+	);
+}
+
+function cc_area_cards_html( array $areas, string $class = '' ): string {
+	if ( ! $areas ) {
+		return '';
+	}
+	return '<div class="cc-grid cc-grid--areas' . ( $class ? ' ' . esc_attr( $class ) : '' ) . '">' . implode( '', array_map( 'cc_area_card_html', $areas ) ) . '</div>';
+}
+
+/** Every town as a compact link, grouped by region. */
+function cc_area_region_list_html(): string {
+	$out = '<div class="cc-area-regions">';
+	foreach ( cc_areas_by_region() as $group ) {
+		$out .= '<div class="cc-area-regions__group"><p class="cc-area-regions__label">' . esc_html( $group['label'] ) . '</p><ul class="cc-area-regions__list">';
+		foreach ( $group['areas'] as $area ) {
+			$codes = (string) cc_get( 'postcodes', $area->ID );
+			$out  .= sprintf(
+				'<li><a href="%s">%s</a>%s</li>',
+				esc_url( get_permalink( $area ) ),
+				esc_html( get_the_title( $area ) ),
+				$codes ? '<span>' . esc_html( $codes ) . '</span>' : ''
+			);
+		}
+		$out .= '</ul></div>';
+	}
+	return $out . '</div>';
+}
+
+/** Postcode districts from text like "HU1–HU9" or "YO15, YO16". */
+function cc_postcode_districts( string $text ): array {
+	$out = [];
+	foreach ( preg_split( '/\s*,\s*/', strtoupper( trim( $text ) ) ) as $part ) {
+		if ( preg_match( '/^([A-Z]{1,2})(\d{1,2})\s*[–-]\s*(?:[A-Z]{1,2})?(\d{1,2})$/u', $part, $m ) ) {
+			for ( $i = (int) $m[2]; $i <= (int) $m[3]; $i++ ) {
+				$out[] = $m[1] . $i;
+			}
+		} elseif ( preg_match( '/^[A-Z]{1,2}\d{1,2}[A-Z]?$/', $part ) ) {
+			$out[] = $part;
+		}
+	}
+	return $out;
+}
+
+/** "Do we cover you?" search by town, village or postcode (matched in the browser by main.js). */
+function cc_area_finder_html( bool $link_hub = true ): string {
+	static $count = 0;
+	$id      = 'cc-area-finder-' . ( ++$count );
+	$hub     = $link_hub ? get_page_by_path( 'areas', OBJECT, 'page' ) : null;
+	$contact = get_page_by_path( 'contact', OBJECT, 'page' );
+	$data    = array_map( fn( WP_Post $area ) => [
+		'name'   => wp_specialchars_decode( get_the_title( $area ), ENT_QUOTES ),
+		'url'    => get_permalink( $area ),
+		'codes'  => cc_postcode_districts( (string) cc_get( 'postcodes', $area->ID ) ),
+		'places' => array_values( array_filter( array_column( (array) cc_get( 'neighbourhoods', $area->ID ), 'name' ) ) ),
+	], cc_areas() );
+
+	return '<div class="cc-area-finder" data-cc-area-finder data-contact="' . esc_url( $contact ? get_permalink( $contact ) : cc_quote_url() ) . '">'
+		. '<p class="cc-area-finder__title">Do we cover you?</p>'
+		. '<form class="cc-area-finder__form" role="search">'
+		. '<label class="cc-area-finder__label" for="' . $id . '">Type your town, village or postcode</label>'
+		. '<input class="cc-area-finder__input" id="' . $id . '" type="search" autocomplete="off" enterkeyhint="search" placeholder="e.g. Sewerby or HU17">'
+		. '</form>'
+		. '<div class="cc-area-finder__result" aria-live="polite"></div>'
+		. '<script type="application/json" class="cc-area-finder__data">' . wp_json_encode( $data, JSON_HEX_TAG | JSON_HEX_AMP | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) . '</script>'
+		. ( $hub ? '<a class="cc-btn cc-btn--outline cc-area-finder__all" href="' . esc_url( get_permalink( $hub ) ) . '">View all ' . count( cc_areas() ) . ' areas</a>' : '' )
+		. '</div>';
+}
+
+/** Home page: featured towns as photo cards, then the finder beside every town grouped by region. */
+function cc_area_directory_html(): string {
+	if ( ! cc_areas() ) {
+		return '';
+	}
+	return '<div class="cc-area-directory">'
+		. cc_area_cards_html( cc_featured_areas(), 'cc-grid--featured' )
+		. '<div class="cc-area-directory__more">'
+		. cc_area_finder_html()
+		. '<div class="cc-area-directory__list">' . cc_area_region_list_html() . '</div>'
+		. '</div>'
+		. '</div>';
+}
+
+/** Areas page: the finder, then photo cards for every town under region headings. */
+function cc_area_hub_html(): string {
+	$out = '<div class="cc-area-hub">' . cc_area_finder_html( false );
+	foreach ( cc_areas_by_region() as $key => $group ) {
+		$out .= '<section class="cc-area-hub__region" id="' . esc_attr( sanitize_title( $key ) ) . '">'
+			. '<h2 class="cc-area-hub__title">' . esc_html( $group['label'] ) . '</h2>'
+			. cc_area_cards_html( $group['areas'] )
+			. '</section>';
+	}
+	return $out . '</div>';
 }
 
 function cc_link_list_html( array $posts ): string {
@@ -849,5 +1013,11 @@ function cc_footer_services_html(): string {
 }
 
 function cc_footer_areas_html(): string {
-	return cc_link_list_html( cc_areas() );
+	$list = cc_link_list_html( cc_featured_areas() );
+	$hub  = get_page_by_path( 'areas', OBJECT, 'page' );
+	if ( ! $list || ! $hub ) {
+		return $list;
+	}
+	$more = sprintf( '<li class="cc-link-list__more"><a href="%s">All %d areas</a></li>', esc_url( get_permalink( $hub ) ), count( cc_areas() ) );
+	return substr_replace( $list, $more . '</ul>', -5 );
 }

@@ -1,0 +1,226 @@
+@use "../abstracts/mixins" as *;
+
+// Areas we cover: featured town tiles, the "Do we cover you?" finder and towns grouped by region
+
+// Five featured towns below desktop: one wide tile, then two rows of two
+.cc-grid--featured:has(.cc-area-card--media) {
+	@include down(lg) {
+		grid-template-columns: 1fr 1fr;
+
+		> :first-child {
+			grid-column: span 2;
+			aspect-ratio: 2 / 1;
+		}
+	}
+}
+
+.cc-area-directory {
+	display: flex;
+	flex-direction: column;
+	gap: var(--cc-space-l);
+
+	&__more {
+		display: grid;
+		gap: var(--cc-space-l);
+		align-items: start;
+
+		@include up(lg) {
+			grid-template-columns: minmax(0, 23rem) minmax(0, 1fr);
+		}
+	}
+}
+
+/* Finder ------------------------------------------------------------------ */
+
+.cc-area-finder {
+	display: flex;
+	flex-direction: column;
+	gap: var(--cc-space-xs);
+	padding: var(--cc-space-m);
+	border-radius: var(--cc-radius-l);
+	background: var(--cc-color-primary-light);
+
+	&__title {
+		margin: 0;
+		color: var(--cc-color-ink);
+		font-size: var(--cc-h4);
+		font-weight: 800;
+		letter-spacing: -0.01em;
+	}
+
+	&__form {
+		display: flex;
+		flex-direction: column;
+		gap: 0.4rem;
+		margin: 0;
+	}
+
+	&__label {
+		color: var(--cc-color-text-muted);
+		font-size: var(--cc-text-s);
+	}
+
+	&__input {
+		width: 100%;
+		padding: 0.85em 1.1em 0.85em 2.9em;
+		border: 1.5px solid var(--cc-color-border);
+		border-radius: var(--cc-radius-pill);
+		background: var(--cc-color-surface) var(--cc-search-muted) 1.05em center / 1.15em no-repeat;
+		color: var(--cc-color-text);
+		font: inherit;
+		transition: border-color var(--cc-transition), box-shadow var(--cc-transition);
+
+		&:focus {
+			border-color: var(--cc-color-primary);
+			outline: none;
+			box-shadow: 0 0 0 4px rgb(11 113 137 / 0.15);
+		}
+
+		&::-webkit-search-cancel-button {
+			cursor: pointer;
+		}
+	}
+
+	&__result:empty {
+		display: none;
+	}
+
+	&__yes,
+	&__no {
+		margin: 0 0 0.5rem;
+		font-size: var(--cc-text-s);
+	}
+
+	&__yes {
+		color: var(--cc-color-accent-dark);
+		font-weight: 700;
+	}
+
+	&__matches {
+		display: grid;
+		gap: 0.35rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+
+		a {
+			display: flex;
+			flex-direction: column;
+			padding: 0.6em 0.95em;
+			border-radius: var(--cc-radius-m);
+			background: var(--cc-color-surface);
+			color: var(--cc-color-primary);
+			font-weight: 700;
+			text-decoration: none;
+			transition: background-color var(--cc-transition), color var(--cc-transition);
+
+			&:hover {
+				background: var(--cc-color-primary);
+				color: #fff;
+			}
+		}
+
+		span {
+			color: var(--cc-color-text-muted);
+			font-size: var(--cc-text-s);
+			font-weight: 400;
+		}
+
+		a:hover span {
+			color: inherit;
+		}
+	}
+
+	&__ask {
+		font-weight: 700;
+	}
+
+	&__all {
+		align-self: flex-start;
+		margin-top: var(--cc-space-3xs);
+	}
+}
+
+/* Towns by region ------------------------------------------------------- */
+
+.cc-area-regions {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
+	gap: var(--cc-space-m) var(--cc-space-l);
+
+	&__label {
+		margin: 0 0 0.6rem;
+		padding-bottom: 0.45rem;
+		border-bottom: 2px solid var(--cc-color-border);
+		color: var(--cc-color-ink);
+		font-size: var(--cc-text-s);
+		font-weight: 800;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+	}
+
+	&__list {
+		display: grid;
+		gap: 0.15rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+
+		li {
+			display: flex;
+			align-items: baseline;
+			justify-content: space-between;
+			gap: var(--cc-space-2xs);
+		}
+
+		a {
+			padding: 0.2em 0;
+			color: var(--cc-color-text);
+			font-weight: 600;
+			text-decoration: none;
+
+			&:hover {
+				color: var(--cc-color-primary);
+				text-decoration: underline;
+			}
+		}
+
+		span {
+			flex-shrink: 0;
+			color: var(--cc-color-text-muted);
+			font-size: var(--cc-text-s);
+		}
+	}
+}
+
+/* Areas page ------------------------------------------------------------ */
+
+.cc-area-hub {
+	display: flex;
+	flex-direction: column;
+	gap: var(--cc-space-xl);
+
+	> .cc-area-finder {
+		width: min(100%, 36rem);
+	}
+
+	&__region {
+		scroll-margin-top: 8rem;
+	}
+
+	&__title {
+		margin: 0 0 var(--cc-space-s);
+		font-size: var(--cc-h3);
+	}
+}
+
+/* "All areas" links at the end of chip and footer lists ----------------- */
+
+.cc-chips__more > a {
+	border-color: var(--cc-color-primary);
+	color: var(--cc-color-primary);
+}
+
+.cc-link-list__more a {
+	font-weight: 700;
+}

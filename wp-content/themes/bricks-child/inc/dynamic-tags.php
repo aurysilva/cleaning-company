@@ -44,10 +44,11 @@ function cc_dynamic_tags(): array {
 		'cc_faqs'              => 'FAQs',
 		'cc_before_after'      => 'Before & after gallery',
 		'cc_reviews'           => 'Reviews',
-		'cc_service_cards'     => 'Service cards (optional group slug)',
+		'cc_service_cards'     => 'Service cards, 3 per row (optional group slugs, comma-separated)',
 		'cc_service_carousel'  => 'Service cards carousel (all services)',
 		'cc_service_groups'    => 'Services grouped by category',
-		'cc_area_links'        => 'Area links (chips|cards)',
+		'cc_area_links'        => 'Area links (chips|cards|regions|hub)',
+		'cc_area_directory'    => 'Areas: featured towns, finder and towns by region',
 		'cc_area_services'     => 'Services in this area',
 		'cc_neighbourhoods'    => 'Neighbourhoods',
 		'cc_related_services'  => 'Related services',
@@ -159,13 +160,15 @@ function cc_render_dynamic_tag( string $name, string $arg, $post ): ?string {
 		case 'cc_reviews':
 			return cc_reviews_html( in_array( get_post_type( $post_id ), [ 'cc_service', 'cc_area', 'cc_local_service' ], true ) ? $post_id : 0 );
 		case 'cc_service_cards':
-			return cc_service_cards_html( sanitize_title( $arg ) );
+			return cc_service_cards_html( array_map( 'sanitize_title', explode( ',', $arg ) ), -1, 'cc-grid--3' );
 		case 'cc_service_carousel':
 			return cc_service_carousel_html();
 		case 'cc_service_groups':
 			return cc_service_groups_html();
 		case 'cc_area_links':
 			return cc_area_links_html( $arg ?: 'chips', get_post_type( $post_id ) === 'cc_area' ? $post_id : 0 );
+		case 'cc_area_directory':
+			return cc_area_directory_html();
 		case 'cc_area_services':
 			return cc_area_services_html( $post_id );
 		case 'cc_neighbourhoods':
