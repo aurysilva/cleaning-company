@@ -544,19 +544,28 @@ function cc_service_carousel_html(): string {
 	return $services ? cc_carousel_html( array_map( 'cc_service_card', $services ), 'Cleaning services' ) : '';
 }
 
-/** Scrolling row of cards with arrows, a progress bar and a "View all services" link. */
-function cc_carousel_html( array $cards, string $label ): string {
-	$hub = get_page_by_path( 'services', OBJECT, 'page' );
+/**
+ * Scrolling row of cards with arrows and a progress bar.
+ *
+ * @param array $args 'link' => [ url, text ] for the button beside the arrows ("View all services" by default,
+ *                    false for none); 'class' => extra modifier classes (cc-carousel--paged shows 3 at a time).
+ */
+function cc_carousel_html( array $cards, string $label, array $args = [] ): string {
+	$link = $args['link'] ?? null;
+	if ( null === $link ) {
+		$hub  = get_page_by_path( 'services', OBJECT, 'page' );
+		$link = $hub ? [ get_permalink( $hub ), 'View all services' ] : false;
+	}
 
-	return '<div class="cc-carousel" data-cc-carousel>'
+	return '<div class="cc-carousel' . ( empty( $args['class'] ) ? '' : ' ' . esc_attr( $args['class'] ) ) . '" data-cc-carousel>'
 		. '<div class="cc-carousel__track" role="region" aria-label="' . esc_attr( $label ) . '" tabindex="0">'
 		. implode( '', $cards )
 		. '</div>'
 		. '<div class="cc-carousel__nav">'
-		. ( $hub ? '<a class="cc-btn cc-btn--outline" href="' . esc_url( get_permalink( $hub ) ) . '">View all services</a>' : '' )
+		. ( $link ? '<a class="cc-btn cc-btn--outline" href="' . esc_url( $link[0] ) . '">' . esc_html( $link[1] ) . '</a>' : '' )
 		. '<div class="cc-carousel__progress" aria-hidden="true"><span></span></div>'
-		. '<button type="button" class="cc-carousel__btn cc-carousel__btn--prev" data-dir="-1" aria-label="Previous services"></button>'
-		. '<button type="button" class="cc-carousel__btn" data-dir="1" aria-label="More services"></button>'
+		. '<button type="button" class="cc-carousel__btn cc-carousel__btn--prev" data-dir="-1" aria-label="Previous"></button>'
+		. '<button type="button" class="cc-carousel__btn" data-dir="1" aria-label="Next"></button>'
 		. '</div>'
 		. '</div>';
 }
@@ -772,8 +781,46 @@ function cc_all_faqs_html(): string {
 	return $out;
 }
 
-function cc_latest_guides_html( int $limit = 3 ): string {
-	return cc_guide_cards_html( get_posts( [ 'post_type' => 'post', 'posts_per_page' => $limit, 'no_found_rows' => true ] ) );
+/** Latest guides, 3 at a time, with a final card linking to the blog (12 cards in total by default). */
+function cc_latest_guides_html( int $limit = 12 ): string {
+	// Newest first, but taking one guide from each topic in turn so a single topic can't fill the row
+	$queues = [];
+	foreach ( get_posts( [ 'post_type' => 'post', 'posts_per_page' => -1, 'no_found_rows' => true ] ) as $post ) {
+		$queues[ cc_guide_category( $post->ID )->slug ?? '' ][] = $post;
+	}
+	$posts = [];
+	$want  = max( 1, $limit - 1 );
+	for ( $round = 0; count( $posts ) < $want; $round++ ) {
+		$added = false;
+		foreach ( $queues as $queue ) {
+			if ( isset( $queue[ $round ] ) ) {
+				$posts[] = $queue[ $round ];
+				$added   = true;
+				if ( count( $posts ) >= $want ) {
+					break 2;
+				}
+			}
+		}
+		if ( ! $added ) {
+			break;
+		}
+	}
+	if ( ! $posts ) {
+		return '';
+	}
+
+	$cards = array_map( 'cc_guide_card', $posts );
+	$blog  = get_page_by_path( 'guides', OBJECT, 'page' );
+	if ( $blog ) {
+		$total   = (int) wp_count_posts( 'post' )->publish;
+		$cards[] = '<a class="cc-card cc-card--more" href="' . esc_url( get_permalink( $blog ) ) . '">'
+			. '<span class="cc-card__more-icon" aria-hidden="true"></span>'
+			. '<span class="cc-card__title">View more</span>'
+			. '<span class="cc-card__text">' . esc_html( sprintf( 'Browse all %d cleaning guides, checklists and tips', $total ) ) . '</span>'
+			. '</a>';
+	}
+
+	return cc_carousel_html( $cards, 'Latest cleaning guides', [ 'link' => false, 'class' => 'cc-carousel--paged' ] );
 }
 
 function cc_company_links_html(): string {

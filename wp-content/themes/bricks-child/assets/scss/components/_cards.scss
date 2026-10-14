@@ -127,4 +127,44 @@
 		background-image: var(--cc-arrow-white);
 		transform: translateX(4px);
 	}
+
+	// Last card in a carousel, linking on to the full listing
+	&--more {
+		justify-content: flex-end;
+		gap: var(--cc-space-2xs);
+		padding: var(--cc-space-l);
+		border: 0;
+		background: var(--cc-gradient-brand);
+		color: #fff;
+		text-decoration: none;
+
+		.cc-card__title {
+			font-size: var(--cc-h3);
+		}
+
+		.cc-card__text {
+			max-width: 22ch;
+			color: rgb(255 255 255 / 0.85);
+			font-size: var(--cc-text-m);
+		}
+
+		&:focus-visible {
+			outline: 3px solid var(--cc-color-highlight);
+			outline-offset: 3px;
+		}
+	}
+
+	&__more-icon {
+		width: 3.5rem;
+		height: 3.5rem;
+		margin-bottom: auto;
+		border-radius: 50%;
+		background: rgb(255 255 255 / 0.18) var(--cc-arrow-white) center / 45% no-repeat;
+		transition: transform var(--cc-transition), background-color var(--cc-transition);
+	}
+
+	&--more:hover &__more-icon {
+		background-color: rgb(255 255 255 / 0.3);
+		transform: translateX(6px);
+	}
 }

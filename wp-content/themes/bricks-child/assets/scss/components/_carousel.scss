@@ -133,6 +133,22 @@
 		}
 	}
 
+	// Stays inside the container and shows 3 whole cards at a time (2 on tablets)
+	&--paged &__track {
+		grid-auto-columns: calc((100% - 2 * var(--cc-space-m)) / 3);
+		margin-inline: calc(-1 * var(--cc-gutter));
+		padding-inline: var(--cc-gutter);
+		scroll-padding-inline: var(--cc-gutter);
+
+		@include down(lg) {
+			grid-auto-columns: calc((100% - var(--cc-space-m)) / 2);
+		}
+
+		@include down(md) {
+			grid-auto-columns: min(82%, 20rem);
+		}
+	}
+
 	// Everything fits on screen: nothing to scroll
 	&.is-static &__progress,
 	&.is-static &__btn {

@@ -181,7 +181,7 @@ function cc_render_dynamic_tag( string $name, string $arg, $post ): ?string {
 		case 'cc_all_faqs':
 			return cc_all_faqs_html();
 		case 'cc_latest_guides':
-			return cc_latest_guides_html( $arg ? (int) $arg : 3 );
+			return cc_latest_guides_html( $arg ? (int) $arg : 12 );
 		case 'cc_guide_eyebrow':
 			return cc_guide_eyebrow_html( $post_id );
 		case 'cc_guide_meta':
