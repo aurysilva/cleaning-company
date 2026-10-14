@@ -223,10 +223,15 @@ final class Sections {
 					self::intro( 'About this service', $local ? '{cc_service_name} in {cc_area_name}' : 'What to expect' ),
 					T::block( $local ? '{cc_field:local_intro}' : '{cc_field:intro}', 'Intro' ),
 				] ),
-				T::div( 'cc-split__aside', [
+				T::div( 'cc-split__aside', array_merge( [
 					T::heading( 'Who it\'s for', 'h2', 'cc-h3' ),
 					T::block( '{cc_who_for}', 'Who it\'s for' ),
-				] ),
+				], $local ? [
+					T::div( 'cc-split__places', [
+						T::heading( 'Places we cover in {cc_area_name}', 'h2', 'cc-h3' ),
+						T::block( '{cc_neighbourhoods}', 'Neighbourhoods' ),
+					], 'Places we cover', T::when_filled( '{cc_neighbourhoods}' ) ),
+				] : [] ) ),
 			] ),
 		], 'Intro' );
 

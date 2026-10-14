@@ -167,7 +167,7 @@ function cc_guide_card( WP_Post $post ): string {
 
 function cc_guide_cards_html( array $posts ): string {
 	$posts = array_filter( $posts, fn( $p ) => $p instanceof WP_Post );
-	return $posts ? '<div class="cc-grid cc-grid--cards">' . implode( '', array_map( 'cc_guide_card', $posts ) ) . '</div>' : '';
+	return $posts ? '<div class="cc-grid cc-grid--cards cc-grid--3">' . implode( '', array_map( 'cc_guide_card', $posts ) ) . '</div>' : '';
 }
 
 /**

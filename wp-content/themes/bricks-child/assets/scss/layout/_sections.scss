@@ -67,6 +67,13 @@ $bubbles:
 		}
 	}
 
+	&__places {
+		display: flex;
+		flex-direction: column;
+		gap: var(--cc-space-s);
+		margin-top: var(--cc-space-s);
+	}
+
 	&--media {
 		grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
 		align-items: center;

@@ -541,14 +541,16 @@ function cc_service_cards_html( string $group = '', int $limit = -1 ): string {
 
 function cc_service_carousel_html(): string {
 	$services = cc_services();
-	if ( ! $services ) {
-		return '';
-	}
+	return $services ? cc_carousel_html( array_map( 'cc_service_card', $services ), 'Cleaning services' ) : '';
+}
+
+/** Scrolling row of cards with arrows, a progress bar and a "View all services" link. */
+function cc_carousel_html( array $cards, string $label ): string {
 	$hub = get_page_by_path( 'services', OBJECT, 'page' );
 
 	return '<div class="cc-carousel" data-cc-carousel>'
-		. '<div class="cc-carousel__track" role="region" aria-label="Cleaning services" tabindex="0">'
-		. implode( '', array_map( 'cc_service_card', $services ) )
+		. '<div class="cc-carousel__track" role="region" aria-label="' . esc_attr( $label ) . '" tabindex="0">'
+		. implode( '', $cards )
 		. '</div>'
 		. '<div class="cc-carousel__nav">'
 		. ( $hub ? '<a class="cc-btn cc-btn--outline" href="' . esc_url( get_permalink( $hub ) ) . '">View all services</a>' : '' )
@@ -639,15 +641,26 @@ function cc_area_services_html( int $area_id ): string {
 
 	$popular = (array) cc_get( 'popular_services', $area_id );
 	$ids     = array_map( fn( $p ) => $p instanceof WP_Post ? $p->ID : (int) $p, $popular );
+	if ( $ids ) {
+		// Services with a page for this area are always listed, after the popular ones
+		$ids = array_values( array_unique( array_merge( $ids, array_keys( $local_by_service ) ) ) );
+	}
 	$services = $ids ? cc_services( [ 'post__in' => $ids, 'orderby' => 'post__in' ] ) : cc_services();
 
 	if ( ! $services ) {
 		return '';
 	}
-	return '<div class="cc-grid cc-grid--cards">' . implode( '', array_map( fn( $s ) => cc_service_card( $s, $local_by_service[ $s->ID ] ?? '' ), $services ) ) . '</div>';
+	return cc_carousel_html(
+		array_map( fn( $s ) => cc_service_card( $s, $local_by_service[ $s->ID ] ?? '' ), $services ),
+		'Cleaning services in ' . get_the_title( $area_id )
+	);
 }
 
 function cc_neighbourhoods_html( int $area_id ): string {
+	$parts = cc_local_service_parts( $area_id );
+	if ( $parts ) {
+		$area_id = $parts['area']->ID;
+	}
 	$rows = array_filter( (array) cc_get( 'neighbourhoods', $area_id ), fn( $r ) => ! empty( $r['name'] ) );
 	if ( ! $rows ) {
 		return '';
@@ -665,7 +678,15 @@ function cc_related_services_html( int $post_id ): string {
 	if ( ! $related ) {
 		return '';
 	}
-	return '<div class="cc-grid cc-grid--cards">' . implode( '', array_map( 'cc_service_card', array_slice( $related, 0, 3 ) ) ) . '</div>';
+
+	// On a service-in-area page, link to the same area's version of each service where one exists
+	$area = get_post_type( $post_id ) === 'cc_local_service' ? ( cc_local_service_parts( $post_id )['area'] ?? null ) : null;
+	$card = function ( WP_Post $s ) use ( $area ) {
+		$local = $area ? cc_find_local_service( $s->post_name, $area->post_name ) : null;
+		return cc_service_card( $s, $local ? get_permalink( $local ) : '' );
+	};
+
+	return '<div class="cc-grid cc-grid--cards cc-grid--3">' . implode( '', array_map( $card, array_slice( $related, 0, 3 ) ) ) . '</div>';
 }
 
 /**

@@ -13,6 +13,7 @@ use WP_CLI;
  *     wp cc seed [--force]   # business settings, services, areas, local services
  *     wp cc images [--force] # import placeholder photos from seed/images.php
  *     wp cc guides           # import guides, categories and guide photos from seed/guides/
+ *     wp cc local            # (re)build service × area pages from seed/local-services/
  *     wp cc pages            # (re)build Bricks pages
  *     wp cc menus            # (re)build the primary menu
  *     wp cc templates        # (re)build header, footer and single templates
@@ -142,8 +143,23 @@ final class Site_Command {
 		return $ids;
 	}
 
+	/**
+	 * (Re)builds Local Service pages (service × area) from seed/local-services/*.php.
+	 */
+	public function local( $args = [], $assoc = [] ) {
+		$this->as_admin();
+		$slugs = fn( string $type ) => array_column( array_map( fn( $p ) => [ $p->post_name, $p->ID ], get_posts( [ 'post_type' => $type, 'posts_per_page' => -1, 'post_status' => 'publish' ] ) ), 1, 0 );
+		$this->seed_local_services( $slugs( 'cc_service' ), $slugs( 'cc_area' ) );
+		flush_rewrite_rules( false );
+		WP_CLI::success( 'Local service pages ready.' );
+	}
+
 	private function seed_local_services( array $services, array $areas ): void {
-		foreach ( $this->load_seed( 'local-services' ) as $row ) {
+		$rows = [];
+		foreach ( glob( CC_THEME_DIR . '/seed/local-services/*.php' ) as $file ) {
+			$rows = array_merge( $rows, (array) require $file );
+		}
+		foreach ( $rows as $row ) {
 			$service_id = $services[ $row['service'] ] ?? 0;
 			$area_id    = $areas[ $row['area'] ] ?? 0;
 			if ( ! $service_id || ! $area_id ) {

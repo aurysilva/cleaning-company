@@ -31,6 +31,13 @@
 		}
 	}
 
+	// Three-up rows (related services, guide cards), so a set of 3 fills the row
+	&--cards#{&}--3 {
+		@include up(md) {
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+		}
+	}
+
 	&--areas {
 		grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
 		gap: var(--cc-space-s);

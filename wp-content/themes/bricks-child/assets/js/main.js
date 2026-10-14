@@ -179,6 +179,7 @@
 
 		const update = () => {
 			const max = track.scrollWidth - track.clientWidth;
+			carousel.classList.toggle('is-static', max <= 2);
 			buttons.forEach((btn) => {
 				btn.disabled = btn.dataset.dir === '-1' ? track.scrollLeft <= 2 : track.scrollLeft >= max - 2;
 			});

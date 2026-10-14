@@ -63,6 +63,57 @@
             "placeholder": "End of Tenancy Cleaning in Hull"
         },
         {
+            "key": "field_cc_local_service_hero_subheading",
+            "label": "Hero subheading",
+            "name": "hero_subheading",
+            "aria-label": "",
+            "type": "textarea",
+            "instructions": "One or two sentences under the heading. Leave blank to use the service's short description.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "rows": 2,
+            "new_lines": ""
+        },
+        {
+            "key": "field_cc_local_service_seo_title",
+            "label": "SEO title",
+            "name": "seo_title",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "Up to 60 characters; the brand is added automatically.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "maxlength": 70
+        },
+        {
+            "key": "field_cc_local_service_meta_description",
+            "label": "Meta description",
+            "name": "meta_description",
+            "aria-label": "",
+            "type": "textarea",
+            "instructions": "140–158 characters, unique to this town.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "rows": 3,
+            "maxlength": 180,
+            "new_lines": ""
+        },
+        {
             "key": "field_cc_local_service_local_intro",
             "label": "Local intro",
             "name": "local_intro",

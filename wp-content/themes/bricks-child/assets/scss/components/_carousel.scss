@@ -1,9 +1,11 @@
 @use "../abstracts/mixins" as *;
 
-// Horizontal card row that runs off the edges of the screen (home page services)
+// Horizontal card row that starts at the container edge and runs off the right of the screen
 .cc-carousel {
 	// Distance from the container edge to the screen edge (matches .cc-container's width)
 	--cc-bleed: max(var(--cc-space-m), (100vw - var(--cc-content-width)) / 2);
+	// Room on the left for card shadows and the focus ring, so they aren't clipped
+	--cc-gutter: 1rem;
 
 	display: flex;
 	flex-direction: column;
@@ -14,12 +16,12 @@
 		grid-auto-flow: column;
 		grid-auto-columns: clamp(16rem, 22vw, 19.5rem);
 		gap: var(--cc-space-m);
-		margin-inline: calc(-1 * var(--cc-bleed));
-		padding: 0.75rem var(--cc-bleed) 1.75rem;
+		margin-inline: calc(-1 * var(--cc-gutter)) calc(-1 * var(--cc-bleed));
+		padding: 0.75rem var(--cc-bleed) 1.75rem var(--cc-gutter);
 		overflow-x: auto;
 		overscroll-behavior-x: contain;
 		scroll-snap-type: x mandatory;
-		scroll-padding-inline: var(--cc-bleed);
+		scroll-padding-inline: var(--cc-gutter) var(--cc-bleed);
 		scrollbar-width: none;
 		cursor: grab;
 
@@ -129,6 +131,12 @@
 			opacity: 0.4;
 			box-shadow: none;
 		}
+	}
+
+	// Everything fits on screen: nothing to scroll
+	&.is-static &__progress,
+	&.is-static &__btn {
+		display: none;
 	}
 
 	@include down(sm) {
