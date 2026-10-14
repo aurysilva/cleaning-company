@@ -1,4 +1,5 @@
 @use "abstracts/tokens";
+@use "base/base";
 @use "base/typography";
 @use "components/buttons";
 @use "components/cards";
@@ -7,5 +8,10 @@
 @use "components/faq";
 @use "components/before-after";
 @use "components/trust-bar";
+@use "components/lists";
+@use "components/blocks";
+@use "layout/sections";
+@use "layout/header";
+@use "layout/footer";
 @use "utilities/utilities";
 @use "vendors/booking-widget";

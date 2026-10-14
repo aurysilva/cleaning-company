@@ -1,0 +1,91 @@
+@use "../abstracts/mixins" as *;
+
+.cc-footer {
+	padding-block: var(--cc-space-2xl) var(--cc-space-m);
+	background: #0d1b26;
+	color: rgb(255 255 255 / 0.78);
+	font-size: var(--cc-text-s);
+
+	a {
+		color: rgb(255 255 255 / 0.85);
+		text-decoration: none;
+
+		&:hover {
+			color: #fff;
+			text-decoration: underline;
+		}
+	}
+
+	.cc-logo {
+		color: #fff;
+	}
+
+	&__grid {
+		display: grid;
+		grid-template-columns: 1.6fr repeat(3, 1fr) 1.4fr;
+		gap: var(--cc-space-l);
+
+		@include down(xl) {
+			grid-template-columns: repeat(3, 1fr);
+		}
+
+		@include down(md) {
+			grid-template-columns: 1fr 1fr;
+		}
+
+		@include down(sm) {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	&__brand {
+		display: flex;
+		flex-direction: column;
+		gap: var(--cc-space-s);
+
+		@include down(xl) {
+			grid-column: 1 / -1;
+		}
+	}
+
+	&__col {
+		display: flex;
+		flex-direction: column;
+		gap: var(--cc-space-xs);
+	}
+
+	&__title {
+		color: #fff;
+		font-size: var(--cc-text-m);
+		font-weight: 700;
+	}
+
+	.cc-ticks li::before {
+		background-color: var(--cc-color-accent);
+	}
+
+	.cc-hours,
+	.cc-contact-list {
+		color: rgb(255 255 255 / 0.78);
+	}
+
+	.cc-contact-list__label {
+		color: rgb(255 255 255 / 0.55);
+	}
+
+	&__bottom {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--cc-space-s);
+		margin-top: var(--cc-space-xl);
+		padding-top: var(--cc-space-m);
+		border-top: 1px solid rgb(255 255 255 / 0.12);
+	}
+
+	&__legal-links {
+		display: flex;
+		gap: var(--cc-space-s);
+	}
+}

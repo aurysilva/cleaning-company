@@ -1,0 +1,41 @@
+// Resets on top of Bricks (Bricks CSS sits in a cascade layer, so these win without !important).
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+// Bricks sets html to 62.5%; our tokens assume a 16px root.
+html {
+	font-size: 100%;
+}
+
+body {
+	margin: 0;
+	background: var(--cc-color-surface);
+}
+
+img {
+	max-width: 100%;
+	height: auto;
+}
+
+h1, h2, h3, h4, p, ul, ol, dl, figure, blockquote {
+	margin-block: 0;
+}
+
+ul[class],
+ol[class] {
+	padding: 0;
+	list-style: none;
+}
+
+table {
+	border-spacing: 0;
+}
+
+// Bricks wraps dynamic-tag output in .brxe-text-basic; these blocks should be full width.
+.brxe-text-basic:empty {
+	display: none;
+}

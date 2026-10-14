@@ -15,8 +15,17 @@ foreach ( [
 	'scf',
 	'rewrites',
 	'bricks',
+	'components',
+	'dynamic-tags',
 	'schema',
 	'performance',
 ] as $cc_file ) {
 	require_once CC_THEME_DIR . "/inc/{$cc_file}.php";
+}
+
+if ( defined( 'WP_CLI' ) && WP_CLI ) {
+	require_once CC_THEME_DIR . '/inc/cli/class-tree.php';
+	require_once CC_THEME_DIR . '/inc/cli/class-sections.php';
+	require_once CC_THEME_DIR . '/inc/cli/class-site-command.php';
+	WP_CLI::add_command( 'cc', CC\Cli\Site_Command::class );
 }

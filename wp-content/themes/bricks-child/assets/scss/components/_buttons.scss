@@ -8,6 +8,7 @@
 	border-radius: var(--cc-radius-pill);
 	font-weight: 700;
 	line-height: 1.1;
+	white-space: nowrap;
 	text-decoration: none;
 	cursor: pointer;
 	transition: background-color var(--cc-transition), color var(--cc-transition), border-color var(--cc-transition), transform var(--cc-transition);
@@ -44,6 +45,28 @@
 		&:hover {
 			background: var(--cc-color-primary);
 			border-color: var(--cc-color-primary);
+			color: #fff;
+		}
+	}
+
+	&--accent {
+		background: var(--cc-color-accent);
+		color: #fff;
+
+		&:hover {
+			background: #fff;
+			color: var(--cc-color-primary-dark);
+		}
+	}
+
+	&--ghost {
+		border-color: rgb(255 255 255 / 0.7);
+		background: transparent;
+		color: #fff;
+
+		&:hover {
+			border-color: #fff;
+			background: rgb(255 255 255 / 0.12);
 			color: #fff;
 		}
 	}
