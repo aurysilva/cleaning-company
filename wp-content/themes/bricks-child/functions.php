@@ -18,7 +18,9 @@ foreach ( [
 	'components',
 	'media',
 	'pricing',
+	'guides',
 	'dynamic-tags',
+	'seo',
 	'schema',
 	'performance',
 ] as $cc_file ) {

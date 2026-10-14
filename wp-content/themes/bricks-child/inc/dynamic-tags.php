@@ -65,6 +65,13 @@ function cc_dynamic_tags(): array {
 		'cc_stats'             => 'Headline stats',
 		'cc_marquee'           => 'Scrolling towns strip',
 		'cc_promos'            => 'Audience promos (landlords, business, hosts)',
+		'cc_guide_eyebrow'     => 'Guide category link',
+		'cc_guide_meta'        => 'Guide date, reading time and author',
+		'cc_toc'               => 'Guide contents list',
+		'cc_guide_service'     => 'Guide pillar service box',
+		'cc_related_guides'    => 'Related guides',
+		'cc_service_guides'    => 'Guides for this service',
+		'cc_guide_hub'         => 'Guides hub (all topic clusters)',
 		'cc_area_name'         => 'Area name (local service)',
 		'cc_service_name'      => 'Service name (local service)',
 	];
@@ -175,6 +182,20 @@ function cc_render_dynamic_tag( string $name, string $arg, $post ): ?string {
 			return cc_all_faqs_html();
 		case 'cc_latest_guides':
 			return cc_latest_guides_html( $arg ? (int) $arg : 3 );
+		case 'cc_guide_eyebrow':
+			return cc_guide_eyebrow_html( $post_id );
+		case 'cc_guide_meta':
+			return cc_guide_meta_html( $post_id );
+		case 'cc_toc':
+			return cc_toc_html( $post_id );
+		case 'cc_guide_service':
+			return cc_guide_service_html( $post_id );
+		case 'cc_related_guides':
+			return cc_related_guides_html( $post_id );
+		case 'cc_service_guides':
+			return cc_service_guides_html( $post_id );
+		case 'cc_guide_hub':
+			return cc_guide_hub_html();
 		case 'cc_footer_services':
 			return cc_footer_services_html();
 		case 'cc_footer_areas':

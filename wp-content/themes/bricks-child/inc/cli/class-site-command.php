@@ -12,6 +12,7 @@ use WP_CLI;
  *     wp cc setup            # everything, in the right order
  *     wp cc seed [--force]   # business settings, services, areas, local services
  *     wp cc images [--force] # import placeholder photos from seed/images.php
+ *     wp cc guides           # import guides, categories and guide photos from seed/guides/
  *     wp cc pages            # (re)build Bricks pages
  *     wp cc menus            # (re)build the primary menu
  *     wp cc templates        # (re)build header, footer and single templates
@@ -35,6 +36,7 @@ final class Site_Command {
 		$this->seed( $args, $assoc );
 		$this->pages();
 		$this->images( $args, [] );
+		$this->guides( $args, [] );
 		$this->menus();
 		$this->templates();
 		WP_CLI::success( 'Site built.' );
@@ -54,7 +56,7 @@ final class Site_Command {
 		$settings['disableEmbed']       = 'on';
 
 		update_option( 'bricks_global_settings', $settings );
-		update_option( 'permalink_structure', '/%postname%/' );
+		update_option( 'permalink_structure', '/guides/%postname%/' );
 
 		foreach ( [ 'hello-world' => 'post', 'sample-page' => 'page' ] as $slug => $type ) {
 			$post = get_page_by_path( $slug, OBJECT, $type );
@@ -284,6 +286,162 @@ final class Site_Command {
 		] );
 
 		return (int) $id;
+	}
+
+	/* ---------------------------------------------------------------------
+	 * Guides
+	 * ------------------------------------------------------------------ */
+
+	/**
+	 * Imports guides from seed/guides/*.php: categories, posts, SEO fields, FAQs, internal links and photos.
+	 *
+	 * [--only=<slugs>]
+	 * : Comma-separated guide slugs.
+	 *
+	 * [--force-images]
+	 * : Replace featured images that are already set.
+	 */
+	public function guides( $args = [], $assoc = [] ) {
+		$this->as_admin();
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+		require_once ABSPATH . 'wp-admin/includes/media.php';
+		require_once ABSPATH . 'wp-admin/includes/image.php';
+
+		update_option( 'permalink_structure', '/guides/%postname%/' );
+		flush_rewrite_rules( false );
+
+		$categories = $this->seed_guide_categories();
+		$photos     = file_exists( CC_THEME_DIR . '/seed/guide-images.php' ) ? $this->load_seed( 'guide-images' ) : [];
+		$only       = ! empty( $assoc['only'] ) ? array_map( 'trim', explode( ',', $assoc['only'] ) ) : [];
+
+		$files = glob( CC_THEME_DIR . '/seed/guides/*.php' );
+		$order = array_flip( [ 'tenancy', 'moving-landlords', 'home-cleaning-1', 'home-cleaning-2', 'ovens-carpets', 'upholstery-builders', 'holiday-lets', 'business', 'hiring' ] );
+		usort( $files, fn( $a, $b ) => ( $order[ basename( $a, '.php' ) ] ?? 99 ) <=> ( $order[ basename( $b, '.php' ) ] ?? 99 ) );
+
+		$guides = [];
+		foreach ( $files as $file ) {
+			foreach ( (array) require $file as $guide ) {
+				$guides[ $guide['slug'] ] = $guide;
+			}
+		}
+		if ( ! $guides ) {
+			WP_CLI::error( 'No guides found in seed/guides/.' );
+		}
+
+		// Topic order, so the newest guides (and the home page list) lead with the core services
+		$rank = array_flip( array_keys( $categories ) );
+		$seq  = array_flip( array_keys( $guides ) );
+		uksort( $guides, fn( $a, $b ) => [ $rank[ $guides[ $a ]['category'] ] ?? 99, $seq[ $a ] ] <=> [ $rank[ $guides[ $b ]['category'] ] ?? 99, $seq[ $b ] ] );
+
+		// Pass 1: every guide must exist before links between guides can be resolved
+		$ids   = [];
+		$index = 0;
+		foreach ( $guides as $slug => $guide ) {
+			$existing = get_page_by_path( $slug, OBJECT, 'post' );
+			if ( $only && ! in_array( $slug, $only, true ) ) {
+				if ( $existing ) {
+					$ids[ $slug ] = $existing->ID;
+				}
+				continue;
+			}
+
+			$post = [
+				'ID'            => $existing ? $existing->ID : 0,
+				'post_type'     => 'post',
+				'post_status'   => 'publish',
+				'post_title'    => $guide['title'],
+				'post_name'     => $slug,
+				'post_excerpt'  => $guide['excerpt'],
+				'post_category' => array_filter( [ $categories[ $guide['category'] ] ?? 0 ] ),
+			];
+			if ( ! $existing ) {
+				// Stagger publish times so archives keep the seed order
+				$post['post_date'] = wp_date( 'Y-m-d H:i:s', time() - ( ++$index * 7 * MINUTE_IN_SECONDS ) );
+			}
+
+			$id = wp_insert_post( wp_slash( $post ), true );
+			if ( is_wp_error( $id ) ) {
+				WP_CLI::warning( "{$slug}: " . $id->get_error_message() );
+				continue;
+			}
+			$ids[ $slug ] = (int) $id;
+		}
+
+		// Pass 2: content, SEO fields, FAQs and photos
+		foreach ( $guides as $slug => $guide ) {
+			if ( empty( $ids[ $slug ] ) || ( $only && ! in_array( $slug, $only, true ) ) ) {
+				continue;
+			}
+			$id      = $ids[ $slug ];
+			$service = get_page_by_path( $guide['service'], OBJECT, 'cc_service' );
+
+			wp_update_post( wp_slash( [
+				'ID'           => $id,
+				'post_content' => $this->resolve_links( $guide['content'], $slug ),
+			] ) );
+
+			update_field( 'field_cc_guide_seo_title', $guide['seo_title'] ?? '', $id );
+			update_field( 'field_cc_guide_meta_description', $guide['description'] ?? '', $id );
+			update_field( 'field_cc_guide_pillar_service', $service ? $service->ID : null, $id );
+			update_field( 'field_cc_guide_related_guides', array_values( array_filter( array_map( fn( $s ) => $ids[ $s ] ?? 0, $guide['related'] ?? [] ) ) ), $id );
+			update_field( 'field_cc_guide_faqs', array_map( fn( $faq ) => [ 'question' => $faq[0], 'answer' => $faq[1] ], $guide['faqs'] ?? [] ), $id );
+
+			if ( ! has_post_thumbnail( $id ) || ! empty( $assoc['force-images'] ) ) {
+				$attachment = ! empty( $photos[ $slug ] ) ? $this->unsplash_attachment( $photos[ $slug ] ) : 0;
+				if ( ! $attachment && $service ) {
+					$attachment = (int) get_post_thumbnail_id( $service );
+				}
+				if ( $attachment ) {
+					set_post_thumbnail( $id, $attachment );
+				}
+			}
+
+			WP_CLI::log( "Guide ready: {$guide['title']}" );
+		}
+
+		WP_CLI::success( sprintf( '%d guides ready.', count( $ids ) ) );
+	}
+
+	/**
+	 * @return array<string,int> category slug => term ID
+	 */
+	private function seed_guide_categories(): array {
+		$ids = [];
+		foreach ( $this->load_seed( 'guide-categories' ) as $slug => $category ) {
+			$term = get_term_by( 'slug', $slug, 'category' );
+			$args = [ 'name' => $category['name'], 'slug' => $slug, 'description' => $category['description'] ];
+			$result = $term ? wp_update_term( $term->term_id, 'category', $args ) : wp_insert_term( $category['name'], 'category', $args );
+			if ( is_wp_error( $result ) ) {
+				WP_CLI::warning( "Category {$slug}: " . $result->get_error_message() );
+				continue;
+			}
+			$ids[ $slug ] = (int) $result['term_id'];
+			update_term_meta( $ids[ $slug ], 'cc_service', $category['service'] ?? '' );
+			update_term_meta( $ids[ $slug ], 'cc_order', count( $ids ) );
+		}
+		update_option( 'default_category', reset( $ids ) ?: 1 );
+		return $ids;
+	}
+
+	/**
+	 * Turns href="{{type:slug}}" tokens into root-relative URLs (so links survive a domain change).
+	 * Links to anything that doesn't exist are reduced to their text.
+	 */
+	private function resolve_links( string $html, string $context ): string {
+		$types = [ 'guide' => 'post', 'service' => 'cc_service', 'area' => 'cc_area', 'local' => 'cc_local_service', 'page' => 'page' ];
+
+		return preg_replace_callback(
+			'#<a\s([^>]*?)href="\{\{(\w+):([a-z0-9-]+)\}\}"([^>]*)>(.*?)</a>#s',
+			function ( $m ) use ( $types, $context ) {
+				$post = isset( $types[ $m[2] ] ) ? get_page_by_path( $m[3], OBJECT, $types[ $m[2] ] ) : null;
+				if ( ! $post || 'publish' !== $post->post_status ) {
+					WP_CLI::warning( "{$context}: no {$m[2]} \"{$m[3]}\" — link removed." );
+					return $m[5];
+				}
+				return sprintf( '<a %shref="%s"%s>%s</a>', $m[1], esc_url( wp_make_link_relative( get_permalink( $post ) ) ), $m[4], $m[5] );
+			},
+			$html
+		);
 	}
 
 	/* ---------------------------------------------------------------------

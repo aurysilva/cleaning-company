@@ -1,0 +1,210 @@
+{
+    "key": "group_cc_guide",
+    "title": "Guide",
+    "fields": [
+        {
+            "key": "field_cc_guide_tab_seo",
+            "label": "SEO",
+            "name": "",
+            "aria-label": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "top",
+            "endpoint": 0
+        },
+        {
+            "key": "field_cc_guide_seo_title",
+            "label": "SEO title",
+            "name": "seo_title",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "Shown in Google results and the browser tab. Aim for 50–60 characters; the brand name is added automatically. Leave empty to use the post title.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "maxlength": 70
+        },
+        {
+            "key": "field_cc_guide_meta_description",
+            "label": "Meta description",
+            "name": "meta_description",
+            "aria-label": "",
+            "type": "textarea",
+            "instructions": "The snippet under the title in Google results. Aim for 140–160 characters. Leave empty to use the excerpt.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "rows": 3,
+            "maxlength": 180
+        },
+        {
+            "key": "field_cc_guide_tab_links",
+            "label": "Linking",
+            "name": "",
+            "aria-label": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "top",
+            "endpoint": 0
+        },
+        {
+            "key": "field_cc_guide_pillar_service",
+            "label": "Main service",
+            "name": "pillar_service",
+            "aria-label": "",
+            "type": "post_object",
+            "instructions": "The service page this guide supports. It is promoted beside the guide, and the guide is listed on that service page.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "post_type": [
+                "cc_service"
+            ],
+            "return_format": "id",
+            "allow_null": 1,
+            "multiple": 0,
+            "ui": 1
+        },
+        {
+            "key": "field_cc_guide_related_guides",
+            "label": "Related guides",
+            "name": "related_guides",
+            "aria-label": "",
+            "type": "relationship",
+            "instructions": "Shown under the guide. Leave empty to pick guides from the same category automatically.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "post_type": [
+                "post"
+            ],
+            "filters": [
+                "search"
+            ],
+            "max": 3,
+            "return_format": "id"
+        },
+        {
+            "key": "field_cc_guide_tab_faqs",
+            "label": "FAQs",
+            "name": "",
+            "aria-label": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "top",
+            "endpoint": 0
+        },
+        {
+            "key": "field_cc_guide_faqs",
+            "label": "FAQs",
+            "name": "faqs",
+            "aria-label": "",
+            "type": "repeater",
+            "instructions": "Shown at the end of the guide and added to the page's FAQ structured data.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "block",
+            "button_label": "Add FAQ",
+            "min": 0,
+            "max": 0,
+            "collapsed": "",
+            "pagination": 0,
+            "sub_fields": [
+                {
+                    "key": "field_cc_guide_faqs_question",
+                    "label": "Question",
+                    "name": "question",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 1,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "parent_repeater": "field_cc_guide_faqs"
+                },
+                {
+                    "key": "field_cc_guide_faqs_answer",
+                    "label": "Answer",
+                    "name": "answer",
+                    "aria-label": "",
+                    "type": "textarea",
+                    "instructions": "",
+                    "required": 1,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "rows": 3,
+                    "parent_repeater": "field_cc_guide_faqs"
+                }
+            ]
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "post"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "",
+    "show_in_rest": 0,
+    "modified": 1792018800
+}

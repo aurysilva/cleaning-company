@@ -254,4 +254,20 @@
 		}, true);
 		track.addEventListener('dragstart', (e) => e.preventDefault());
 	});
+
+	/* Guide contents list: mark the section being read ------------------- */
+
+	const tocLinks = [...document.querySelectorAll('.cc-toc a[href^="#"]')];
+	const headings = tocLinks.map((a) => document.getElementById(decodeURIComponent(a.hash.slice(1)))).filter(Boolean);
+
+	if (headings.length && 'IntersectionObserver' in window) {
+		const visible = new Set();
+		const observer = new IntersectionObserver((entries) => {
+			entries.forEach((entry) => (entry.isIntersecting ? visible.add(entry.target) : visible.delete(entry.target)));
+			const current = headings.find((h) => visible.has(h))
+				|| [...headings].reverse().find((h) => h.getBoundingClientRect().top < 0);
+			tocLinks.forEach((a) => a.classList.toggle('is-active', !!current && a.hash === '#' + current.id));
+		}, { rootMargin: '-120px 0px -55% 0px' });
+		headings.forEach((h) => observer.observe(h));
+	}
 })();

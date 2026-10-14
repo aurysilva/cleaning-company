@@ -294,6 +294,11 @@ final class Sections {
 			T::block( '{cc_related_services}', 'Related services' ),
 		], 'Related services' );
 
+		$sections[] = self::filled_section( '{cc_service_guides}', 'cc-section--alt', [
+			self::intro( 'Guides & advice', $local ? '{cc_service_name} tips from our team' : 'Helpful guides from our cleaners' ),
+			T::block( '{cc_service_guides}', 'Guides' ),
+		], 'Guides' );
+
 		$sections[] = self::cta_band();
 
 		return $sections;
@@ -349,16 +354,30 @@ final class Sections {
 
 	public static function post_single(): array {
 		return [
-			T::section( 'cc-page-hero cc-page-hero--article', [
-				T::container( 'cc-container--narrow', [
+			T::section( 'cc-page-hero cc-page-hero--guide', [
+				self::cover( '{cc_hero_media}' ),
+				T::container( 'cc-page-hero__inner', [
 					T::block( '{cc_breadcrumbs}', 'Breadcrumbs' ),
+					T::block( '{cc_guide_eyebrow}', 'Category' ),
 					T::heading( '{post_title}', 'h1' ),
-					T::text( 'Updated {post_modified}', 'cc-meta' ),
+					T::text( '{cc_hero_sub}', 'cc-lead' ),
+					T::block( '{cc_guide_meta}', 'Meta' ),
 				] ),
 			], 'Article hero' ),
-			T::section( '', [
-				T::container( 'cc-container--narrow', [ T::el( 'post-content', [], [], 'Post content' ) ] ),
+			T::section( 'cc-section--article', [
+				T::container( 'cc-article', [
+					T::el( 'post-content', [ '_cssClasses' => 'cc-prose cc-article__content' ], [], 'Post content' ),
+					T::div( 'cc-article__aside', [
+						T::block( '{cc_toc}', 'Contents' ),
+						T::block( '{cc_guide_service}', 'Service box' ),
+					], 'Sidebar' ),
+				] ),
 			], 'Article' ),
+			self::faqs_section(),
+			self::filled_section( '{cc_related_guides}', '', [
+				self::intro( 'Keep reading', 'Related guides' ),
+				T::block( '{cc_related_guides}', 'Related guides' ),
+			], 'Related guides' ),
 			self::cta_band(),
 		];
 	}
@@ -697,8 +716,8 @@ final class Sections {
 
 	public static function guides(): array {
 		return [
-			self::page_hero( 'Cleaning guides & advice', 'Practical tips on cleaning, moving home and getting your deposit back — from local cleaning professionals.', 'Guides', false ),
-			self::filled_section( '{cc_latest_guides}', '', [ T::block( '{cc_latest_guides:24}', 'Guides' ) ], 'Guides' ),
+			self::page_hero( 'Cleaning guides & advice', 'Practical, local advice on cleaning, moving home, getting your deposit back and running a spotless rental or business — from the cleaning professionals in Hull & East Yorkshire.', 'Guides', false ),
+			self::filled_section( '{cc_guide_hub}', 'cc-section--hub', [ T::block( '{cc_guide_hub}', 'Guide topics' ) ], 'Guides' ),
 			self::cta_band(),
 		];
 	}

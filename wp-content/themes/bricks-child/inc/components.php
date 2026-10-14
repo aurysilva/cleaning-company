@@ -293,6 +293,10 @@ function cc_breadcrumbs_html( int $post_id ): string {
 		}
 	} elseif ( $type === 'post' ) {
 		$crumbs[] = [ 'Guides', home_url( '/guides/' ) ];
+		$term     = cc_guide_category( $post_id );
+		if ( $term ) {
+			$crumbs[] = [ $term->name, cc_guide_category_url( $term ) ];
+		}
 	}
 
 	$crumbs[] = [ get_the_title( $post_id ), '' ];
@@ -748,23 +752,7 @@ function cc_all_faqs_html(): string {
 }
 
 function cc_latest_guides_html( int $limit = 3 ): string {
-	$posts = get_posts( [ 'post_type' => 'post', 'posts_per_page' => $limit, 'no_found_rows' => true ] );
-	if ( ! $posts ) {
-		return '';
-	}
-	$out = '<div class="cc-grid cc-grid--cards">';
-	foreach ( $posts as $post ) {
-		$image = cc_card_image_html( (int) get_post_thumbnail_id( $post ) );
-		$out  .= sprintf(
-			'<article class="cc-card%s">%s<div class="cc-card__body"><h3 class="cc-card__title"><a href="%s">%s</a></h3><p class="cc-card__text">%s</p><span class="cc-card__link" aria-hidden="true">Read guide</span></div></article>',
-			$image ? ' cc-card--media' : '',
-			$image ? '<div class="cc-card__media">' . $image . '</div>' : '',
-			esc_url( get_permalink( $post ) ),
-			esc_html( get_the_title( $post ) ),
-			esc_html( wp_trim_words( get_the_excerpt( $post ), 22 ) )
-		);
-	}
-	return $out . '</div>';
+	return cc_guide_cards_html( get_posts( [ 'post_type' => 'post', 'posts_per_page' => $limit, 'no_found_rows' => true ] ) );
 }
 
 function cc_company_links_html(): string {

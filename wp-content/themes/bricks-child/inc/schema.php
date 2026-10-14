@@ -124,12 +124,58 @@ function cc_schema_service( int $service_id, ?WP_Post $area = null ): array {
 	return array_filter( $node );
 }
 
+function cc_schema_article( int $post_id ): array {
+	$image = get_the_post_thumbnail_url( $post_id, 'full' );
+	$term  = cc_guide_category( $post_id );
+
+	return array_filter( [
+		'@type'            => 'BlogPosting',
+		'@id'              => get_permalink( $post_id ) . '#article',
+		'headline'         => get_the_title( $post_id ),
+		'description'      => cc_seo_description( $post_id ),
+		'image'            => $image ?: null,
+		'datePublished'    => get_post_time( 'c', true, $post_id ),
+		'dateModified'     => get_post_modified_time( 'c', true, $post_id ),
+		'wordCount'        => str_word_count( wp_strip_all_tags( (string) get_post_field( 'post_content', $post_id ) ) ),
+		'articleSection'   => $term ? $term->name : null,
+		'inLanguage'       => 'en-GB',
+		'mainEntityOfPage' => get_permalink( $post_id ),
+		'author'           => [ '@type' => 'Organization', 'name' => cc_brand_name(), 'url' => home_url( '/about/' ) ],
+		'publisher'        => [ '@id' => cc_business_id() ],
+		'about'            => ( $service = cc_guide_service( $post_id ) ) ? [ '@type' => 'Service', 'name' => get_the_title( $service ), 'url' => get_permalink( $service ) ] : null,
+	] );
+}
+
+function cc_schema_breadcrumbs( int $post_id ): array {
+	$items = [ [ 'Home', home_url( '/' ) ], [ 'Guides', home_url( '/guides/' ) ] ];
+	$term  = cc_guide_category( $post_id );
+	if ( $term ) {
+		$items[] = [ $term->name, cc_guide_category_url( $term ) ];
+	}
+	$items[] = [ get_the_title( $post_id ), get_permalink( $post_id ) ];
+
+	return [
+		'@type'           => 'BreadcrumbList',
+		'itemListElement' => array_map(
+			fn( $item, $i ) => [ '@type' => 'ListItem', 'position' => $i + 1, 'name' => $item[0], 'item' => $item[1] ],
+			$items,
+			array_keys( $items )
+		),
+	];
+}
+
 add_action( 'wp_head', function () {
 	if ( ! function_exists( 'get_field' ) || is_admin() ) {
 		return;
 	}
 
 	$graph = [];
+
+	if ( is_singular( 'post' ) ) {
+		$graph[] = cc_schema_business();
+		$graph[] = cc_schema_article( get_the_ID() );
+		$graph[] = cc_schema_breadcrumbs( get_the_ID() );
+	}
 
 	if ( apply_filters( 'cc_output_business_schema', true ) && ( is_front_page() || is_singular( [ 'cc_area', 'page' ] ) ) ) {
 		$graph[] = cc_schema_business();
@@ -146,7 +192,7 @@ add_action( 'wp_head', function () {
 		}
 	}
 
-	if ( is_singular( [ 'cc_service', 'cc_local_service', 'cc_area', 'page' ] ) ) {
+	if ( is_singular( [ 'cc_service', 'cc_local_service', 'cc_area', 'page', 'post' ] ) ) {
 		$faq = cc_schema_faq( get_the_ID() );
 		if ( $faq ) {
 			$graph[] = $faq;
