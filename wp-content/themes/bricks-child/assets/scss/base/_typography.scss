@@ -1,0 +1,47 @@
+:root {
+	--cc-text-s: clamp(0.88rem, 0.85rem + 0.13vw, 0.94rem);
+	--cc-text-m: clamp(1rem, 0.96rem + 0.18vw, 1.13rem);
+	--cc-text-l: clamp(1.13rem, 1.06rem + 0.36vw, 1.38rem);
+	--cc-h4: clamp(1.25rem, 1.16rem + 0.45vw, 1.5rem);
+	--cc-h3: clamp(1.5rem, 1.36rem + 0.71vw, 1.88rem);
+	--cc-h2: clamp(1.88rem, 1.65rem + 1.12vw, 2.5rem);
+	--cc-h1: clamp(2.25rem, 1.86rem + 1.96vw, 3.5rem);
+}
+
+body {
+	font-family: var(--cc-font-body);
+	font-size: var(--cc-text-m);
+	line-height: 1.6;
+	color: var(--cc-color-text);
+	-webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 {
+	font-family: var(--cc-font-heading);
+	line-height: 1.2;
+	color: var(--cc-color-text);
+	text-wrap: balance;
+}
+
+h1 { font-size: var(--cc-h1); font-weight: 800; }
+h2 { font-size: var(--cc-h2); font-weight: 750; }
+h3 { font-size: var(--cc-h3); font-weight: 700; }
+h4 { font-size: var(--cc-h4); font-weight: 700; }
+
+p {
+	text-wrap: pretty;
+}
+
+a {
+	color: var(--cc-color-primary);
+	transition: color var(--cc-transition);
+
+	&:hover {
+		color: var(--cc-color-primary-dark);
+	}
+}
+
+:focus-visible {
+	outline: 3px solid var(--cc-color-accent);
+	outline-offset: 2px;
+}

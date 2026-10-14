@@ -1,0 +1,48 @@
+.cc-faq {
+	display: grid;
+	gap: var(--cc-space-xs);
+	max-width: var(--cc-content-width-narrow);
+
+	&__item {
+		border: 1px solid var(--cc-color-border);
+		border-radius: var(--cc-radius-m);
+		background: var(--cc-color-surface);
+
+		&[open] .cc-faq__question::after {
+			transform: rotate(45deg);
+		}
+	}
+
+	&__question {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		gap: var(--cc-space-s);
+		padding: var(--cc-space-s) var(--cc-space-m);
+		font-weight: 700;
+		cursor: pointer;
+		list-style: none;
+
+		&::-webkit-details-marker {
+			display: none;
+		}
+
+		&::after {
+			content: "+";
+			flex-shrink: 0;
+			font-size: 1.5em;
+			line-height: 1;
+			color: var(--cc-color-primary);
+			transition: transform var(--cc-transition);
+		}
+	}
+
+	&__answer {
+		padding: 0 var(--cc-space-m) var(--cc-space-s);
+		color: var(--cc-color-text-muted);
+
+		> :last-child {
+			margin-bottom: 0;
+		}
+	}
+}

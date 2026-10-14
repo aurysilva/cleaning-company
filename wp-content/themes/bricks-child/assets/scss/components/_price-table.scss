@@ -1,0 +1,35 @@
+.cc-price-table {
+	width: 100%;
+	border-collapse: collapse;
+	border: 1px solid var(--cc-color-border);
+	border-radius: var(--cc-radius-m);
+	overflow: hidden;
+
+	th,
+	td {
+		padding: var(--cc-space-xs) var(--cc-space-s);
+		text-align: left;
+		border-bottom: 1px solid var(--cc-color-border);
+	}
+
+	th {
+		background: var(--cc-color-primary);
+		color: #fff;
+		font-weight: 700;
+	}
+
+	tr:nth-child(even) td {
+		background: var(--cc-color-surface-alt);
+	}
+
+	&__price {
+		font-weight: 700;
+		color: var(--cc-color-primary);
+		white-space: nowrap;
+	}
+
+	&__note {
+		font-size: var(--cc-text-s);
+		color: var(--cc-color-text-muted);
+	}
+}

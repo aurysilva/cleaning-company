@@ -1,0 +1,324 @@
+{
+    "key": "group_cc_local_service",
+    "title": "Local Service",
+    "fields": [
+        {
+            "key": "field_cc_local_service_service",
+            "label": "Service",
+            "name": "service",
+            "aria-label": "",
+            "type": "post_object",
+            "instructions": "",
+            "required": 1,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "post_type": [
+                "cc_service"
+            ],
+            "return_format": "id",
+            "allow_null": 0,
+            "multiple": 0,
+            "ui": 1
+        },
+        {
+            "key": "field_cc_local_service_area",
+            "label": "Area",
+            "name": "area",
+            "aria-label": "",
+            "type": "post_object",
+            "instructions": "",
+            "required": 1,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "post_type": [
+                "cc_area"
+            ],
+            "return_format": "id",
+            "allow_null": 0,
+            "multiple": 0,
+            "ui": 1
+        },
+        {
+            "key": "field_cc_local_service_hero_heading",
+            "label": "Hero heading",
+            "name": "hero_heading",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placeholder": "End of Tenancy Cleaning in Hull"
+        },
+        {
+            "key": "field_cc_local_service_local_intro",
+            "label": "Local intro",
+            "name": "local_intro",
+            "aria-label": "",
+            "type": "wysiwyg",
+            "instructions": "400–800 unique words. Never just swap the town name.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "tabs": "all",
+            "toolbar": "full",
+            "media_upload": 1,
+            "delay": 1
+        },
+        {
+            "key": "field_cc_local_service_local_price_note",
+            "label": "Local price note",
+            "name": "local_price_note",
+            "aria-label": "",
+            "type": "textarea",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "rows": 2,
+            "new_lines": ""
+        },
+        {
+            "key": "field_cc_local_service_before_after",
+            "label": "Before / after photos",
+            "name": "before_after",
+            "aria-label": "",
+            "type": "repeater",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "block",
+            "button_label": "Add before / after",
+            "min": 0,
+            "max": 0,
+            "collapsed": "",
+            "pagination": 0,
+            "sub_fields": [
+                {
+                    "key": "field_cc_local_service_before_after_before",
+                    "label": "Before",
+                    "name": "before",
+                    "aria-label": "",
+                    "type": "image",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "50",
+                        "class": "",
+                        "id": ""
+                    },
+                    "return_format": "array",
+                    "preview_size": "medium",
+                    "library": "all",
+                    "parent_repeater": "field_cc_local_service_before_after"
+                },
+                {
+                    "key": "field_cc_local_service_before_after_after",
+                    "label": "After",
+                    "name": "after",
+                    "aria-label": "",
+                    "type": "image",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "50",
+                        "class": "",
+                        "id": ""
+                    },
+                    "return_format": "array",
+                    "preview_size": "medium",
+                    "library": "all",
+                    "parent_repeater": "field_cc_local_service_before_after"
+                },
+                {
+                    "key": "field_cc_local_service_before_after_caption",
+                    "label": "Caption",
+                    "name": "caption",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "e.g. \"End of tenancy clean, the Avenues, HU5\"",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "60",
+                        "class": "",
+                        "id": ""
+                    },
+                    "parent_repeater": "field_cc_local_service_before_after"
+                },
+                {
+                    "key": "field_cc_local_service_before_after_area",
+                    "label": "Area",
+                    "name": "area",
+                    "aria-label": "",
+                    "type": "post_object",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "40",
+                        "class": "",
+                        "id": ""
+                    },
+                    "post_type": [
+                        "cc_area"
+                    ],
+                    "return_format": "id",
+                    "allow_null": 1,
+                    "multiple": 0,
+                    "ui": 1,
+                    "parent_repeater": "field_cc_local_service_before_after"
+                }
+            ]
+        },
+        {
+            "key": "field_cc_local_service_reviews",
+            "label": "Reviews",
+            "name": "reviews",
+            "aria-label": "",
+            "type": "relationship",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "post_type": [
+                "cc_review"
+            ],
+            "filters": [
+                "search"
+            ],
+            "return_format": "object"
+        },
+        {
+            "key": "field_cc_local_service_case_study",
+            "label": "Case study",
+            "name": "case_study",
+            "aria-label": "",
+            "type": "post_object",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "post_type": [
+                "cc_case_study"
+            ],
+            "return_format": "id",
+            "allow_null": 1,
+            "multiple": 0,
+            "ui": 1
+        },
+        {
+            "key": "field_cc_local_service_faqs",
+            "label": "FAQs",
+            "name": "faqs",
+            "aria-label": "",
+            "type": "repeater",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "block",
+            "button_label": "Add FAQ",
+            "min": 0,
+            "max": 0,
+            "collapsed": "",
+            "pagination": 0,
+            "sub_fields": [
+                {
+                    "key": "field_cc_local_service_faqs_question",
+                    "label": "Question",
+                    "name": "question",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 1,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "parent_repeater": "field_cc_local_service_faqs"
+                },
+                {
+                    "key": "field_cc_local_service_faqs_answer",
+                    "label": "Answer",
+                    "name": "answer",
+                    "aria-label": "",
+                    "type": "wysiwyg",
+                    "instructions": "",
+                    "required": 1,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "tabs": "all",
+                    "toolbar": "full",
+                    "media_upload": 1,
+                    "delay": 1,
+                    "parent_repeater": "field_cc_local_service_faqs"
+                }
+            ]
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "cc_local_service"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "",
+    "show_in_rest": 0,
+    "modified": 1792000000
+}

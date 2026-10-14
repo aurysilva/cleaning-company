@@ -1,0 +1,13 @@
+{
+	"name": "cc-bricks-child",
+	"version": "0.1.0",
+	"private": true,
+	"description": "Cleaning company Bricks child theme assets",
+	"scripts": {
+		"build": "sass assets/scss/main.scss assets/css/main.css --style=compressed --no-source-map",
+		"watch": "sass assets/scss/main.scss assets/css/main.css --style=expanded --source-map --watch"
+	},
+	"devDependencies": {
+		"sass": "^1.80.0"
+	}
+}

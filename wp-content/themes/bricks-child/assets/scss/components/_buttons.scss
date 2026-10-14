@@ -1,0 +1,54 @@
+.cc-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: var(--cc-space-2xs);
+	padding: 0.85em 1.5em;
+	border: 2px solid transparent;
+	border-radius: var(--cc-radius-pill);
+	font-weight: 700;
+	line-height: 1.1;
+	text-decoration: none;
+	cursor: pointer;
+	transition: background-color var(--cc-transition), color var(--cc-transition), border-color var(--cc-transition), transform var(--cc-transition);
+
+	&:hover {
+		transform: translateY(-1px);
+	}
+
+	&--primary {
+		background: var(--cc-color-accent);
+		color: #fff;
+
+		&:hover {
+			background: var(--cc-color-accent-dark);
+			color: #fff;
+		}
+	}
+
+	&--secondary {
+		background: var(--cc-color-primary);
+		color: #fff;
+
+		&:hover {
+			background: var(--cc-color-primary-dark);
+			color: #fff;
+		}
+	}
+
+	&--outline {
+		border-color: currentColor;
+		background: transparent;
+		color: var(--cc-color-primary);
+
+		&:hover {
+			background: var(--cc-color-primary);
+			border-color: var(--cc-color-primary);
+			color: #fff;
+		}
+	}
+
+	&--block {
+		width: 100%;
+	}
+}

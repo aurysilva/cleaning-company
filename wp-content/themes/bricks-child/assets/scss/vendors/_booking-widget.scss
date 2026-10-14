@@ -1,0 +1,14 @@
+.cc-booking-embed {
+	width: 100%;
+	min-height: 40rem;
+	border: 0;
+	border-radius: var(--cc-radius-l);
+	box-shadow: var(--cc-shadow-m);
+	overflow: hidden;
+
+	iframe {
+		width: 100%;
+		min-height: 40rem;
+		border: 0;
+	}
+}

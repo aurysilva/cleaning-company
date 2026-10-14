@@ -1,0 +1,27 @@
+@use "../abstracts/mixins" as *;
+
+.cc-trust-bar {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: var(--cc-space-s) var(--cc-space-l);
+	padding: var(--cc-space-s) var(--cc-space-m);
+	background: var(--cc-color-primary-light);
+	font-size: var(--cc-text-s);
+	font-weight: 600;
+
+	&__item {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--cc-space-2xs);
+	}
+
+	&__stars {
+		color: var(--cc-color-star);
+		letter-spacing: 0.1em;
+	}
+
+	@include down(md) {
+		justify-content: flex-start;
+	}
+}

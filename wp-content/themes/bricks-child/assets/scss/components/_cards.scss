@@ -1,0 +1,49 @@
+.cc-card {
+	display: flex;
+	flex-direction: column;
+	gap: var(--cc-space-xs);
+	padding: var(--cc-space-m);
+	border: 1px solid var(--cc-color-border);
+	border-radius: var(--cc-radius-l);
+	background: var(--cc-color-surface);
+	box-shadow: var(--cc-shadow-s);
+	transition: box-shadow var(--cc-transition), transform var(--cc-transition);
+
+	&:hover {
+		box-shadow: var(--cc-shadow-l);
+		transform: translateY(-2px);
+	}
+
+	&__icon {
+		width: 3rem;
+		height: 3rem;
+		padding: 0.6rem;
+		border-radius: var(--cc-radius-m);
+		background: var(--cc-color-primary-light);
+	}
+
+	&__title {
+		margin: 0;
+		font-size: var(--cc-h4);
+	}
+
+	&__text {
+		margin: 0;
+		color: var(--cc-color-text-muted);
+	}
+
+	&__price {
+		margin-top: auto;
+		font-weight: 700;
+		color: var(--cc-color-primary);
+	}
+
+	&__link {
+		font-weight: 700;
+		text-decoration: none;
+
+		&::after {
+			content: " →";
+		}
+	}
+}
