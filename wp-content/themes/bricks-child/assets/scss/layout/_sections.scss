@@ -1,5 +1,12 @@
 @use "../abstracts/mixins" as *;
 
+$wave: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 80' preserveAspectRatio='none'%3E%3Cpath d='M0 46C180 78 360 82 560 62S920 6 1120 10s250 30 320 44v26H0z' fill='%23ffffff'/%3E%3C/svg%3E");
+$bubbles:
+	radial-gradient(circle closest-side, rgb(255 255 255 / 0.05) 72%, rgb(255 255 255 / 0.4) 94%, transparent 100%) 82% 22% / 5.5rem 5.5rem no-repeat,
+	radial-gradient(circle closest-side, rgb(255 255 255 / 0.05) 70%, rgb(255 255 255 / 0.35) 93%, transparent 100%) 92% 58% / 3rem 3rem no-repeat,
+	radial-gradient(circle closest-side, rgb(255 255 255 / 0.05) 66%, rgb(255 255 255 / 0.35) 92%, transparent 100%) 70% 78% / 2rem 2rem no-repeat,
+	radial-gradient(circle closest-side, rgb(255 255 255 / 0.06) 60%, rgb(255 255 255 / 0.3) 90%, transparent 100%) 62% 12% / 1.4rem 1.4rem no-repeat;
+
 .cc-container {
 	display: flex;
 	flex-direction: column;
@@ -18,8 +25,8 @@
 .cc-section-head {
 	display: flex;
 	flex-direction: column;
-	gap: var(--cc-space-2xs);
-	max-width: 46rem;
+	gap: var(--cc-space-xs);
+	max-width: 48rem;
 
 	&--center {
 		align-items: center;
@@ -54,10 +61,24 @@
 		display: flex;
 		flex-direction: column;
 		gap: var(--cc-space-m);
+
+		> .cc-btn {
+			align-self: flex-start;
+		}
+	}
+
+	&--media {
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+		align-items: center;
+		gap: clamp(2.5rem, 6vw, 6rem);
 	}
 
 	@include down(lg) {
 		grid-template-columns: 1fr;
+
+		&--media {
+			grid-template-columns: 1fr;
+		}
 	}
 }
 
@@ -69,12 +90,147 @@
 	box-shadow: var(--cc-shadow-m);
 }
 
-// Hero (home + singles)
+/* -------------------------------------------------------------------------
+ * Background photos (heroes, CTA band)
+ * ---------------------------------------------------------------------- */
+
+.cc-cover {
+	position: absolute;
+	inset: 0;
+	z-index: -1;
+	overflow: hidden;
+	background: var(--cc-color-ink);
+
+	img {
+		display: block;
+		width: 100%;
+		height: 120%;
+		object-fit: cover;
+		transform: translate3d(0, var(--cc-parallax, 0px), 0) scale(1.04);
+		animation: cc-settle 2.2s var(--cc-ease) both;
+	}
+
+	&::after {
+		content: "";
+		position: absolute;
+		inset: 0;
+	}
+}
+
+// Content sitting on a photo
+@mixin on-photo {
+	color: #fff;
+
+	h1,
+	h2 {
+		color: #fff;
+	}
+
+	.cc-lead {
+		color: rgb(255 255 255 / 0.88);
+	}
+
+	.cc-eyebrow {
+		color: var(--cc-color-highlight);
+	}
+
+	.cc-breadcrumbs ol,
+	.cc-breadcrumbs a {
+		color: rgb(255 255 255 / 0.8);
+	}
+
+	.cc-trust-bar {
+		color: #fff;
+	}
+
+	.cc-actions .cc-btn--outline {
+		border-color: rgb(255 255 255 / 0.65);
+		background: rgb(255 255 255 / 0.06);
+		color: #fff;
+		backdrop-filter: blur(6px);
+
+		&:hover {
+			border-color: #fff;
+			background: #fff;
+			color: var(--cc-color-ink);
+		}
+	}
+}
+
+// Wave edge into the next (white) section
+@mixin wave-bottom {
+	&::after {
+		content: "";
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: -1px;
+		z-index: 1;
+		height: clamp(28px, 4.5vw, 72px);
+		background: $wave center bottom / 100% 100% no-repeat;
+		pointer-events: none;
+	}
+}
+
+/* -------------------------------------------------------------------------
+ * Hero (home + singles)
+ * ---------------------------------------------------------------------- */
+
 .cc-hero {
+	position: relative;
+	isolation: isolate;
+	overflow: hidden;
 	padding-block: var(--cc-space-xl) var(--cc-space-2xl);
 	background:
-		radial-gradient(60rem 30rem at 85% -10%, rgb(43 182 115 / 0.12), transparent 60%),
+		radial-gradient(60rem 30rem at 85% -10%, rgb(23 182 123 / 0.14), transparent 60%),
 		linear-gradient(180deg, var(--cc-color-primary-light), var(--cc-color-surface));
+
+	&:has(> .cc-cover) {
+		@include on-photo;
+		@include wave-bottom;
+		padding-block: clamp(4rem, 9vw, 8rem) clamp(5.5rem, 11vw, 10rem);
+		background: var(--cc-color-ink);
+
+		.cc-hero__card :is(h2, h3) {
+			color: var(--cc-color-ink);
+		}
+
+		.cc-cover::after {
+			background:
+				linear-gradient(90deg, rgb(6 42 53 / 0.94) 0%, rgb(6 42 53 / 0.8) 38%, rgb(6 42 53 / 0.35) 75%, rgb(6 42 53 / 0.2) 100%),
+				linear-gradient(0deg, rgb(6 42 53 / 0.55), transparent 45%);
+		}
+
+		// Soap bubbles drifting over the photo
+		&::before {
+			content: "";
+			position: absolute;
+			inset: 0;
+			z-index: 0;
+			background: $bubbles;
+			pointer-events: none;
+			animation: cc-bubbles 14s ease-in-out infinite alternate;
+
+			@include down(md) {
+				content: none;
+			}
+		}
+
+		@include down(lg) {
+			.cc-cover::after {
+				background: linear-gradient(180deg, rgb(6 42 53 / 0.66), rgb(6 42 53 / 0.86));
+			}
+		}
+	}
+
+	&--home:has(> .cc-cover) {
+		padding-bottom: clamp(8rem, 14vw, 12rem);
+	}
+
+	> .cc-container {
+		position: relative;
+		z-index: 2;
+	}
 
 	&__grid {
 		display: grid;
@@ -91,6 +247,16 @@
 		display: flex;
 		flex-direction: column;
 		gap: var(--cc-space-s);
+
+		> * {
+			animation: cc-rise 0.9s var(--cc-ease) both;
+		}
+
+		@for $i from 1 through 6 {
+			> :nth-child(#{$i}) {
+				animation-delay: #{($i - 1) * 90 + 100}ms;
+			}
+		}
 	}
 
 	&__lead {
@@ -102,9 +268,18 @@
 		flex-direction: column;
 		gap: var(--cc-space-s);
 		padding: var(--cc-space-l);
-		border-radius: var(--cc-radius-l);
-		background: var(--cc-color-surface);
-		box-shadow: var(--cc-shadow-l);
+		border: 1px solid rgb(255 255 255 / 0.6);
+		border-radius: var(--cc-radius-xl);
+		background: rgb(255 255 255 / 0.94);
+		box-shadow: var(--cc-shadow-xl);
+		color: var(--cc-color-text);
+		backdrop-filter: blur(16px);
+		animation: cc-rise-card 1s 0.45s var(--cc-ease) both;
+
+		.cc-breadcrumbs ol,
+		.cc-breadcrumbs a {
+			color: var(--cc-color-text-muted);
+		}
 	}
 
 	&__card-title {
@@ -112,9 +287,10 @@
 	}
 
 	&__price {
-		font-size: var(--cc-h3);
+		font-size: var(--cc-h4);
 		font-weight: 800;
-		color: var(--cc-color-primary);
+		letter-spacing: -0.02em;
+		color: var(--cc-color-primary-dark);
 	}
 
 	.cc-trust-bar {
@@ -122,18 +298,55 @@
 	}
 }
 
+/* -------------------------------------------------------------------------
+ * Page hero (hubs and landing pages)
+ * ---------------------------------------------------------------------- */
+
 .cc-page-hero {
+	position: relative;
+	isolation: isolate;
+	overflow: hidden;
 	padding-block: var(--cc-space-xl);
-	background: linear-gradient(180deg, var(--cc-color-primary-light), var(--cc-color-surface));
+	background:
+		radial-gradient(50rem 22rem at 10% -20%, rgb(23 182 123 / 0.12), transparent 60%),
+		linear-gradient(180deg, var(--cc-color-primary-light), var(--cc-color-surface));
+
+	&:has(> .cc-cover) {
+		@include on-photo;
+		@include wave-bottom;
+		padding-block: clamp(4.5rem, 9vw, 8rem) clamp(5.5rem, 10vw, 9rem);
+
+		.cc-cover::after {
+			background:
+				radial-gradient(ellipse at center, rgb(6 42 53 / 0.55), rgb(6 42 53 / 0.85)),
+				linear-gradient(180deg, rgb(6 42 53 / 0.4), rgb(6 42 53 / 0.7));
+		}
+	}
+
+	> .cc-container {
+		position: relative;
+		z-index: 2;
+	}
 
 	&__inner {
 		gap: var(--cc-space-s);
-		max-width: 52rem;
+		max-width: 54rem;
 		margin-inline: auto;
 		align-items: center;
 		text-align: center;
 
-		.cc-trust-bar {
+		> * {
+			animation: cc-rise 0.9s var(--cc-ease) both;
+		}
+
+		@for $i from 1 through 6 {
+			> :nth-child(#{$i}) {
+				animation-delay: #{($i - 1) * 90 + 100}ms;
+			}
+		}
+
+		.cc-trust-bar,
+		.cc-actions {
 			justify-content: center;
 		}
 	}
@@ -145,9 +358,240 @@
 	}
 }
 
-// Closing call to action
+/* -------------------------------------------------------------------------
+ * Home: stats card overlapping the hero, towns marquee
+ * ---------------------------------------------------------------------- */
+
+.cc-section.cc-stats-band {
+	z-index: 3;
+	padding-block: 0;
+	margin-top: calc(-1 * clamp(4.5rem, 8vw, 7rem));
+}
+
+.cc-stats {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr));
+	margin: 0;
+	padding: var(--cc-space-s);
+	border: 1px solid var(--cc-color-border);
+	border-radius: var(--cc-radius-xl);
+	background: var(--cc-color-surface);
+	box-shadow: var(--cc-shadow-xl);
+}
+
+.cc-stat {
+	display: flex;
+	flex-direction: column-reverse;
+	align-items: center;
+	gap: 0.1em;
+	padding: var(--cc-space-s);
+	text-align: center;
+
+	& + & {
+		border-left: 1px solid var(--cc-color-border);
+	}
+
+	@include down(md) {
+		& + & {
+			border-left: 0;
+		}
+	}
+
+	&__value {
+		margin: 0;
+		font-size: clamp(2.2rem, 1.8rem + 2vw, 3.2rem);
+		font-weight: 800;
+		line-height: 1;
+		letter-spacing: -0.04em;
+		background: var(--cc-gradient-brand);
+		-webkit-background-clip: text;
+		background-clip: text;
+		color: transparent;
+		font-variant-numeric: tabular-nums;
+	}
+
+	&__suffix {
+		margin-left: 0.08em;
+		font-size: 0.55em;
+		letter-spacing: 0;
+	}
+
+	&__label {
+		font-size: var(--cc-text-s);
+		font-weight: 600;
+		color: var(--cc-color-text-muted);
+	}
+}
+
+.cc-section.cc-marquee-band {
+	padding-block: var(--cc-space-xl) 0;
+}
+
+.cc-marquee {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: var(--cc-space-xs);
+
+	&__label {
+		font-size: 0.8rem;
+		font-weight: 800;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+		color: var(--cc-color-text-muted);
+	}
+
+	&__viewport {
+		display: flex;
+		width: 100%;
+		overflow: hidden;
+		-webkit-mask: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+		mask: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+
+		&:hover .cc-marquee__track {
+			animation-play-state: paused;
+		}
+	}
+
+	&__track {
+		display: flex;
+		flex-shrink: 0;
+		align-items: center;
+		min-width: 100%;
+		animation: cc-marquee 45s linear infinite;
+
+		li {
+			display: flex;
+			align-items: center;
+			white-space: nowrap;
+
+			&::after {
+				content: "✦";
+				margin-inline: var(--cc-space-m);
+				font-size: 0.7em;
+				color: var(--cc-color-accent);
+			}
+		}
+
+		a {
+			font-size: clamp(1.25rem, 1rem + 1.2vw, 2rem);
+			font-weight: 800;
+			letter-spacing: -0.03em;
+			color: var(--cc-color-primary-dark);
+			opacity: 0.35;
+			text-decoration: none;
+			transition: opacity var(--cc-transition), color var(--cc-transition);
+
+			&:hover {
+				opacity: 1;
+				color: var(--cc-color-primary);
+			}
+		}
+	}
+}
+
+/* -------------------------------------------------------------------------
+ * Photo collage ("why us")
+ * ---------------------------------------------------------------------- */
+
+.cc-collage {
+	position: relative;
+	padding: 0 14% 14% 0;
+
+	// Dotted pattern behind the photos
+	&::before {
+		content: "";
+		position: absolute;
+		left: -6%;
+		top: -6%;
+		width: 45%;
+		height: 45%;
+		z-index: 0;
+		background: radial-gradient(var(--cc-color-accent) 1.6px, transparent 1.8px) 0 0 / 18px 18px;
+		opacity: 0.35;
+	}
+
+	&__main {
+		position: relative;
+		z-index: 1;
+		overflow: hidden;
+		border-radius: var(--cc-radius-xl);
+		box-shadow: var(--cc-shadow-l);
+
+		img {
+			display: block;
+			width: 100%;
+			aspect-ratio: 4 / 4.4;
+			object-fit: cover;
+			transition: transform 1.2s var(--cc-ease);
+		}
+
+		&:hover img {
+			transform: scale(1.05);
+		}
+	}
+
+	&__detail {
+		position: absolute;
+		right: 0;
+		bottom: 0;
+		z-index: 2;
+		width: 46%;
+		overflow: hidden;
+		border: 6px solid var(--cc-color-surface);
+		border-radius: var(--cc-radius-l);
+		box-shadow: var(--cc-shadow-xl);
+		animation: cc-float 7s ease-in-out infinite;
+
+		img {
+			display: block;
+			width: 100%;
+			aspect-ratio: 1;
+			object-fit: cover;
+		}
+	}
+
+	&__badge {
+		position: absolute;
+		left: -4%;
+		top: 9%;
+		z-index: 3;
+		display: flex;
+		align-items: center;
+		gap: 0.65em;
+		padding: 0.75em 1.1em 0.75em 0.75em;
+		border-radius: var(--cc-radius-pill);
+		background: var(--cc-color-surface);
+		box-shadow: var(--cc-shadow-l);
+		font-size: var(--cc-text-s);
+		line-height: 1.25;
+		animation: cc-float 6s 1.5s ease-in-out infinite;
+
+		.cc-icon {
+			@include icon-tile(2.6em, 50%);
+		}
+
+		strong {
+			display: block;
+			font-size: 1.1em;
+			color: var(--cc-color-primary-dark);
+		}
+
+		@include down(sm) {
+			left: 0;
+		}
+	}
+}
+
+/* -------------------------------------------------------------------------
+ * Closing call to action
+ * ---------------------------------------------------------------------- */
+
 .cc-cta {
-	background: linear-gradient(120deg, var(--cc-color-primary-dark), var(--cc-color-primary));
+	position: relative;
+	isolation: isolate;
+	overflow: hidden;
+	background: var(--cc-gradient-ink);
 	color: #fff;
 
 	h2 {
@@ -156,6 +600,44 @@
 
 	.cc-lead {
 		color: rgb(255 255 255 / 0.85);
+	}
+
+	.cc-cover::after {
+		background: linear-gradient(100deg, rgb(6 42 53 / 0.95) 10%, rgb(8 57 74 / 0.82) 55%, rgb(11 113 137 / 0.55));
+	}
+
+	// Decorative rings
+	&::before,
+	&::after {
+		content: "";
+		position: absolute;
+		z-index: 0;
+		border-radius: 50%;
+		border: 2px solid rgb(255 255 255 / 0.12);
+		pointer-events: none;
+	}
+
+	&::before {
+		width: 26rem;
+		height: 26rem;
+		right: -8rem;
+		top: -12rem;
+		animation: cc-spin 40s linear infinite;
+		border-style: dashed;
+	}
+
+	&::after {
+		width: 14rem;
+		height: 14rem;
+		right: 12%;
+		bottom: -8rem;
+		background: radial-gradient(circle, rgb(255 207 92 / 0.18), transparent 70%);
+		border: 0;
+	}
+
+	> .cc-container {
+		position: relative;
+		z-index: 1;
 	}
 
 	&__inner {
@@ -170,10 +652,14 @@
 	&__text {
 		display: flex;
 		flex-direction: column;
-		gap: var(--cc-space-2xs);
-		max-width: 42rem;
+		gap: var(--cc-space-xs);
+		max-width: 44rem;
 	}
 }
+
+/* -------------------------------------------------------------------------
+ * Misc page blocks
+ * ---------------------------------------------------------------------- */
 
 .cc-not-included {
 	display: flex;
@@ -240,5 +726,37 @@
 
 	h2 {
 		font-size: var(--cc-h3);
+	}
+}
+
+// Sticky call/quote bar on phones, shown once the visitor scrolls past the hero (main.js)
+.cc-mobile-cta {
+	display: none;
+
+	@include down(md) {
+		position: fixed;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		z-index: 90;
+		display: grid;
+		grid-template-columns: 1fr 1.4fr;
+		gap: var(--cc-space-2xs);
+		padding: 0.6rem 0.75rem calc(0.6rem + env(safe-area-inset-bottom));
+		background: rgb(255 255 255 / 0.92);
+		border-top: 1px solid var(--cc-color-border);
+		box-shadow: 0 -8px 24px rgb(8 57 74 / 0.12);
+		backdrop-filter: blur(12px);
+		transform: translateY(110%);
+		transition: transform 0.4s var(--cc-ease);
+
+		.cc-btn {
+			padding: 0.85em 1em;
+			font-size: var(--cc-text-s);
+		}
+
+		&.is-visible {
+			transform: none;
+		}
 	}
 }

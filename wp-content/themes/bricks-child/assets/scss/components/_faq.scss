@@ -7,9 +7,28 @@
 		border: 1px solid var(--cc-color-border);
 		border-radius: var(--cc-radius-m);
 		background: var(--cc-color-surface);
+		transition: border-color var(--cc-transition), box-shadow var(--cc-transition);
 
-		&[open] .cc-faq__question::after {
-			transform: rotate(45deg);
+		&:hover {
+			border-color: rgb(11 113 137 / 0.35);
+		}
+
+		&[open] {
+			border-color: var(--cc-color-primary);
+			box-shadow: var(--cc-shadow-m);
+
+			.cc-faq__question {
+				color: var(--cc-color-primary-dark);
+
+				&::after {
+					background-color: var(--cc-color-primary);
+					transform: rotate(135deg);
+				}
+			}
+
+			.cc-faq__answer {
+				animation: cc-rise 0.4s var(--cc-ease) both;
+			}
 		}
 	}
 
@@ -22,18 +41,20 @@
 		font-weight: 700;
 		cursor: pointer;
 		list-style: none;
+		transition: color var(--cc-transition);
 
 		&::-webkit-details-marker {
 			display: none;
 		}
 
 		&::after {
-			content: "+";
+			content: "";
 			flex-shrink: 0;
-			font-size: 1.5em;
-			line-height: 1;
-			color: var(--cc-color-primary);
-			transition: transform var(--cc-transition);
+			width: 1.9rem;
+			height: 1.9rem;
+			border-radius: 50%;
+			background: var(--cc-color-accent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round'%3E%3Cpath d='M5 12h14M12 5v14'/%3E%3C/svg%3E") center / 50% no-repeat;
+			transition: transform 0.35s var(--cc-ease), background-color var(--cc-transition);
 		}
 	}
 

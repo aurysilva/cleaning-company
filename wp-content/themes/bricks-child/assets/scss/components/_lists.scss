@@ -49,11 +49,14 @@ $tick: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox
 		font-size: var(--cc-text-s);
 		font-weight: 600;
 		text-decoration: none;
+		transition: background-color var(--cc-transition), border-color var(--cc-transition), color var(--cc-transition), transform var(--cc-transition);
 	}
 
 	li > a:hover {
 		border-color: var(--cc-color-primary);
-		color: var(--cc-color-primary);
+		background: var(--cc-color-primary);
+		color: #fff;
+		transform: translateY(-2px);
 	}
 }
 

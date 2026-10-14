@@ -1,0 +1,97 @@
+// Keyframes and scroll-reveal states. main.js adds .cc-reveal only to elements that start below the fold,
+// so content is never hidden if the script doesn't run.
+
+@keyframes cc-rise {
+	from {
+		opacity: 0;
+		transform: translateY(24px);
+	}
+}
+
+@keyframes cc-rise-card {
+	from {
+		opacity: 0;
+		transform: translateY(40px) scale(0.97);
+	}
+}
+
+@keyframes cc-settle {
+	from {
+		transform: translate3d(0, var(--cc-parallax, 0px), 0) scale(1.14);
+	}
+}
+
+@keyframes cc-draw {
+	from {
+		transform: scaleX(0);
+	}
+}
+
+@keyframes cc-float {
+	50% {
+		transform: translateY(-12px);
+	}
+}
+
+@keyframes cc-bubbles {
+	to {
+		transform: translateY(-28px);
+	}
+}
+
+@keyframes cc-marquee {
+	to {
+		transform: translateX(-100%);
+	}
+}
+
+@keyframes cc-spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+@keyframes cc-pulse {
+	0% {
+		box-shadow: 0 0 0 0 rgb(23 182 123 / 0.45);
+	}
+	70%,
+	100% {
+		box-shadow: 0 0 0 14px rgb(23 182 123 / 0);
+	}
+}
+
+// `html` raises specificity above component transitions; main.js removes the class once revealed.
+html .cc-reveal {
+	opacity: 0;
+	transform: translateY(32px);
+	transition:
+		opacity 0.8s var(--cc-ease),
+		transform 0.8s var(--cc-ease);
+	transition-delay: calc(var(--cc-i, 0) * 90ms);
+
+	&.is-visible {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+		scroll-behavior: auto !important;
+	}
+
+	html .cc-reveal {
+		opacity: 1;
+		transform: none;
+	}
+
+	.cc-marquee__track {
+		animation: none !important;
+	}
+}

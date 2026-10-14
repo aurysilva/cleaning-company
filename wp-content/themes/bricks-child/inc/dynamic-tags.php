@@ -33,6 +33,8 @@ function cc_dynamic_tags(): array {
 		'cc_hero_sub'          => 'Hero subheading',
 		'cc_hero_facts'        => 'Hero facts (price, time, availability)',
 		'cc_price_from'        => 'Price from',
+		'cc_hero_card_title'   => 'Hero card title (price or quote offer)',
+		'cc_quote_promise'     => 'Quote promise (when prices are hidden)',
 		'cc_field'             => 'Rich text field (with service fallback)',
 		'cc_who_for'           => 'Who it\'s for',
 		'cc_checklist'         => 'Cleaning checklist',
@@ -55,6 +57,13 @@ function cc_dynamic_tags(): array {
 		'cc_latest_guides'     => 'Latest guides',
 		'cc_footer_services'   => 'Footer: services list',
 		'cc_footer_areas'      => 'Footer: areas list',
+		'cc_company_links'     => 'Footer: company links',
+		'cc_hero_media'        => 'Hero background photo (featured image)',
+		'cc_option_image'      => 'Business Settings photo as background (field name)',
+		'cc_why_media'         => 'Why us photo collage',
+		'cc_stats'             => 'Headline stats',
+		'cc_marquee'           => 'Scrolling towns strip',
+		'cc_promos'            => 'Audience promos (landlords, business, hosts)',
 		'cc_area_name'         => 'Area name (local service)',
 		'cc_service_name'      => 'Service name (local service)',
 	];
@@ -119,6 +128,10 @@ function cc_render_dynamic_tag( string $name, string $arg, $post ): ?string {
 			return cc_hero_facts_html( $post_id );
 		case 'cc_price_from':
 			return esc_html( cc_price_from_text( $post_id ) );
+		case 'cc_hero_card_title':
+			return esc_html( cc_hero_card_title( $post_id ) );
+		case 'cc_quote_promise':
+			return cc_quote_promise_html();
 		case 'cc_field':
 			return cc_rich_field_html( sanitize_key( $arg ), $post_id );
 		case 'cc_who_for':
@@ -163,6 +176,20 @@ function cc_render_dynamic_tag( string $name, string $arg, $post ): ?string {
 			return cc_footer_services_html();
 		case 'cc_footer_areas':
 			return cc_footer_areas_html();
+		case 'cc_company_links':
+			return cc_company_links_html();
+		case 'cc_hero_media':
+			return cc_hero_media_html( $post_id );
+		case 'cc_option_image':
+			return cc_option_image_html( sanitize_key( $arg ) );
+		case 'cc_why_media':
+			return cc_why_media_html();
+		case 'cc_stats':
+			return cc_stats_html();
+		case 'cc_marquee':
+			return cc_marquee_html();
+		case 'cc_promos':
+			return cc_promos_html();
 		case 'cc_area_name':
 		case 'cc_service_name':
 			$parts = cc_local_service_parts( $post_id );

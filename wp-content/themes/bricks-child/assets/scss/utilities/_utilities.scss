@@ -5,11 +5,17 @@
 }
 
 .cc-section {
+	position: relative;
 	padding-block: var(--cc-space-section);
 }
 
 .cc-section--alt {
 	background: var(--cc-color-surface-alt);
+}
+
+// Keep stripes alternating when optional sections between two tinted ones are empty
+.cc-section--alt + .cc-section--alt:not(.cc-section--alt + .cc-section--alt + *) {
+	background: var(--cc-color-surface);
 }
 
 .cc-container {
@@ -23,15 +29,33 @@
 }
 
 .cc-eyebrow {
-	font-size: var(--cc-text-s);
-	font-weight: 700;
-	letter-spacing: 0.08em;
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5em;
+	align-self: flex-start;
+	font-size: 0.8rem;
+	font-weight: 800;
+	letter-spacing: 0.12em;
 	text-transform: uppercase;
 	color: var(--cc-color-accent-dark);
+
+	&::before {
+		content: "";
+		width: 1.6em;
+		height: 2px;
+		border-radius: 2px;
+		background: currentColor;
+	}
+}
+
+.cc-section-head--center .cc-eyebrow,
+.cc-page-hero .cc-eyebrow {
+	align-self: center;
 }
 
 .cc-lead {
 	font-size: var(--cc-text-l);
+	line-height: 1.6;
 	color: var(--cc-color-text-muted);
 }
 

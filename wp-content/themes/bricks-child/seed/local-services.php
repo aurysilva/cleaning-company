@@ -17,7 +17,7 @@ return [
 			'faqs'             => [
 				[ 'question' => 'Do you clean student houses in Hull?', 'answer' => 'Yes. We clean student lets and HMOs across Hull, including the Avenues, Newland Park and Cottingham Road, and can clean several houses for the same landlord on one day.' ],
 				[ 'question' => 'Can you work with my Hull letting agent?', 'answer' => 'Yes. We follow agent checklists, can collect and return keys, and invoice the agent or landlord directly if you prefer.' ],
-				[ 'question' => 'How much is an end of tenancy clean in Hull?', 'answer' => 'Prices start from £150 for a studio and £200 for a 2-bedroom property. You\'ll get a fixed price when you book.' ],
+				[ 'question' => 'How much is an end of tenancy clean in Hull?', 'answer' => 'It depends on the size and condition of the property and any extras like oven or carpet cleaning. Tell us about the property and we\'ll send a free, fixed quote — usually within the hour.' ],
 			],
 		],
 	],

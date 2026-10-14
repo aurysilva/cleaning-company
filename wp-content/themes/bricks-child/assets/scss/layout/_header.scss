@@ -5,7 +5,15 @@
 	top: 0;
 	z-index: 100;
 	background: var(--cc-color-surface);
-	box-shadow: var(--cc-shadow-s);
+	box-shadow: 0 1px 0 var(--cc-color-border);
+	transition: box-shadow var(--cc-transition), background-color var(--cc-transition);
+
+	// Set by main.js once the page is scrolled
+	.cc-scrolled & {
+		background: rgb(255 255 255 / 0.9);
+		box-shadow: var(--cc-shadow-m);
+		backdrop-filter: saturate(1.4) blur(14px);
+	}
 }
 
 .cc-topbar {
@@ -61,21 +69,29 @@
 		align-items: center;
 		gap: var(--cc-space-m);
 		width: min(100% - 2 * var(--cc-space-m), 82rem);
-		min-height: 4.5rem;
+		min-height: 4.75rem;
+		transition: min-height var(--cc-transition);
+
+		.cc-scrolled & {
+			min-height: 4rem;
+		}
 	}
 
 	&__logo {
-		flex-shrink: 1;
-		min-width: 0;
-		overflow: hidden;
+		flex-shrink: 0;
 
-		.cc-logo {
-			max-width: 100%;
-		}
+		@include down(sm) {
+			flex-shrink: 1;
+			min-width: 0;
 
-		.cc-logo__name {
-			overflow: hidden;
-			text-overflow: ellipsis;
+			.cc-logo {
+				max-width: 100%;
+			}
+
+			.cc-logo__name {
+				white-space: normal;
+				line-height: 1.1;
+			}
 		}
 	}
 
@@ -87,7 +103,7 @@
 		margin-left: auto;
 	}
 
-	@media (max-width: 1360px) {
+	@media (max-width: 1440px) {
 		&__call {
 			display: none;
 		}
@@ -148,12 +164,18 @@
 	&__mark {
 		display: grid;
 		place-items: center;
-		width: 2.25rem;
-		height: 2.25rem;
+		width: 2.4rem;
+		height: 2.4rem;
 		border-radius: 50%;
-		background: var(--cc-color-primary);
+		background: var(--cc-gradient-brand);
+		box-shadow: 0 6px 14px rgb(11 113 137 / 0.3);
 		color: #fff;
 		font-size: 1rem;
+		transition: transform 0.6s var(--cc-ease);
+	}
+
+	&:hover &__mark {
+		transform: rotate(180deg) scale(1.08);
 	}
 
 	img {
@@ -181,19 +203,47 @@
 
 		> li > a,
 		> li > .brx-submenu-toggle > a {
+			position: relative;
 			padding-block: 1.5rem;
 			color: var(--cc-color-text);
 			font-weight: 600;
 			text-decoration: none;
 
+			&::after {
+				content: "";
+				position: absolute;
+				left: 0;
+				right: 0;
+				bottom: 1.05rem;
+				height: 2px;
+				border-radius: 2px;
+				background: var(--cc-gradient-brand);
+				transform: scaleX(0);
+				transform-origin: right;
+				transition: transform 0.35s var(--cc-ease);
+			}
+
 			&:hover {
 				color: var(--cc-color-primary);
+
+				&::after {
+					transform: scaleX(1);
+					transform-origin: left;
+				}
 			}
+		}
+
+		.sub-menu {
+			animation: cc-rise 0.3s var(--cc-ease) both;
 		}
 
 		.current-menu-item > a,
 		.current-menu-ancestor > .brx-submenu-toggle > a {
 			color: var(--cc-color-primary);
+
+			&::after {
+				transform: scaleX(1);
+			}
 		}
 
 		.sub-menu {

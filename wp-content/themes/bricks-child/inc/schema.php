@@ -36,7 +36,7 @@ function cc_schema_business(): array {
 		'url'        => home_url( '/' ),
 		'telephone'  => cc_option( 'phone' ),
 		'email'      => cc_option( 'email' ),
-		'priceRange' => '££',
+		'priceRange' => cc_show_prices() ? '££' : '',
 		'address'    => array_filter( [
 			'@type'           => 'PostalAddress',
 			'streetAddress'   => cc_option( 'address_street' ),
@@ -112,7 +112,7 @@ function cc_schema_service( int $service_id, ?WP_Post $area = null ): array {
 		'areaServed'  => $area ? [ '@type' => 'Place', 'name' => get_the_title( $area ) ] : cc_schema_areas(),
 	];
 
-	if ( $price ) {
+	if ( $price && cc_show_prices() ) {
 		$node['offers'] = [
 			'@type'         => 'Offer',
 			'priceCurrency' => 'GBP',

@@ -9,6 +9,12 @@
 		border-radius: var(--cc-radius-l);
 		background: var(--cc-color-surface);
 		box-shadow: var(--cc-shadow-s);
+		transition: transform 0.35s var(--cc-ease), box-shadow 0.35s var(--cc-ease);
+
+		&:hover {
+			transform: translateY(-4px);
+			box-shadow: var(--cc-shadow-m);
+		}
 	}
 
 	&__title {

@@ -18,6 +18,13 @@ function cc_brand_name(): string {
 	return (string) cc_option( 'brand_name', get_bloginfo( 'name' ) );
 }
 
+/**
+ * Prices are hidden from visitors unless switched on in Business Settings > Booking & CTAs.
+ */
+function cc_show_prices(): bool {
+	return (bool) cc_option( 'show_prices', false );
+}
+
 function cc_phone_display(): string {
 	return (string) cc_option( 'phone_display', cc_option( 'phone' ) );
 }

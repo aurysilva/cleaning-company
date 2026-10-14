@@ -24,6 +24,13 @@ add_filter( 'image_size_names_choose', function ( $sizes ) {
 	] );
 } );
 
+add_action( 'wp_head', function () {
+	printf(
+		'<link rel="preload" href="%s" as="font" type="font/woff2" crossorigin>' . "\n",
+		esc_url( CC_THEME_URI . '/assets/fonts/plus-jakarta-sans-latin.woff2' )
+	);
+}, 2 );
+
 add_action( 'wp_enqueue_scripts', function () {
 	if ( function_exists( 'bricks_is_builder_main' ) && bricks_is_builder_main() ) {
 		return;

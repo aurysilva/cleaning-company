@@ -1,19 +1,45 @@
 @use "../abstracts/mixins" as *;
 
 .cc-footer {
+	position: relative;
 	padding-block: var(--cc-space-2xl) var(--cc-space-m);
-	background: #0d1b26;
-	color: rgb(255 255 255 / 0.78);
+	background:
+		radial-gradient(50rem 24rem at 100% 0%, rgb(11 113 137 / 0.35), transparent 60%),
+		var(--cc-color-ink);
+	color: rgb(255 255 255 / 0.75);
 	font-size: var(--cc-text-s);
+
+	&::before {
+		content: "";
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		height: 4px;
+		background: var(--cc-gradient-brand);
+	}
 
 	a {
 		color: rgb(255 255 255 / 0.85);
 		text-decoration: none;
+		transition: color var(--cc-transition);
 
 		&:hover {
-			color: #fff;
-			text-decoration: underline;
+			color: var(--cc-color-highlight);
 		}
+	}
+
+	.cc-link-list a {
+		display: inline-block;
+		transition: color var(--cc-transition), transform var(--cc-transition);
+
+		&:hover {
+			transform: translateX(4px);
+		}
+	}
+
+	@include down(md) {
+		padding-bottom: calc(var(--cc-space-m) + 4.5rem);
 	}
 
 	.cc-logo {
@@ -57,7 +83,8 @@
 	&__title {
 		color: #fff;
 		font-size: var(--cc-text-m);
-		font-weight: 700;
+		font-weight: 800;
+		letter-spacing: -0.01em;
 	}
 
 	.cc-ticks li::before {

@@ -723,6 +723,23 @@
             "endpoint": 0
         },
         {
+            "key": "field_cc_business_show_prices",
+            "label": "Show prices on the website",
+            "name": "show_prices",
+            "aria-label": "",
+            "type": "true_false",
+            "instructions": "Off: prices stay in WP Admin but are hidden from visitors, the page source and schema, and the Pricing page redirects to Contact.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "ui": 1,
+            "default_value": 0
+        },
+        {
             "key": "field_cc_business_quote_url",
             "label": "Instant quote URL",
             "name": "quote_url",
@@ -949,6 +966,77 @@
                 "class": "",
                 "id": ""
             }
+        },
+        {
+            "key": "field_cc_business_tab_images",
+            "label": "Images",
+            "name": "",
+            "aria-label": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "top",
+            "endpoint": 0
+        },
+        {
+            "key": "field_cc_business_cta_image",
+            "label": "Call-to-action background",
+            "name": "cta_image",
+            "aria-label": "",
+            "type": "image",
+            "instructions": "Background for the \"Ready for a cleaner home?\" band at the bottom of most pages. Page, service and area heroes use each page's featured image.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "return_format": "id",
+            "preview_size": "medium",
+            "library": "all"
+        },
+        {
+            "key": "field_cc_business_why_image_main",
+            "label": "Why choose us: main photo",
+            "name": "why_image_main",
+            "aria-label": "",
+            "type": "image",
+            "instructions": "Shown next to \"A cleaning company you can trust\" on the home page. Ideally a photo of your own team.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "return_format": "id",
+            "preview_size": "medium",
+            "library": "all"
+        },
+        {
+            "key": "field_cc_business_why_image_detail",
+            "label": "Why choose us: detail photo",
+            "name": "why_image_detail",
+            "aria-label": "",
+            "type": "image",
+            "instructions": "Smaller photo overlapping the main one, e.g. products or equipment.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "return_format": "id",
+            "preview_size": "medium",
+            "library": "all"
         }
     ],
     "location": [
@@ -969,5 +1057,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1792000000
+    "modified": 1792004400
 }

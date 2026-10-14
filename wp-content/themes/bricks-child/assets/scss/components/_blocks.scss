@@ -6,30 +6,71 @@
 
 	&--cards {
 		grid-template-columns: repeat(auto-fill, minmax(min(100%, 16.5rem), 1fr));
+
+		// Swipeable row on phones; the next card peeks in to show there's more
+		@include down(md) {
+			grid-template-columns: none;
+			grid-auto-flow: column;
+			grid-auto-columns: min(82%, 20rem);
+			gap: var(--cc-space-s);
+			margin-inline: calc(-1 * var(--cc-space-m));
+			padding: 0.5rem var(--cc-space-m) 1.25rem;
+			overflow-x: auto;
+			overscroll-behavior-x: contain;
+			scroll-snap-type: x mandatory;
+			scroll-padding-inline: var(--cc-space-m);
+			scrollbar-width: none;
+
+			&::-webkit-scrollbar {
+				display: none;
+			}
+
+			> * {
+				scroll-snap-align: start;
+			}
+		}
 	}
 
 	&--areas {
 		grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
 		gap: var(--cc-space-s);
+
+		&:has(.cc-area-card--media) {
+			grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr));
+		}
+
+		// Large feature tiles so 13 or 14 towns fill complete rows of four
+		@include up(lg) {
+			&:has(.cc-area-card--media) {
+				grid-template-columns: repeat(4, minmax(0, 1fr));
+
+				> :first-child,
+				&:has(> :nth-child(14):last-child) > :nth-child(2) {
+					grid-column: span 2;
+					grid-row: span 2;
+
+					.cc-area-card__name {
+						font-size: var(--cc-h3);
+					}
+				}
+			}
+		}
+
+		@include down(sm) {
+			&:has(.cc-area-card--media) {
+				grid-template-columns: 1fr 1fr;
+				gap: var(--cc-space-2xs);
+			}
+		}
 	}
 }
 
-.cc-card__title a {
-	color: inherit;
-	text-decoration: none;
-
-	&::after {
-		content: "";
-		position: absolute;
-		inset: 0;
-	}
-}
-
-.cc-card {
-	position: relative;
-}
+/* -------------------------------------------------------------------------
+ * Area cards
+ * ---------------------------------------------------------------------- */
 
 .cc-area-card {
+	position: relative;
 	display: flex;
 	flex-direction: column;
 	gap: 0.15em;
@@ -39,23 +80,115 @@
 	background: var(--cc-color-surface);
 	color: var(--cc-color-text);
 	text-decoration: none;
-	transition: border-color var(--cc-transition), box-shadow var(--cc-transition);
+	transition: border-color var(--cc-transition), box-shadow var(--cc-transition), transform var(--cc-transition);
 
 	&:hover {
 		border-color: var(--cc-color-primary);
 		box-shadow: var(--cc-shadow-m);
 		color: var(--cc-color-text);
+		transform: translateY(-3px);
 	}
 
 	&__name {
-		font-weight: 700;
+		font-weight: 800;
+		letter-spacing: -0.01em;
 	}
 
 	&__postcodes {
 		font-size: var(--cc-text-s);
 		color: var(--cc-color-text-muted);
 	}
+
+	// Photo tile with the name over a gradient
+	&--media {
+		isolation: isolate;
+		overflow: hidden;
+		justify-content: flex-end;
+		aspect-ratio: 4 / 3;
+		padding: 0;
+		border: 0;
+		border-radius: var(--cc-radius-l);
+		background: var(--cc-color-ink);
+		color: #fff;
+
+		&:hover {
+			box-shadow: var(--cc-shadow-l);
+			color: #fff;
+			transform: translateY(-5px);
+		}
+
+		.cc-area-card__media {
+			position: absolute;
+			inset: 0;
+			z-index: -1;
+
+			img {
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
+				transition: transform 0.9s var(--cc-ease), filter 0.5s var(--cc-ease);
+			}
+
+			&::after {
+				content: "";
+				position: absolute;
+				inset: 0;
+				background: linear-gradient(180deg, rgb(6 42 53 / 0) 35%, rgb(6 42 53 / 0.85) 100%);
+				transition: opacity 0.4s var(--cc-ease);
+			}
+		}
+
+		&:hover .cc-area-card__media img {
+			transform: scale(1.08);
+			filter: saturate(1.15);
+		}
+
+		.cc-area-card__body {
+			display: flex;
+			flex-direction: column;
+			padding: var(--cc-space-s);
+			transform: translateY(0.9em);
+			transition: transform 0.4s var(--cc-ease);
+		}
+
+		.cc-area-card__name {
+			font-size: var(--cc-text-l);
+			line-height: 1.2;
+			text-shadow: 0 1px 8px rgb(0 0 0 / 0.3);
+		}
+
+		.cc-area-card__postcodes {
+			color: var(--cc-color-highlight);
+			font-weight: 700;
+			opacity: 0;
+			transition: opacity 0.4s var(--cc-ease);
+		}
+
+		&:hover .cc-area-card__body,
+		&:focus-visible .cc-area-card__body {
+			transform: none;
+		}
+
+		&:hover .cc-area-card__postcodes,
+		&:focus-visible .cc-area-card__postcodes {
+			opacity: 1;
+		}
+
+		@media (hover: none) {
+			.cc-area-card__body {
+				transform: none;
+			}
+
+			.cc-area-card__postcodes {
+				opacity: 1;
+			}
+		}
+	}
 }
+
+/* -------------------------------------------------------------------------
+ * Audience, guarantee
+ * ---------------------------------------------------------------------- */
 
 .cc-audience {
 	display: grid;
@@ -66,6 +199,12 @@
 		border-left: 4px solid var(--cc-color-accent);
 		border-radius: var(--cc-radius-s);
 		background: var(--cc-color-surface-alt);
+		transition: transform var(--cc-transition), box-shadow var(--cc-transition);
+
+		&:hover {
+			transform: translateX(4px);
+			box-shadow: var(--cc-shadow-s);
+		}
 
 		h3 {
 			font-size: var(--cc-text-l);
@@ -78,22 +217,27 @@
 }
 
 .cc-guarantee {
+	position: relative;
+	overflow: hidden;
 	display: flex;
 	gap: var(--cc-space-s);
 	padding: var(--cc-space-m);
+	border: 1px solid rgb(23 182 123 / 0.25);
 	border-radius: var(--cc-radius-l);
-	background: rgb(43 182 115 / 0.1);
+	background: linear-gradient(135deg, rgb(23 182 123 / 0.12), rgb(11 113 137 / 0.06));
 
 	&__badge {
 		display: grid;
 		flex-shrink: 0;
 		place-items: center;
-		width: 2.5rem;
-		height: 2.5rem;
+		width: 2.75rem;
+		height: 2.75rem;
 		border-radius: 50%;
-		background: var(--cc-color-accent);
+		background: var(--cc-gradient-brand);
+		box-shadow: 0 0 0 0 rgb(23 182 123 / 0.5);
 		color: #fff;
 		font-weight: 800;
+		animation: cc-pulse 2.8s ease-out infinite;
 	}
 
 	&__title {
@@ -110,26 +254,55 @@
 	}
 }
 
+/* -------------------------------------------------------------------------
+ * How it works
+ * ---------------------------------------------------------------------- */
+
 .cc-steps {
+	position: relative;
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
 	gap: var(--cc-space-l);
-	counter-reset: none;
+
+	// Dashed line joining the steps
+	&::before {
+		content: "";
+		position: absolute;
+		top: calc(var(--cc-space-l) + 1.9rem);
+		left: 16%;
+		right: 16%;
+		border-top: 2px dashed rgb(11 113 137 / 0.3);
+	}
 
 	@include down(md) {
 		grid-template-columns: 1fr;
+
+		&::before {
+			display: none;
+		}
 	}
 
 	&__item {
+		position: relative;
 		display: flex;
 		flex-direction: column;
+		align-items: center;
 		gap: var(--cc-space-2xs);
 		padding: var(--cc-space-l);
+		border: 1px solid var(--cc-color-border);
 		border-radius: var(--cc-radius-l);
 		background: var(--cc-color-surface);
 		box-shadow: var(--cc-shadow-s);
+		text-align: center;
+		transition: transform 0.35s var(--cc-ease), box-shadow 0.35s var(--cc-ease);
+
+		&:hover {
+			transform: translateY(-6px);
+			box-shadow: var(--cc-shadow-l);
+		}
 
 		h3 {
+			margin-top: var(--cc-space-2xs);
 			font-size: var(--cc-h4);
 		}
 
@@ -138,22 +311,66 @@
 		}
 	}
 
+	&__icon {
+		position: relative;
+
+		.cc-icon {
+			@include icon-tile(3.8rem, 50%);
+			box-shadow: 0 0 0 8px var(--cc-color-surface), var(--cc-shadow-m);
+			transition: transform 0.5s var(--cc-ease);
+		}
+	}
+
+	&__item:hover .cc-icon {
+		transform: rotate(-8deg) scale(1.06);
+	}
+
 	&__num {
+		position: absolute;
+		right: -0.5rem;
+		top: -0.4rem;
 		display: grid;
 		place-items: center;
-		width: 2.5rem;
-		height: 2.5rem;
+		width: 1.7rem;
+		height: 1.7rem;
+		border: 3px solid var(--cc-color-surface);
 		border-radius: 50%;
-		background: var(--cc-color-primary);
-		color: #fff;
+		background: var(--cc-color-highlight);
+		color: var(--cc-color-ink);
+		font-size: 0.8rem;
 		font-weight: 800;
 	}
 }
+
+/* -------------------------------------------------------------------------
+ * Features
+ * ---------------------------------------------------------------------- */
 
 .cc-features {
 	display: grid;
 	grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
 	gap: var(--cc-space-m);
+
+	&--compact {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: var(--cc-space-l) var(--cc-space-m);
+
+		@include down(sm) {
+			grid-template-columns: 1fr;
+		}
+
+		.cc-feature {
+			padding: 0;
+			border: 0;
+			background: none;
+			box-shadow: none;
+
+			&:hover {
+				transform: none;
+				box-shadow: none;
+			}
+		}
+	}
 }
 
 .cc-feature {
@@ -161,10 +378,28 @@
 	flex-direction: column;
 	gap: var(--cc-space-2xs);
 	padding: var(--cc-space-m);
-	border-top: 4px solid var(--cc-color-primary);
-	border-radius: var(--cc-radius-m);
+	border: 1px solid var(--cc-color-border);
+	border-radius: var(--cc-radius-l);
 	background: var(--cc-color-surface);
 	box-shadow: var(--cc-shadow-s);
+	transition: transform 0.35s var(--cc-ease), box-shadow 0.35s var(--cc-ease), border-color 0.35s var(--cc-ease);
+
+	&:hover {
+		border-color: transparent;
+		transform: translateY(-6px);
+		box-shadow: var(--cc-shadow-l);
+	}
+
+	.cc-icon {
+		@include icon-tile;
+		margin-bottom: var(--cc-space-2xs);
+		box-shadow: 0 8px 18px rgb(11 113 137 / 0.25);
+		transition: transform 0.5s var(--cc-ease);
+	}
+
+	&:hover .cc-icon {
+		transform: rotate(-8deg) scale(1.08);
+	}
 
 	h3 {
 		font-size: var(--cc-h4);
@@ -172,8 +407,13 @@
 
 	p {
 		color: var(--cc-color-text-muted);
+		font-size: var(--cc-text-s);
 	}
 }
+
+/* -------------------------------------------------------------------------
+ * Promos (who we help)
+ * ---------------------------------------------------------------------- */
 
 .cc-promos {
 	display: grid;
@@ -182,41 +422,116 @@
 }
 
 .cc-promo {
+	position: relative;
+	isolation: isolate;
+	overflow: hidden;
 	display: flex;
 	flex-direction: column;
-	gap: var(--cc-space-2xs);
-	padding: var(--cc-space-l);
-	border-radius: var(--cc-radius-l);
-	background: var(--cc-color-surface);
+	justify-content: flex-end;
+	min-height: 26rem;
+	border-radius: var(--cc-radius-xl);
+	background: var(--cc-color-ink);
 	box-shadow: var(--cc-shadow-m);
-	color: var(--cc-color-text);
+	color: #fff;
 	text-decoration: none;
-	transition: transform var(--cc-transition), box-shadow var(--cc-transition);
+	transition: transform 0.4s var(--cc-ease), box-shadow 0.4s var(--cc-ease);
 
 	&:hover {
-		transform: translateY(-2px);
-		box-shadow: var(--cc-shadow-l);
-		color: var(--cc-color-text);
+		transform: translateY(-6px);
+		box-shadow: var(--cc-shadow-xl);
+		color: #fff;
 	}
 
-	h3 {
+	&__media {
+		position: absolute;
+		inset: 0;
+		z-index: -1;
+
+		img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			transition: transform 1s var(--cc-ease);
+		}
+
+		&::after {
+			content: "";
+			position: absolute;
+			inset: 0;
+			background: linear-gradient(180deg, rgb(6 42 53 / 0.05) 20%, rgb(6 42 53 / 0.92) 78%);
+			transition: background 0.4s var(--cc-ease);
+		}
+	}
+
+	&:hover &__media img {
+		transform: scale(1.08);
+	}
+
+	&__body {
+		display: flex;
+		flex-direction: column;
+		gap: var(--cc-space-2xs);
+		padding: var(--cc-space-l);
+	}
+
+	.cc-eyebrow {
+		color: var(--cc-color-highlight);
+	}
+
+	&__title {
 		font-size: var(--cc-h4);
+		font-weight: 800;
+		line-height: 1.2;
+		letter-spacing: -0.02em;
 	}
 
-	p {
-		color: var(--cc-color-text-muted);
+	&__text {
+		max-height: 0;
+		overflow: hidden;
+		color: rgb(255 255 255 / 0.85);
+		font-size: var(--cc-text-s);
+		opacity: 0;
+		transition: max-height 0.5s var(--cc-ease), opacity 0.4s var(--cc-ease);
+	}
+
+	&:hover &__text,
+	&:focus-visible &__text {
+		max-height: 8em;
+		opacity: 1;
+	}
+
+	@media (hover: none) {
+		&__text {
+			max-height: none;
+			opacity: 1;
+		}
 	}
 
 	&__link {
-		margin-top: auto;
-		color: var(--cc-color-primary);
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5em;
+		margin-top: var(--cc-space-2xs);
 		font-weight: 700;
 
 		&::after {
-			content: " →";
+			content: "";
+			width: 2em;
+			height: 2em;
+			border-radius: 50%;
+			background: var(--cc-color-accent) var(--cc-arrow-white) center / 52% no-repeat;
+			transition: transform var(--cc-transition);
 		}
 	}
+
+	&:hover &__link::after {
+		transform: translateX(5px);
+	}
 }
+
+/* -------------------------------------------------------------------------
+ * Reviews, gallery
+ * ---------------------------------------------------------------------- */
 
 .cc-reviews {
 	display: grid;
@@ -225,14 +540,32 @@
 }
 
 .cc-review {
+	position: relative;
 	display: flex;
 	flex-direction: column;
 	gap: var(--cc-space-xs);
 	margin: 0;
-	padding: var(--cc-space-m);
+	padding: var(--cc-space-l) var(--cc-space-m) var(--cc-space-m);
 	border: 1px solid var(--cc-color-border);
 	border-radius: var(--cc-radius-l);
 	background: var(--cc-color-surface);
+	transition: transform var(--cc-transition), box-shadow var(--cc-transition);
+
+	&::before {
+		content: "\201C";
+		position: absolute;
+		top: -0.15em;
+		right: 0.3em;
+		font-size: 6rem;
+		font-weight: 800;
+		line-height: 1;
+		color: var(--cc-color-primary-light);
+	}
+
+	&:hover {
+		transform: translateY(-4px);
+		box-shadow: var(--cc-shadow-m);
+	}
 
 	footer {
 		margin-top: auto;
@@ -295,7 +628,10 @@
 	text-align: center;
 }
 
-// Bricks form
+/* -------------------------------------------------------------------------
+ * Bricks form
+ * ---------------------------------------------------------------------- */
+
 .cc-form {
 	@include down(sm) {
 		.form-group {
@@ -308,36 +644,47 @@
 	select,
 	textarea {
 		width: 100%;
-		padding: 0.75em 0.9em;
-		border: 1px solid var(--cc-color-border);
-		border-radius: var(--cc-radius-s);
-		background: var(--cc-color-surface);
+		padding: 0.85em 1em;
+		border: 1.5px solid var(--cc-color-border);
+		border-radius: var(--cc-radius-m);
+		background: var(--cc-color-surface-alt);
 		font: inherit;
 		color: var(--cc-color-text);
+		transition: border-color var(--cc-transition), box-shadow var(--cc-transition), background-color var(--cc-transition);
+
+		&:hover {
+			border-color: rgb(11 113 137 / 0.4);
+		}
 
 		&:focus {
 			border-color: var(--cc-color-primary);
-			outline: 2px solid var(--cc-color-primary-light);
+			background: var(--cc-color-surface);
+			box-shadow: 0 0 0 4px rgb(11 113 137 / 0.12);
+			outline: none;
 		}
 	}
 
 	label {
-		font-weight: 600;
+		font-weight: 700;
 		font-size: var(--cc-text-s);
 	}
 
 	button[type="submit"] {
-		padding: 0.9em 1.6em;
+		padding: 1em 1.8em;
 		border: 0;
 		border-radius: var(--cc-radius-pill);
 		background: var(--cc-color-accent);
+		box-shadow: 0 6px 18px rgb(23 182 123 / 0.28);
 		color: #fff;
 		font: inherit;
 		font-weight: 700;
 		cursor: pointer;
+		transition: background-color var(--cc-transition), box-shadow var(--cc-transition), transform var(--cc-transition);
 
 		&:hover {
 			background: var(--cc-color-accent-dark);
+			box-shadow: var(--cc-shadow-glow);
+			transform: translateY(-2px);
 		}
 	}
 }

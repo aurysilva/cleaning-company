@@ -1,22 +1,69 @@
 .cc-card {
+	position: relative;
 	display: flex;
 	flex-direction: column;
-	gap: var(--cc-space-xs);
-	padding: var(--cc-space-m);
+	overflow: hidden;
 	border: 1px solid var(--cc-color-border);
 	border-radius: var(--cc-radius-l);
 	background: var(--cc-color-surface);
 	box-shadow: var(--cc-shadow-s);
-	transition: box-shadow var(--cc-transition), transform var(--cc-transition);
+	transition:
+		box-shadow 0.35s var(--cc-ease),
+		transform 0.35s var(--cc-ease),
+		border-color 0.35s var(--cc-ease);
 
 	&:hover {
+		border-color: transparent;
 		box-shadow: var(--cc-shadow-l);
-		transform: translateY(-2px);
+		transform: translateY(-6px);
+	}
+
+	&__media {
+		position: relative;
+		aspect-ratio: 4 / 3;
+		overflow: hidden;
+		background: var(--cc-color-primary-light);
+
+		img {
+			display: block;
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			transition: transform 0.8s var(--cc-ease);
+		}
+
+		&::after {
+			content: "";
+			position: absolute;
+			inset: 0;
+			background: linear-gradient(180deg, transparent 55%, rgb(6 42 53 / 0.35));
+			opacity: 0;
+			transition: opacity 0.35s var(--cc-ease);
+		}
+	}
+
+	&:hover &__media {
+		img {
+			transform: scale(1.07);
+		}
+
+		&::after {
+			opacity: 1;
+		}
+	}
+
+	&__body {
+		display: flex;
+		flex: 1;
+		flex-direction: column;
+		gap: var(--cc-space-2xs);
+		padding: var(--cc-space-m);
 	}
 
 	&__icon {
 		width: 3rem;
 		height: 3rem;
+		margin: var(--cc-space-m) var(--cc-space-m) 0;
 		padding: 0.6rem;
 		border-radius: var(--cc-radius-m);
 		background: var(--cc-color-primary-light);
@@ -25,25 +72,59 @@
 	&__title {
 		margin: 0;
 		font-size: var(--cc-h4);
+
+		a {
+			color: inherit;
+			text-decoration: none;
+
+			// Whole card is clickable
+			&::after {
+				content: "";
+				position: absolute;
+				inset: 0;
+				z-index: 1;
+			}
+		}
+	}
+
+	&:hover &__title a {
+		color: var(--cc-color-primary);
 	}
 
 	&__text {
 		margin: 0;
 		color: var(--cc-color-text-muted);
+		font-size: var(--cc-text-s);
 	}
 
 	&__price {
-		margin-top: auto;
 		font-weight: 700;
 		color: var(--cc-color-primary);
 	}
 
 	&__link {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.45em;
+		margin-top: auto;
+		padding-top: var(--cc-space-2xs);
+		color: var(--cc-color-primary);
+		font-size: var(--cc-text-s);
 		font-weight: 700;
-		text-decoration: none;
 
 		&::after {
-			content: " →";
+			content: "";
+			width: 2em;
+			height: 2em;
+			border-radius: 50%;
+			background: var(--cc-color-primary-light) var(--cc-arrow-primary) center / 52% no-repeat;
+			transition: background-color var(--cc-transition), transform var(--cc-transition);
 		}
+	}
+
+	&:hover &__link::after {
+		background-color: var(--cc-color-accent);
+		background-image: var(--cc-arrow-white);
+		transform: translateX(4px);
 	}
 }

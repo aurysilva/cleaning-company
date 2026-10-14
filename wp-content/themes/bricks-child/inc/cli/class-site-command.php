@@ -11,6 +11,7 @@ use WP_CLI;
  *
  *     wp cc setup            # everything, in the right order
  *     wp cc seed [--force]   # business settings, services, areas, local services
+ *     wp cc images [--force] # import placeholder photos from seed/images.php
  *     wp cc pages            # (re)build Bricks pages
  *     wp cc menus            # (re)build the primary menu
  *     wp cc templates        # (re)build header, footer and single templates
@@ -33,6 +34,7 @@ final class Site_Command {
 		$this->settings();
 		$this->seed( $args, $assoc );
 		$this->pages();
+		$this->images( $args, [] );
 		$this->menus();
 		$this->templates();
 		WP_CLI::success( 'Site built.' );
@@ -195,6 +197,92 @@ final class Site_Command {
 		if ( is_wp_error( $id ) ) {
 			WP_CLI::error( $id->get_error_message() );
 		}
+		return (int) $id;
+	}
+
+	/* ---------------------------------------------------------------------
+	 * Images
+	 * ------------------------------------------------------------------ */
+
+	/**
+	 * Imports placeholder photos from seed/images.php into the Media Library (once each) and assigns them.
+	 *
+	 * [--force]
+	 * : Replace featured images and Business Settings images that are already set.
+	 */
+	public function images( $args = [], $assoc = [] ) {
+		$this->as_admin();
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+		require_once ABSPATH . 'wp-admin/includes/media.php';
+		require_once ABSPATH . 'wp-admin/includes/image.php';
+
+		$force = ! empty( $assoc['force'] );
+
+		foreach ( $this->load_seed( 'images' ) as $photo ) {
+			$attachment = $this->unsplash_attachment( $photo );
+			if ( ! $attachment ) {
+				continue;
+			}
+
+			foreach ( $photo['targets'] as $target ) {
+				[ $type, $key ] = explode( ':', $target, 2 );
+
+				if ( 'option' === $type ) {
+					if ( $force || ! get_field( $key, 'option' ) ) {
+						update_field( 'field_cc_business_' . $key, $attachment, 'option' );
+					}
+					continue;
+				}
+
+				$post = get_page_by_path( $key, OBJECT, $type );
+				if ( ! $post ) {
+					WP_CLI::warning( "No {$type} with slug {$key}." );
+					continue;
+				}
+				if ( $force || ! has_post_thumbnail( $post ) ) {
+					set_post_thumbnail( $post, $attachment );
+				}
+			}
+			WP_CLI::log( "Image ready: {$photo['alt']}" );
+		}
+
+		WP_CLI::success( 'Images ready.' );
+	}
+
+	private function unsplash_attachment( array $photo ): int {
+		$existing = get_posts( [
+			'post_type'      => 'attachment',
+			'post_status'    => 'inherit',
+			'posts_per_page' => 1,
+			'fields'         => 'ids',
+			'meta_key'       => '_cc_unsplash_id',
+			'meta_value'     => $photo['id'],
+		] );
+		if ( $existing ) {
+			return (int) $existing[0];
+		}
+
+		$tmp = download_url( $photo['url'] . '?w=2400&q=75&fm=webp&fit=max', 120 );
+		if ( is_wp_error( $tmp ) ) {
+			WP_CLI::warning( "Download failed for {$photo['id']}: " . $tmp->get_error_message() );
+			return 0;
+		}
+
+		$id = media_handle_sideload( [ 'name' => sanitize_title( $photo['alt'] ) . '.webp', 'tmp_name' => $tmp ], 0, $photo['alt'] );
+		if ( is_wp_error( $id ) ) {
+			wp_delete_file( $tmp );
+			WP_CLI::warning( "Import failed for {$photo['id']}: " . $id->get_error_message() );
+			return 0;
+		}
+
+		update_post_meta( $id, '_wp_attachment_image_alt', $photo['alt'] );
+		update_post_meta( $id, '_cc_unsplash_id', $photo['id'] );
+		wp_update_post( [
+			'ID'           => $id,
+			'post_excerpt' => sprintf( 'Photo by %s on Unsplash', $photo['by'] ),
+			'post_content' => sprintf( 'https://unsplash.com/photos/%s — https://unsplash.com/@%s', $photo['id'], $photo['user'] ),
+		] );
+
 		return (int) $id;
 	}
 

@@ -18,6 +18,26 @@
 	outline-offset: 2px;
 }
 
+// White line icon on a gradient tile, for .cc-icon elements (see components/_icons.scss).
+@mixin icon-tile($size: 3.25rem, $radius: var(--cc-radius-m)) {
+	position: relative;
+	width: $size;
+	height: $size;
+	border-radius: $radius;
+	background: var(--cc-gradient-brand);
+	-webkit-mask: none;
+	mask: none;
+
+	&::after {
+		content: "";
+		position: absolute;
+		inset: 26%;
+		background: #fff;
+		-webkit-mask: var(--cc-icon) center / contain no-repeat;
+		mask: var(--cc-icon) center / contain no-repeat;
+	}
+}
+
 @mixin visually-hidden {
 	position: absolute !important;
 	width: 1px;

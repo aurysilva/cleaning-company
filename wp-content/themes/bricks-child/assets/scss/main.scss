@@ -1,6 +1,9 @@
 @use "abstracts/tokens";
+@use "base/fonts";
 @use "base/base";
 @use "base/typography";
+@use "base/motion";
+@use "components/icons";
 @use "components/buttons";
 @use "components/cards";
 @use "components/price-table";

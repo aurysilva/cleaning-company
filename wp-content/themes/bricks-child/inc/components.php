@@ -220,12 +220,35 @@ function cc_hero_sub( int $post_id ): string {
 }
 
 function cc_price_from_text( int $post_id ): string {
+	if ( ! cc_show_prices() ) {
+		return '';
+	}
 	$service = cc_parent_service_id( $post_id );
 	$price   = cc_get( 'price_from', $service );
 	if ( ! $price ) {
 		return '';
 	}
 	return trim( 'From ' . cc_money( $price ) . ' ' . cc_get( 'price_unit', $service ) );
+}
+
+function cc_hero_card_title( int $post_id ): string {
+	return cc_price_from_text( $post_id ) ?: 'Free, no-obligation quote';
+}
+
+/**
+ * Shown instead of price tables while prices are hidden.
+ */
+function cc_quote_promise_html(): string {
+	if ( cc_show_prices() ) {
+		return '';
+	}
+	$points = [
+		'Every property is different, so we price each clean individually',
+		'A free, no-obligation quote — usually within the hour',
+		'Your fixed price is agreed before we start',
+		'No hidden extras or surprise charges',
+	];
+	return '<ul class="cc-ticks">' . implode( '', array_map( fn( $p ) => '<li>' . esc_html( $p ) . '</li>', $points ) ) . '</ul>';
 }
 
 function cc_hero_facts_html( int $post_id ): string {
@@ -332,6 +355,9 @@ function cc_not_included_html( int $post_id ): string {
 }
 
 function cc_price_table_html( int $post_id ): string {
+	if ( ! cc_show_prices() ) {
+		return '';
+	}
 	$service = cc_parent_service_id( $post_id );
 	$rows    = array_filter( (array) cc_get( 'price_table', $service ), fn( $r ) => ! empty( $r['property_size'] ) );
 	if ( ! $rows ) {
@@ -363,12 +389,14 @@ function cc_addons_html( int $post_id ): string {
 	if ( ! $rows ) {
 		return '';
 	}
-	$out = '<ul class="cc-addons">';
+	$show_prices = cc_show_prices();
+	$out         = '<ul class="cc-addons">';
 	foreach ( $rows as $row ) {
-		$out .= sprintf(
-			'<li class="cc-addons__item"><span class="cc-addons__name">%s</span><span class="cc-addons__price">%s</span><span class="cc-addons__desc">%s</span></li>',
+		$price = $show_prices ? ( $row['price'] ? '+' . esc_html( cc_money( $row['price'] ) ) : 'Quote' ) : '';
+		$out  .= sprintf(
+			'<li class="cc-addons__item"><span class="cc-addons__name">%s</span>%s<span class="cc-addons__desc">%s</span></li>',
 			esc_html( $row['name'] ),
-			$row['price'] ? '+' . esc_html( cc_money( $row['price'] ) ) : 'Quote',
+			$price ? '<span class="cc-addons__price">' . $price . '</span>' : '',
 			esc_html( $row['description'] ?? '' )
 		);
 	}
@@ -472,11 +500,22 @@ function cc_areas(): array {
 }
 
 function cc_service_card( WP_Post $service, string $url = '' ): string {
+	$image = cc_card_image_html( cc_post_image_id( $service->ID ) );
 	$icon  = cc_get( 'icon', $service->ID );
 	$price = cc_price_from_text( $service->ID );
+
+	if ( $image ) {
+		$media = '<div class="cc-card__media">' . $image . '</div>';
+	} elseif ( is_array( $icon ) && ! empty( $icon['url'] ) ) {
+		$media = '<img class="cc-card__icon" src="' . esc_url( $icon['url'] ) . '" alt="" width="48" height="48">';
+	} else {
+		$media = '';
+	}
+
 	return sprintf(
-		'<article class="cc-card">%s<h3 class="cc-card__title"><a href="%s">%s</a></h3><p class="cc-card__text">%s</p>%s<a class="cc-card__link" href="%2$s" aria-hidden="true" tabindex="-1">Learn more</a></article>',
-		is_array( $icon ) && ! empty( $icon['url'] ) ? '<img class="cc-card__icon" src="' . esc_url( $icon['url'] ) . '" alt="" width="48" height="48">' : '',
+		'<article class="cc-card%s">%s<div class="cc-card__body"><h3 class="cc-card__title"><a href="%s">%s</a></h3><p class="cc-card__text">%s</p>%s<span class="cc-card__link" aria-hidden="true">Learn more</span></div></article>',
+		$image ? ' cc-card--media' : '',
+		$media,
 		esc_url( $url ?: get_permalink( $service ) ),
 		esc_html( get_the_title( $service ) ),
 		esc_html( (string) cc_get( 'short_description', $service->ID ) ),
@@ -531,9 +570,12 @@ function cc_area_links_html( string $style = 'chips', int $exclude = 0 ): string
 	if ( $style === 'cards' ) {
 		$out = '<div class="cc-grid cc-grid--areas">';
 		foreach ( $areas as $area ) {
-			$out .= sprintf(
-				'<a class="cc-area-card" href="%s"><span class="cc-area-card__name">%s</span><span class="cc-area-card__postcodes">%s</span></a>',
+			$image = cc_card_image_html( (int) get_post_thumbnail_id( $area ), '(max-width: 640px) 50vw, 300px' );
+			$out  .= sprintf(
+				'<a class="cc-area-card%s" href="%s">%s<span class="cc-area-card__body"><span class="cc-area-card__name">%s</span><span class="cc-area-card__postcodes">%s</span></span></a>',
+				$image ? ' cc-area-card--media' : '',
 				esc_url( get_permalink( $area ) ),
+				$image ? '<span class="cc-area-card__media">' . $image . '</span>' : '',
 				esc_html( get_the_title( $area ) ),
 				esc_html( (string) cc_get( 'postcodes', $area->ID ) )
 			);
@@ -637,18 +679,21 @@ function cc_service_areas_html( int $post_id ): string {
 
 function cc_how_it_works_html(): string {
 	$steps = [
-		[ 'Get a price', 'Tell us about your property and the clean you need. You get a clear, fixed price — no surprises.' ],
-		[ 'Pick a time', 'Choose a day and time that suits you, 7 days a week. You don\'t need to be home; we can collect keys.' ],
-		[ 'We clean, guaranteed', 'Our insured, DBS-checked team arrives fully equipped. Not happy with anything? We\'ll come back and put it right.' ],
+		[ 'message', 'Get a price', 'Tell us about your property and the clean you need. You get a clear, fixed price — no surprises.' ],
+		[ 'calendar', 'Pick a time', 'Choose a day and time that suits you, 7 days a week. You don\'t need to be home; we can collect keys.' ],
+		[ 'sparkles', 'We clean, guaranteed', 'Our insured, DBS-checked team arrives fully equipped. Not happy with anything? We\'ll come back and put it right.' ],
 	];
 	$out = '<ol class="cc-steps">';
-	foreach ( $steps as $i => [ $title, $text ] ) {
-		$out .= sprintf( '<li class="cc-steps__item"><span class="cc-steps__num">%d</span><h3>%s</h3><p>%s</p></li>', $i + 1, esc_html( $title ), esc_html( $text ) );
+	foreach ( $steps as $i => [ $icon, $title, $text ] ) {
+		$out .= sprintf( '<li class="cc-steps__item"><span class="cc-steps__icon">%s<span class="cc-steps__num">%d</span></span><h3>%s</h3><p>%s</p></li>', cc_icon( $icon ), $i + 1, esc_html( $title ), esc_html( $text ) );
 	}
 	return $out . '</ol>';
 }
 
 function cc_pricing_overview_html(): string {
+	if ( ! cc_show_prices() ) {
+		return '';
+	}
 	$services = cc_services();
 	if ( ! $services ) {
 		return '';
@@ -689,14 +734,38 @@ function cc_latest_guides_html( int $limit = 3 ): string {
 	}
 	$out = '<div class="cc-grid cc-grid--cards">';
 	foreach ( $posts as $post ) {
-		$out .= sprintf(
-			'<article class="cc-card"><h3 class="cc-card__title"><a href="%s">%s</a></h3><p class="cc-card__text">%s</p><a class="cc-card__link" href="%1$s" aria-hidden="true" tabindex="-1">Read guide</a></article>',
+		$image = cc_card_image_html( (int) get_post_thumbnail_id( $post ) );
+		$out  .= sprintf(
+			'<article class="cc-card%s">%s<div class="cc-card__body"><h3 class="cc-card__title"><a href="%s">%s</a></h3><p class="cc-card__text">%s</p><span class="cc-card__link" aria-hidden="true">Read guide</span></div></article>',
+			$image ? ' cc-card--media' : '',
+			$image ? '<div class="cc-card__media">' . $image . '</div>' : '',
 			esc_url( get_permalink( $post ) ),
 			esc_html( get_the_title( $post ) ),
 			esc_html( wp_trim_words( get_the_excerpt( $post ), 22 ) )
 		);
 	}
 	return $out . '</div>';
+}
+
+function cc_company_links_html(): string {
+	$links = [
+		'about'         => 'About us',
+		'pricing'       => 'Pricing',
+		'our-guarantee' => 'Our guarantee',
+		'reviews'       => 'Reviews',
+		'faq'           => 'FAQs',
+		'guides'        => 'Cleaning guides',
+		'careers'       => 'Careers',
+		'contact'       => 'Contact',
+	];
+	if ( ! cc_show_prices() ) {
+		unset( $links['pricing'] );
+	}
+	$out = '<ul class="cc-link-list">';
+	foreach ( $links as $slug => $label ) {
+		$out .= sprintf( '<li><a href="%s">%s</a></li>', esc_url( home_url( "/{$slug}/" ) ), esc_html( $label ) );
+	}
+	return $out . '</ul>';
 }
 
 function cc_footer_services_html(): string {

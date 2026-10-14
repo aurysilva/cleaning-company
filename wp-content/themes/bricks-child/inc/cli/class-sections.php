@@ -48,6 +48,7 @@ final class Sections {
 
 	public static function cta_band( string $heading = 'Ready for a cleaner home?', string $text = 'Get a fixed price in minutes. No obligation, no hidden extras — and every clean is backed by our re-clean guarantee.' ): array {
 		return T::section( 'cc-cta', [
+			self::cover( '{cc_option_image:cta_image}' ),
 			T::container( 'cc-cta__inner', [
 				T::div( 'cc-cta__text', [
 					T::heading( $heading, 'h2' ),
@@ -70,7 +71,7 @@ final class Sections {
 		}
 		$children[] = T::block( '{cc_trust_bar}', 'Trust bar' );
 
-		return T::section( 'cc-page-hero', [ T::container( 'cc-page-hero__inner', $children ) ], 'Page hero' );
+		return T::section( 'cc-page-hero', [ self::cover( '{cc_hero_media}' ), T::container( 'cc-page-hero__inner', $children ) ], 'Page hero' );
 	}
 
 	private static function how_it_works( string $class = 'cc-section--alt' ): array {
@@ -102,6 +103,24 @@ final class Sections {
 		return T::section( $class, [ T::container( 'cc-container--narrow', [ T::rich( $html, 'cc-prose' ) ] ) ], $label );
 	}
 
+	/**
+	 * Full-bleed background photo, only rendered when the tag returns an image.
+	 */
+	private static function cover( string $tag ): array {
+		return T::el( 'text-basic', array_merge( [ 'text' => $tag, 'tag' => 'div', '_cssClasses' => 'cc-cover' ], T::when_filled( $tag ) ), [], 'Background photo' );
+	}
+
+	/**
+	 * @param array<int, array{0:string,1:string,2:string}> $items [ icon, title, text ]
+	 */
+	private static function features( array $items, string $class = '' ): array {
+		$html = '<div class="' . esc_attr( trim( 'cc-features ' . $class ) ) . '">';
+		foreach ( $items as [ $icon, $title, $text ] ) {
+			$html .= '<div class="cc-feature">' . cc_icon( $icon ) . '<h3>' . esc_html( $title ) . '</h3><p>' . esc_html( $text ) . '</p></div>';
+		}
+		return T::rich( $html . '</div>', '', 'Features' );
+	}
+
 	/* ---------------------------------------------------------------------
 	 * Header & footer
 	 * ------------------------------------------------------------------ */
@@ -131,17 +150,6 @@ final class Sections {
 	}
 
 	public static function footer(): array {
-		$company = '<ul class="cc-link-list">'
-			. '<li><a href="/about/">About us</a></li>'
-			. '<li><a href="/pricing/">Pricing</a></li>'
-			. '<li><a href="/our-guarantee/">Our guarantee</a></li>'
-			. '<li><a href="/reviews/">Reviews</a></li>'
-			. '<li><a href="/faq/">FAQs</a></li>'
-			. '<li><a href="/guides/">Cleaning guides</a></li>'
-			. '<li><a href="/careers/">Careers</a></li>'
-			. '<li><a href="/contact/">Contact</a></li>'
-			. '</ul>';
-
 		$legal = '<ul class="cc-footer__legal-links">'
 			. '<li><a href="/privacy-policy/">Privacy</a></li>'
 			. '<li><a href="/terms/">Terms</a></li>'
@@ -160,7 +168,7 @@ final class Sections {
 						] ),
 						T::div( 'cc-footer__col', [ T::heading( 'Services', 'h2', 'cc-footer__title' ), T::block( '{cc_footer_services}', 'Services list' ) ] ),
 						T::div( 'cc-footer__col', [ T::heading( 'Areas', 'h2', 'cc-footer__title' ), T::block( '{cc_footer_areas}', 'Areas list' ) ] ),
-						T::div( 'cc-footer__col', [ T::heading( 'Company', 'h2', 'cc-footer__title' ), T::rich( $company, '', 'Company links' ) ] ),
+						T::div( 'cc-footer__col', [ T::heading( 'Company', 'h2', 'cc-footer__title' ), T::block( '{cc_company_links}', 'Company links' ) ] ),
 						T::div( 'cc-footer__col', [
 							T::heading( 'Contact', 'h2', 'cc-footer__title' ),
 							T::block( '{cc_contact_list}', 'Contact list' ),
@@ -173,6 +181,10 @@ final class Sections {
 					] ),
 				] ),
 			], 'Footer' ),
+			T::div( 'cc-mobile-cta', [
+				self::call_button( 'cc-btn cc-btn--outline' ),
+				self::quote_button( 'cc-btn cc-btn--primary' ),
+			], 'Mobile call to action' ),
 		];
 	}
 
@@ -192,14 +204,14 @@ final class Sections {
 		$children = [ $content ];
 		if ( $card ) {
 			$children[] = T::div( 'cc-hero__card', [
-				T::text( '{cc_price_from}', 'cc-hero__price', 'p', 'Price from' ),
+				T::text( '{cc_hero_card_title}', 'cc-hero__price', 'p', 'Card title' ),
 				T::block( '{cc_hero_facts}', 'Facts' ),
 				T::block( '{cc_guarantee}', 'Guarantee' ),
 				self::quote_button( 'cc-btn cc-btn--primary cc-btn--block' ),
 			], 'Hero card' );
 		}
 
-		return T::section( 'cc-hero', [ T::container( 'cc-hero__grid', $children ) ], 'Hero' );
+		return T::section( 'cc-hero', [ self::cover( '{cc_hero_media}' ), T::container( 'cc-hero__grid', $children ) ], 'Hero' );
 	}
 
 	private static function service_body( bool $local ): array {
@@ -227,17 +239,18 @@ final class Sections {
 			], 'Not included', T::when_filled( '{cc_not_included}' ) ),
 		], 'Checklist' );
 
-		$sections[] = self::filled_section( '{cc_price_table}', '', [
-			T::div( 'cc-split', [
+		$sections[] = T::section( '', [
+			T::container( 'cc-split', [
 				T::div( 'cc-split__main', [
-					self::intro( 'Pricing', 'Clear, fixed prices', 'Your price is confirmed before we start — no hidden extras.' ),
+					self::intro( 'Pricing', 'A fixed price for your property', 'Tell us about your property and we\'ll send a fixed quote — confirmed before we start, with no hidden extras.' ),
 					T::block( '{cc_price_table}', 'Price table' ),
+					T::block( '{cc_quote_promise}', 'Quote promise' ),
+					self::quote_button(),
 				] ),
 				T::div( 'cc-split__aside', [
 					T::heading( 'Popular add-ons', 'h2', 'cc-h3' ),
 					T::block( '{cc_addons}', 'Add-ons' ),
-					self::quote_button( 'cc-btn cc-btn--primary cc-btn--block' ),
-				] ),
+				], 'Add-ons', T::when_filled( '{cc_addons}' ) ),
 			] ),
 		], 'Pricing' );
 
@@ -377,25 +390,13 @@ final class Sections {
 	 * ------------------------------------------------------------------ */
 
 	public static function home(): array {
-		$features = '<div class="cc-features">'
-			. '<div class="cc-feature"><h3>Vetted, local cleaners</h3><p>Every cleaner is DBS-checked, trained in-house and lives locally — so you get reliable, familiar faces.</p></div>'
-			. '<div class="cc-feature"><h3>Fixed, honest prices</h3><p>Clear prices on every service page and a fixed quote before we start. No hidden extras.</p></div>'
-			. '<div class="cc-feature"><h3>Re-clean guarantee</h3><p>If anything isn\'t right, tell us within 72 hours and we\'ll come back and put it right for free.</p></div>'
-			. '<div class="cc-feature"><h3>7 days a week</h3><p>Early, late and weekend slots, with key holding so you don\'t need to be home.</p></div>'
-			. '</div>';
-
-		$audiences = '<div class="cc-promos">'
-			. '<a class="cc-promo" href="/landlords/"><span class="cc-eyebrow">Landlords & letting agents</span><h3>Fast, reliable property turnarounds</h3><p>End of tenancy, inventory-standard cleans, communal areas and invoicing direct to you.</p><span class="cc-promo__link">Landlord services</span></a>'
-			. '<a class="cc-promo" href="/business/"><span class="cc-eyebrow">Businesses</span><h3>Office & commercial cleaning</h3><p>Out-of-hours cleaning with a dedicated team, fixed monthly price and full compliance paperwork.</p><span class="cc-promo__link">Business services</span></a>'
-			. '<a class="cc-promo" href="/services/holiday-let-airbnb-cleaning/"><span class="cc-eyebrow">Holiday hosts</span><h3>Changeovers on the coast</h3><p>Linen, restocking and photo reports for holiday lets in Bridlington, Hornsea and beyond.</p><span class="cc-promo__link">Holiday let cleaning</span></a>'
-			. '</div>';
-
 		return [
 			T::section( 'cc-hero cc-hero--home', [
+				self::cover( '{cc_hero_media}' ),
 				T::container( 'cc-hero__grid', [
 					T::div( 'cc-hero__content', [
 						T::text( 'Hull & East Yorkshire cleaning company', 'cc-eyebrow' ),
-						T::heading( 'Professional cleaners in Hull & East Yorkshire', 'h1', 'cc-hero__title' ),
+						T::heading( 'Professional cleaners in <span class="cc-highlight">Hull & East Yorkshire</span>', 'h1', 'cc-hero__title' ),
 						T::text( 'Trusted house cleaning, end of tenancy and commercial cleaning — by insured, DBS-checked local cleaners, with fixed prices and a re-clean guarantee.', 'cc-lead cc-hero__lead' ),
 						self::ctas(),
 						T::block( '{cc_trust_bar}', 'Trust bar' ),
@@ -404,11 +405,11 @@ final class Sections {
 						T::heading( 'Most popular', 'h2', 'cc-hero__card-title' ),
 						T::rich(
 							'<ul class="cc-quick-links">'
-							. '<li><a href="/services/regular-house-cleaning/"><span>Regular house cleaning</span><span>from £20/hr</span></a></li>'
-							. '<li><a href="/services/end-of-tenancy-cleaning/"><span>End of tenancy cleaning</span><span>from £150</span></a></li>'
-							. '<li><a href="/services/deep-cleaning/"><span>Deep cleaning</span><span>from £160</span></a></li>'
-							. '<li><a href="/services/oven-cleaning/"><span>Oven cleaning</span><span>from £55</span></a></li>'
-							. '<li><a href="/services/office-cleaning/"><span>Office cleaning</span><span>from £18/hr</span></a></li>'
+							. '<li><a href="/services/regular-house-cleaning/"><span>Regular house cleaning</span><span>→</span></a></li>'
+							. '<li><a href="/services/end-of-tenancy-cleaning/"><span>End of tenancy cleaning</span><span>→</span></a></li>'
+							. '<li><a href="/services/deep-cleaning/"><span>Deep cleaning</span><span>→</span></a></li>'
+							. '<li><a href="/services/oven-cleaning/"><span>Oven cleaning</span><span>→</span></a></li>'
+							. '<li><a href="/services/office-cleaning/"><span>Office cleaning</span><span>→</span></a></li>'
 							. '</ul>',
 							'',
 							'Quick links'
@@ -417,24 +418,34 @@ final class Sections {
 					], 'Hero card' ),
 				] ),
 			], 'Hero' ),
+			T::section( 'cc-stats-band', [ T::container( '', [ T::block( '{cc_stats}', 'Stats' ) ] ) ], 'Stats' ),
+			T::section( 'cc-marquee-band', [ T::block( '{cc_marquee}', 'Towns strip' ) ], 'Towns strip' ),
 			T::section( '', [
 				T::container( '', [
-					self::intro( 'Our services', 'Cleaning services for every home and business', 'From weekly house cleaning to end of tenancy and office contracts — all with clear prices and the same high standard.' ),
+					self::intro( 'Our services', 'Cleaning services for every home and business', 'From weekly house cleaning to end of tenancy and office contracts — all with fixed quotes and the same high standard.' ),
 					T::block( '{cc_service_cards}', 'Service cards' ),
 					T::div( 'cc-actions cc-actions--center', [ T::button( 'View all services', '/services/', 'cc-btn cc-btn--outline' ) ] ),
 				] ),
 			], 'Services' ),
 			T::section( 'cc-section--alt', [
-				T::container( '', [
-					self::intro( 'Why choose us', 'A cleaning company you can trust', '', 'cc-section-head--center' ),
-					T::rich( $features, '', 'Features' ),
+				T::container( 'cc-split cc-split--media', [
+					T::block( '{cc_why_media}', 'Photo collage', 'cc-split__media' ),
+					T::div( 'cc-split__main', [
+						self::intro( 'Why choose us', 'A cleaning company you can trust', 'Local, vetted cleaners who turn up on time, follow a proper checklist and stand behind every clean.' ),
+						self::features( [
+							[ 'shield', 'Vetted, local cleaners', 'Every cleaner is DBS-checked, trained in-house and lives locally — so you get reliable, familiar faces.' ],
+							[ 'receipt', 'Fixed, honest quotes', 'A free quote tailored to your property, with the price agreed before we start. No hidden extras.' ],
+							[ 'rotate', 'Re-clean guarantee', 'If anything isn\'t right, tell us within 72 hours and we\'ll come back and put it right for free.' ],
+							[ 'calendar', '7 days a week', 'Early, late and weekend slots, with key holding so you don\'t need to be home.' ],
+						], 'cc-features--compact' ),
+					] ),
 				] ),
 			], 'Why us' ),
 			self::how_it_works( '' ),
 			T::section( 'cc-section--alt', [
 				T::container( '', [
 					self::intro( 'Who we help', 'Specialist cleaning for landlords, businesses and hosts' ),
-					T::rich( $audiences, '', 'Audiences' ),
+					T::block( '{cc_promos}', 'Audiences' ),
 				] ),
 			], 'Audiences' ),
 			self::reviews_section(),
@@ -454,7 +465,7 @@ final class Sections {
 
 	public static function services_hub(): array {
 		return [
-			self::page_hero( 'Cleaning services in Hull & East Yorkshire', 'From regular house cleaning to end of tenancy, office and holiday let cleaning — every service comes with clear prices, vetted cleaners and our re-clean guarantee.', 'Our services' ),
+			self::page_hero( 'Cleaning services in Hull & East Yorkshire', 'From regular house cleaning to end of tenancy, office and holiday let cleaning — every service comes with a fixed quote, vetted cleaners and our re-clean guarantee.', 'Our services' ),
 			T::section( '', [ T::container( '', [ T::block( '{cc_service_groups}', 'Services by group' ) ] ) ], 'Services' ),
 			self::how_it_works(),
 			self::cta_band( 'Not sure which clean you need?', 'Tell us about your property and we\'ll recommend the right service and give you a fixed price.' ),
@@ -480,13 +491,6 @@ final class Sections {
 			. '<p>Today our team of local cleaners looks after homes, rental properties and businesses across the region. We\'re small enough to know our customers by name, and organised enough to handle everything from a weekly clean to a full commercial contract.</p>'
 			. '<p><em>Add your own story here — who founded the company, why, and what makes you different.</em></p>';
 
-		$values = '<div class="cc-features">'
-			. '<div class="cc-feature"><h3>Reliability</h3><p>We turn up when we say we will. If plans change, you hear from us first.</p></div>'
-			. '<div class="cc-feature"><h3>Honesty</h3><p>Clear prices, fixed quotes and straight answers — including when a job isn\'t right for us.</p></div>'
-			. '<div class="cc-feature"><h3>Care</h3><p>We treat every home like our own, and every customer like a neighbour.</p></div>'
-			. '<div class="cc-feature"><h3>Fair work</h3><p>We pay our cleaners fairly and train them properly. Happy cleaners do better work.</p></div>'
-			. '</div>';
-
 		$standards = '<h2>Our standards</h2>'
 			. '<ul class="cc-ticks">'
 			. '<li>Every cleaner is DBS-checked, reference-checked and interviewed in person</li>'
@@ -503,7 +507,12 @@ final class Sections {
 			T::section( 'cc-section--alt', [
 				T::container( '', [
 					self::intro( 'Our values', 'What we stand for', '', 'cc-section-head--center' ),
-					T::rich( $values, '', 'Values' ),
+					self::features( [
+						[ 'clock', 'Reliability', 'We turn up when we say we will. If plans change, you hear from us first.' ],
+						[ 'receipt', 'Honesty', 'Fixed quotes, no hidden extras and straight answers — including when a job isn\'t right for us.' ],
+						[ 'heart', 'Care', 'We treat every home like our own, and every customer like a neighbour.' ],
+						[ 'users', 'Fair work', 'We pay our cleaners fairly and train them properly. Happy cleaners do better work.' ],
+					] ),
 				] ),
 			], 'Values' ),
 			self::rich_section( $standards, '', 'Standards' ),
@@ -586,19 +595,17 @@ final class Sections {
 	}
 
 	public static function landlords(): array {
-		$benefits = '<div class="cc-features">'
-			. '<div class="cc-feature"><h3>Inventory-standard cleans</h3><p>We follow agent and inventory checklists, so properties pass check-out first time.</p></div>'
-			. '<div class="cc-feature"><h3>Fast turnarounds</h3><p>Same-week and weekend cleans to cut void periods between tenancies.</p></div>'
-			. '<div class="cc-feature"><h3>Key collection</h3><p>We collect and return keys from your office or key safe.</p></div>'
-			. '<div class="cc-feature"><h3>Invoicing to suit you</h3><p>Invoice the landlord, the agent or the tenant — with monthly statements for portfolios.</p></div>'
-			. '</div>';
-
 		return [
 			self::page_hero( 'Cleaning for landlords & letting agents', 'End of tenancy cleans, communal areas and property turnarounds across Hull & East Yorkshire — reliable, inventory-standard and invoiced the way you need.', 'Landlords & agents' ),
 			T::section( '', [
 				T::container( '', [
 					self::intro( 'Why agents use us', 'Built around the way you work', '', 'cc-section-head--center' ),
-					T::rich( $benefits, '', 'Benefits' ),
+					self::features( [
+						[ 'clipboard', 'Inventory-standard cleans', 'We follow agent and inventory checklists, so properties pass check-out first time.' ],
+						[ 'clock', 'Fast turnarounds', 'Same-week and weekend cleans to cut void periods between tenancies.' ],
+						[ 'key', 'Key collection', 'We collect and return keys from your office or key safe.' ],
+						[ 'receipt', 'Invoicing to suit you', 'Invoice the landlord, the agent or the tenant — with monthly statements for portfolios.' ],
+					] ),
 				] ),
 			], 'Benefits' ),
 			T::section( 'cc-section--alt', [
@@ -613,19 +620,17 @@ final class Sections {
 	}
 
 	public static function business(): array {
-		$benefits = '<div class="cc-features">'
-			. '<div class="cc-feature"><h3>Out of hours</h3><p>Early mornings, evenings or weekends — we work around your business.</p></div>'
-			. '<div class="cc-feature"><h3>Dedicated team</h3><p>The same vetted cleaners every visit, with a named account manager.</p></div>'
-			. '<div class="cc-feature"><h3>Compliance included</h3><p>RAMS, COSHH data sheets, insurance certificates and cleaning logs.</p></div>'
-			. '<div class="cc-feature"><h3>Fixed monthly price</h3><p>A clear specification and one predictable invoice each month.</p></div>'
-			. '</div>';
-
 		return [
 			self::page_hero( 'Office & commercial cleaning', 'Reliable contract cleaning for offices, shops, clinics and industrial sites across Hull & East Yorkshire.', 'For businesses' ),
 			T::section( '', [
 				T::container( '', [
 					self::intro( 'Why businesses choose us', 'Cleaning that just happens', '', 'cc-section-head--center' ),
-					T::rich( $benefits, '', 'Benefits' ),
+					self::features( [
+						[ 'clock', 'Out of hours', 'Early mornings, evenings or weekends — we work around your business.' ],
+						[ 'users', 'Dedicated team', 'The same vetted cleaners every visit, with a named account manager.' ],
+						[ 'clipboard', 'Compliance included', 'RAMS, COSHH data sheets, insurance certificates and cleaning logs.' ],
+						[ 'building', 'Fixed monthly price', 'A clear specification and one predictable invoice each month.' ],
+					] ),
 				] ),
 			], 'Benefits' ),
 			T::section( 'cc-section--alt', [

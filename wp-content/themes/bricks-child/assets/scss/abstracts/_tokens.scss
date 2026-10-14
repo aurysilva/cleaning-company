@@ -3,17 +3,19 @@
 // Placeholder brand palette: replace once the brand identity is final.
 
 $colors: (
-	"primary": #0f6b8f,
-	"primary-dark": #0a4d68,
-	"primary-light": #e6f3f8,
-	"accent": #2bb673,
-	"accent-dark": #1f8f59,
-	"text": #1b2430,
-	"text-muted": #5b6675,
-	"border": #dde3ea,
+	"primary": #0b7189,
+	"primary-dark": #08394a,
+	"primary-light": #e4f4f7,
+	"accent": #17b67b,
+	"accent-dark": #0f8f60,
+	"highlight": #ffcf5c,
+	"ink": #062a35,
+	"text": #0f2633,
+	"text-muted": #556b78,
+	"border": #dbe6eb,
 	"surface": #ffffff,
-	"surface-alt": #f5f8fa,
-	"success": #2bb673,
+	"surface-alt": #f1f8f9,
+	"success": #17b67b,
 	"warning": #f2a900,
 	"danger": #d64545,
 	"star": #f5b400,
@@ -32,20 +34,23 @@ $space: (
 );
 
 $radius: (
-	"s": 0.375rem,
-	"m": 0.75rem,
-	"l": 1.25rem,
+	"s": 0.5rem,
+	"m": 0.875rem,
+	"l": 1.5rem,
+	"xl": 2rem,
 	"pill": 999px,
 );
 
 $shadow: (
-	"s": 0 1px 2px rgb(16 24 40 / 0.06),
-	"m": 0 4px 12px rgb(16 24 40 / 0.08),
-	"l": 0 12px 32px rgb(16 24 40 / 0.12),
+	"s": 0 1px 3px rgb(8 57 74 / 0.07),
+	"m": 0 8px 24px rgb(8 57 74 / 0.09),
+	"l": 0 18px 44px rgb(8 57 74 / 0.14),
+	"xl": 0 30px 70px rgb(8 57 74 / 0.2),
+	"glow": 0 12px 30px rgb(23 182 123 / 0.35),
 );
 
-$font-body: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-$font-heading: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+$font-body: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+$font-heading: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 
 :root {
 	@each $name, $value in $colors {
@@ -61,9 +66,13 @@ $font-heading: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif
 		--cc-shadow-#{$name}: #{$value};
 	}
 
+	--cc-gradient-brand: linear-gradient(135deg, var(--cc-color-primary) 0%, var(--cc-color-accent) 100%);
+	--cc-gradient-ink: linear-gradient(120deg, var(--cc-color-ink) 0%, var(--cc-color-primary-dark) 55%, var(--cc-color-primary) 100%);
+
 	--cc-font-body: #{$font-body};
 	--cc-font-heading: #{$font-heading};
 	--cc-content-width: 75rem;
 	--cc-content-width-narrow: 48rem;
-	--cc-transition: 180ms ease;
+	--cc-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+	--cc-transition: 240ms var(--cc-ease);
 }

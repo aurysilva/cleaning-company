@@ -16,6 +16,8 @@ foreach ( [
 	'rewrites',
 	'bricks',
 	'components',
+	'media',
+	'pricing',
 	'dynamic-tags',
 	'schema',
 	'performance',
