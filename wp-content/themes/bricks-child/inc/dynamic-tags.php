@@ -75,6 +75,7 @@ function cc_dynamic_tags(): array {
 		'cc_guide_hub'         => 'Guides hub (all topic clusters)',
 		'cc_area_name'         => 'Area name (local service)',
 		'cc_service_name'      => 'Service name (local service)',
+		'cc_quote_form'        => 'Instant quote form (CC Bookings plugin; empty if inactive)',
 	];
 }
 
@@ -99,6 +100,8 @@ function cc_render_dynamic_tag( string $name, string $arg, $post ): ?string {
 			return cc_email_link();
 		case 'cc_quote_url':
 			return esc_url( cc_quote_url() );
+		case 'cc_quote_form':
+			return function_exists( 'cc_bookings_quote_form' ) ? cc_bookings_quote_form() : '';
 		case 'cc_cta_primary':
 			return esc_html( cc_option( 'cta_primary_label', 'Get a free quote' ) );
 		case 'cc_cta_secondary':

@@ -91,13 +91,21 @@ final class Tree {
 	 * Only render when a dynamic tag is not empty.
 	 */
 	public static function when_filled( string $tag ): array {
+		return self::condition( $tag, '!=' );
+	}
+
+	public static function when_empty( string $tag ): array {
+		return self::condition( $tag, '==' );
+	}
+
+	private static function condition( string $tag, string $compare ): array {
 		return [
 			'_conditions' => [
 				[
 					[
 						'id'           => self::id(),
 						'key'          => 'dynamic_data',
-						'compare'      => '!=',
+						'compare'      => $compare,
 						'value'        => '',
 						'dynamic_data' => $tag,
 					],

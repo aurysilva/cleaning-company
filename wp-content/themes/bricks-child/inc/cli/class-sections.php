@@ -596,13 +596,18 @@ final class Sections {
 			'_cssClasses'      => 'cc-form',
 		], [], 'Quote form' );
 
+		$instant = T::el( 'text-basic', array_merge( [ 'text' => '{cc_quote_form}', 'tag' => 'div' ], T::when_filled( '{cc_quote_form}' ) ), [], 'Instant quote form' );
+
 		return [
-			self::page_hero( 'Get a free quote', 'Tell us a little about your property and the clean you need. We\'ll reply with a fixed price — usually within the hour during opening times.', 'Contact us', false ),
+			self::page_hero( 'Get a free quote', 'Tell us about your property and the clean you need. Most cleans get an instant fixed price you can book online; anything bespoke, we\'ll price personally — usually within the hour during opening times.', 'Contact us', false ),
 			T::section( '', [
 				T::container( 'cc-split', [
 					T::div( 'cc-split__main cc-panel', [
-						T::heading( 'Request a quote', 'h2', 'cc-h3' ),
-						$form,
+						$instant,
+						T::div( '', [
+							T::heading( 'Request a quote', 'h2', 'cc-h3' ),
+							$form,
+						], 'Fallback form (plugin inactive)', T::when_empty( '{cc_quote_form}' ) ),
 					] ),
 					T::div( 'cc-split__aside', [
 						T::heading( 'Contact details', 'h2', 'cc-h3' ),

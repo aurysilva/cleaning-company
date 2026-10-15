@@ -1,0 +1,124 @@
+.cc-admin .cc-status {
+	display: inline-block;
+	padding: 2px 8px;
+	border-radius: 10px;
+	font-size: 12px;
+	line-height: 1.6;
+	background: #f0f0f1;
+	color: #3c434a;
+	vertical-align: middle;
+}
+.cc-admin .cc-status--draft,
+.cc-admin .cc-status--confirmed { background: #fcf0e3; color: #8a4b00; }
+.cc-admin .cc-status--sent,
+.cc-admin .cc-status--viewed,
+.cc-admin .cc-status--dispatching { background: #e5f0fa; color: #0a4b78; }
+.cc-admin .cc-status--accepted,
+.cc-admin .cc-status--assigned,
+.cc-admin .cc-status--paid,
+.cc-admin .cc-status--completed { background: #e6f4ea; color: #1e6b34; }
+.cc-admin .cc-status--cancelled,
+.cc-admin .cc-status--expired,
+.cc-admin .cc-status--superseded,
+.cc-admin .cc-status--refunded,
+.cc-admin .cc-status--partially_refunded { background: #f6e7e7; color: #8a2424; }
+
+.cc-admin__test,
+.cc-admin__tag {
+	display: inline-block;
+	padding: 1px 6px;
+	border-radius: 3px;
+	font-size: 11px;
+	text-transform: uppercase;
+	letter-spacing: .03em;
+	vertical-align: middle;
+}
+.cc-admin__test { background: #fff3c4; color: #6b5300; }
+.cc-admin__tag { background: #ede7f6; color: #4a2a8a; }
+
+.cc-admin__cards {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+	gap: 12px;
+	margin: 16px 0 8px;
+}
+.cc-admin__card {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	padding: 16px;
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 6px;
+	text-decoration: none;
+	color: #1d2327;
+}
+.cc-admin__card strong { font-size: 28px; line-height: 1.1; }
+.cc-admin__card:hover { border-color: #2271b1; }
+
+.cc-admin__cols {
+	display: grid;
+	grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
+	gap: 24px;
+	align-items: start;
+}
+@media (max-width: 1100px) {
+	.cc-admin__cols { grid-template-columns: 1fr; }
+}
+
+.cc-admin__kv th { width: 34%; font-weight: 600; }
+.cc-admin__kv th,
+.cc-admin__kv td { padding: 8px 10px; vertical-align: top; }
+.cc-admin__num { text-align: right; white-space: nowrap; }
+
+.cc-admin__inline { display: inline-block; margin: 0 6px 6px 0; }
+.cc-admin__actions { margin-bottom: 12px; }
+.cc-admin__check { display: inline-block; margin: 0 14px 6px 0; }
+
+.cc-admin__timeline { margin: 0; padding: 0; list-style: none; border-left: 2px solid #dcdcde; }
+.cc-admin__timeline li { position: relative; margin: 0; padding: 4px 0 8px 14px; }
+.cc-admin__timeline li::before {
+	content: "";
+	position: absolute;
+	left: -6px;
+	top: 10px;
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	background: #c3c4c7;
+}
+.cc-admin__timeline time { color: #646970; font-size: 12px; margin-right: 4px; }
+.cc-admin__actor { color: #646970; font-size: 12px; }
+.cc-admin__event {
+	display: inline-block;
+	padding: 0 6px;
+	border-radius: 3px;
+	background: #f0f0f1;
+	font-size: 11px;
+	text-transform: uppercase;
+	letter-spacing: .02em;
+}
+.cc-admin__event--email_sent,
+.cc-admin__event--confirmed,
+.cc-admin__event--assigned { background: #e6f4ea; }
+.cc-admin__event--email_failed,
+.cc-admin__event--admin_alert,
+.cc-admin__event--refund_failed,
+.cc-admin__event--webhook_invalid { background: #f6e7e7; }
+
+.cc-admin__photos { display: flex; flex-wrap: wrap; gap: 8px; }
+.cc-admin__photos img { width: 120px; height: 90px; object-fit: cover; border-radius: 4px; border: 1px solid #dcdcde; }
+
+.cc-admin__crew { margin: 0 0 8px; }
+.cc-admin__crew li { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+.cc-admin__pricing input[type="text"].widefat { min-width: 220px; }
+.cc-admin__filters { margin: 12px 0; }
+.cc-admin__data summary { cursor: pointer; color: #2271b1; }
+.cc-admin__data pre { white-space: pre-wrap; max-width: 640px; font-size: 12px; background: #f6f7f7; padding: 8px; }
+.cc-admin__template { background: #fff; border: 1px solid #dcdcde; border-radius: 4px; padding: 8px 12px; margin-bottom: 8px; }
+.cc-admin__template summary { cursor: pointer; }
+.cc-admin__ok { color: #1e6b34; font-weight: 600; }
+.cc-admin__warn { color: #8a4b00; }
+.cc-admin__steps li { margin-bottom: 8px; }
+.cc-admin .search-box { margin: 8px 0; }
