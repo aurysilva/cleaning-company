@@ -373,7 +373,7 @@ Phase 1 is live in the `cc-bookings` plugin. The quote form replaces the contact
 Phase 2 lives in the same plugin, in its own files (`class-dispatch*.php`, `class-availability.php`, `class-sms.php`, `class-job-links.php`, `class-job-pages.php`, `admin/class-cleaner-profiles-screen.php`, `admin/class-dispatch-screen.php`, `templates/job*.php`, `templates/cleaner-jobs.php`). `Plugin::boot()` calls `Dispatch::init()`; everything else is wired through hooks.
 
 **What it does**
-- **Cleaner profiles** (**Bookings → Cleaners**): type, contact details, areas (Area pages) and extra districts, services, team lead, car, weekly hours ("any time", or set times per day), time off (whole or part days), max jobs per day, pay (hourly or per job) and notes. Each profile has a "My jobs" link button.
+- **Cleaner profiles** (**Bookings → Cleaners**): type, contact details, areas (Area pages) and extra districts, services, team lead, car, weekly hours ("any time", or set times per day), time off (whole or part days), max jobs per day, pay (hourly or per job) and notes. Each profile can email, show or revoke the cleaner's "My jobs" link.
 - **Slots from cleaner calendars:** once there is at least one active cleaner, the quote form only offers an arrival slot if enough cleaners who cover the postcode and do the service are free for the whole job: inside their weekly hours, not on time off, under their daily limit, with a travel buffer around other jobs. Unstaffed bookings and live slot holds count against the spare cleaners. With no active cleaners, the Phase 1 capacity settings apply as before. **Bookings → Dispatch** can switch the source to "both" (calendars and capacity) or "capacity only".
 - **Dispatch on payment** (`cc_booking_confirmed`):
   1. Employed cleaners are assigned directly. A cleaner who has cleaned for this customer before comes first, then whoever is least busy that day and week. Team jobs keep one place for a team lead.
@@ -385,15 +385,15 @@ Phase 2 lives in the same plugin, in its own files (`class-dispatch*.php`, `clas
   - `/job/{offer}/{sig}/`: an offer shows only the district, date and slot, hours, team size and pay, with Accept and Decline. Once the cleaner is on the job, it adds the full address, the customer's first name, access notes and a map link. The customer's phone appears from 24 hours before the job.
   - The same page has "Can't make it" (with an optional reason) and, from 2 hours before the start, "Mark job complete" with optional photos. Photos are stored privately in `uploads/cc-bookings-private/{ref}-done/` and shown on the admin booking screen. Completing fires `cc_booking_completed`; Phase 3 handles everything after that.
   - `/job/me/{cleaner}/{sig}/` lists the cleaner's upcoming jobs.
-  - Links are HMAC-signed with a per-row random key and `wp_salt('auth')`, so they can be re-sent at any time. **Revoke links** on a profile rotates the key.
+  - Links are HMAC-signed with a per-row random key and `wp_salt('auth')`, so they can be re-sent at any time. **Revoke link** on a profile rotates the cleaner's key, which stops their "My jobs" link working. Individual job links have their own keys.
 
 **Owner steps**
 1. **Text messages (Twilio).** Until this is done, every text is written in full to **Bookings → Activity** (`sms_logged`) instead of being sent. Add to `wp-config.php`:
    - `define( 'CC_TWILIO_SID', 'AC…' );`
    - `define( 'CC_TWILIO_TOKEN', '…' );`
    - `define( 'CC_TWILIO_FROM', '+44…' );` (or an approved alphanumeric sender), or `define( 'CC_TWILIO_MESSAGING_SID', 'MG…' );`
-   - Then set **Bookings → Dispatch → Admin mobile** for urgent alerts. "Log texts only" there pauses sending without removing the keys. Another provider can answer the `cc_bookings_send_sms` filter at a priority below 20 and return `true`.
-2. **Cleaners:** add each cleaner with their areas, services, weekly hours, daily limit and pay, then use **My jobs link → Email link** so they have their jobs page.
+   - Then set **Bookings → Dispatch → Urgent alerts by text to** (the admin mobile). "Log texts only" there pauses sending without removing the keys. Another provider can answer the `cc_bookings_send_sms` filter at a priority below 20 and return `true`.
+2. **Cleaners:** add each cleaner with their areas, services, weekly hours, daily limit and pay, then press **Email & text the link** on their profile so they have their "My jobs" page.
 3. **Check the dispatch settings** (offer timeout, urgent window, travel buffer, slot source, whether customers are emailed when a cleaner is assigned).
 4. The **server cron** from Phase 1 also runs offer timeouts on time.
 
@@ -418,3 +418,74 @@ Phase 2 lives in the same plugin, in its own files (`class-dispatch*.php`, `clas
 | `cleaner-link <id>` | Prints a cleaner's "My jobs" link |
 | `sms-log [--limit]` | Lists recent texts: sent, logged or failed |
 | `purge-p2-test --yes` | Deletes only cleaners and customers named "P2 Test…" and their data |
+
+### Phase 3 — after-booking automation (built)
+
+Phase 3 lives in its own files: `class-aftercare.php` (bootstrap, email templates, completion follow-ups), `class-manage.php` (customer reschedule/cancel), `class-reminders.php`, `class-reclean.php`, `class-aftercare-cli.php`, `admin/class-aftercare-screen.php` and `admin/class-reports-screen.php`. It is switched on by one line in `cc-bookings.php` (`add_action( 'cc_bookings_loaded', [ Aftercare::class, 'init' ] )`). The only edits to shared files are additive: `Notify::send()` applies a new `cc_bookings_email_vars` filter, `Notify::render()` passes an optional `manage_url`, and `templates/email.php` shows a "Need to change or cancel? Manage your booking" line when it is set.
+
+**What it does**
+- **Manage booking link:** every customer email about a booking that is still open (confirmed, dispatching or assigned) carries a "Manage your booking" link to the private booking page. Emails about completed or cancelled bookings don't. The booking page sidebar gains:
+  - **Change date or time:** free up to 48 hours before the start. It only lists slots that can be staffed: Phase 1 capacity or Phase 2 cleaner calendars, for the booking's own service and postcode, with the booking's own crew counted as free. Inside 48 hours it asks the customer to call. A move updates the date, slot and start/end times, emails the customer and the admin, texts the customer, then fires `cc_booking_rescheduled( $booking_id, $old_start )`. Phase 2 then re-dispatches the crew and tells anyone removed; without Phase 2, Phase 3 emails and texts the crew itself.
+  - **Cancel booking:** shows the refund due now and the policy. More than 48 hours before: full refund. From 48 down to 24 hours: 50% of what was paid. Under 24 hours: nothing. The bands are inclusive at 48h and 24h; every number can be changed. Refunds use `Bookings::refund()`. A Stripe payment is refunded through Stripe. If Stripe isn't set up, the refund fails, or the booking was paid by hand, the refund is saved as a **pending manual refund** (a `payments` row with status `pending`) and the admin gets an alert. The customer gets one cancellation email that states the refund; the admin gets `cancel_admin`; the crew is told (by Phase 2 when it is active).
+- **Reminders** 48 and 24 hours before (configurable), by email and text, to the customer and every cleaner on the job. The cleaner's reminder includes the address and access notes, and the customer's phone number only from 24 hours before. Reminders are queued on `cc_booking_confirmed`, re-queued on `cc_booking_rescheduled`, and removed when a booking is cancelled or completed. Each reminder is sent at most once per start time.
+- **Completion follow-ups** on `cc_booking_completed` (the Phase 2 "Mark job complete" button, the Phase 1 admin button, or **Mark complete** in the new "After booking" box for future-dated jobs):
+  - A thank-you email with a re-clean guarantee link that opens the claim form, plus an admin notice.
+  - A review request after 2 hours (configurable). It is skipped and logged while no Google review link is set, and skipped if the customer has a re-clean claim.
+  - A re-clean window of 72 hours, from `cc_option('reclean_window_hours')` unless overridden.
+- **Re-clean claims:**
+  - The customer fills in the form on the private booking page with a message and at least one photo. Photos are stored in `uploads/cc-bookings-private/RC-{ref}/`. Claims are accepted only inside the window, one per booking.
+  - The customer gets a receipt and the admin gets an email linking to the booking.
+  - On the admin booking screen the admin sees the photos and either:
+    - **approves** with a date and slot: this creates a £0 linked booking (`parent_id` = the original, `payment_status` "No charge", status confirmed) and fires `cc_booking_confirmed`, so dispatch and reminders run as usual; the customer gets `reclean_approved` instead of the paid confirmation; or
+    - **declines** with a reason, which is emailed to the customer.
+  - Re-clean bookings get no thank-you email, no review request and no claim window of their own.
+- **Reports** (**Bookings → Reports**), for a job-date range (test data can be included):
+  - Cards: bookings, net revenue, average booking, quote conversion, cancellations and free re-cleans.
+  - Tables by service, by area (postcode districts mapped to Area pages) and by month.
+  - Quote conversion by month received.
+  - Cleaner hours and pay for completed jobs. Pay is the agreed offer pay, else the per-job rate, else the hourly rate × hours.
+  - CSV downloads: cleaner pay (completed jobs, or including upcoming ones) and bookings. The CSVs are guarded against spreadsheet formula injection.
+- **"After booking" admin page:** open re-clean claims, pending manual refunds (each with **Mark refund paid**, which updates the booking and emails the customer), recently decided claims, and the settings. On each booking, the "After booking" box shows:
+  - queued reminders and what a cancellation would refund now;
+  - **Move booking** (optionally ignoring capacity and notice) and **Mark complete**;
+  - any pending refunds, the re-clean window and the claims.
+
+**Owner steps**
+1. **Google review link:** in Google Business Profile, choose "Ask for reviews", copy the link and paste it into **Bookings → After booking → Google review link**. Until then no review requests are sent; each skip is logged as `review_skipped`.
+2. **Cancellation policy wording:** the defaults are 48h/24h/50%. If you change them, also update the Terms page and any FAQ that mentions cancellations. The booking page and emails pick up the new numbers automatically.
+3. **Manual refunds:** while Stripe isn't live, or for bookings paid by phone, refunds wait under **After booking → Pending manual refunds**. Pay each one by hand, then press **Mark refund paid**.
+4. **Text reminders** go through the Phase 2 SMS setup (Twilio). Until it is configured they are logged, not sent. You can turn reminder texts off under **After booking**.
+
+**Technical notes**
+- **Schema:** separate installer (option `cc_bookings_aftercare_schema`, version 1) for the table `wp_cc_reclean_claims`: booking, status (open/approved/declined), message, photos, photo_ref, re-clean booking id, admin note, who decided and when. The core schema version is unchanged. Payment status `free` ("No charge") is added through `cc_bookings_statuses`.
+- **Settings** are stored under `aftercare.*` in `cc_bookings_settings`, with defaults in `Aftercare::DEFAULTS`: `allow_reschedule`, `reschedule_hours`, `allow_cancel`, `full_refund_hours`, `partial_refund_hours`, `partial_refund_pct`, `reminder_hours`, `reminder_sms`, `review_url` (falls back to `cc_option('google_review_url')`), `review_delay_hours` and `reclean_hours` (blank means `cc_option('reclean_window_hours')`).
+- **Queue actions:** `cc_bookings_reminder( $booking_id, $hours )` and `cc_bookings_review_request( $booking_id )`.
+- **Hooks fired:**
+  - `cc_booking_rescheduled( $booking_id, $old_start )`. `$old_start` is the previous `start_at` as a UTC `Y-m-d H:i:s` string.
+  - `cc_booking_refund_pending( $booking_id, $amount, $payment_id )`.
+  - `cc_booking_reclean_claimed( $claim_id, $booking_id )`, `cc_booking_reclean_approved( $claim_id, $booking_id, $reclean_booking_id )` and `cc_booking_reclean_declined( $claim_id, $booking_id, $reason )`.
+  - Also the existing `cc_booking_confirmed` (for re-cleans, with context `provider => reclean`), `cc_booking_refunded` and `cc_booking_cancelled`.
+- **Filter:** `cc_bookings_email_vars( $vars, $template, $object )` in `Notify::send()`.
+- **Listens to:** `cc_booking_confirmed`, `cc_booking_rescheduled`, `cc_booking_status_changed`, `cc_booking_completed`, `cc_bookings_booking_page_actions` (customer panels), `cc_bookings_admin_booking_sidebar`, `cc_bookings_admin_pages` and `cc_bookings_admin_action_{aftercare_*, reclean_*, reports_csv}`.
+- **Working with Phase 2:** Phase 3 skips its own crew emails on reschedule and cancel when `Dispatch::on_rescheduled` / `Dispatch::on_status_changed` are hooked, so cleaners aren't told twice. It calls `Availability::set_context()` before checking slots.
+- **Customer forms** post back to the private booking page. They are checked with the page token plus a nonce, and rate-limited to 20 per hour. Results are shown as a one-off message.
+- **New email templates** (editable under **Settings → Emails**): `reschedule_customer`, `reschedule_admin`, `reschedule_cleaner`, `cancel_admin`, `cancel_cleaner`, `reminder_customer`, `reminder_cleaner`, `aftercare_thanks`, `aftercare_admin`, `review_request`, `reclean_received`, `reclean_admin`, `reclean_approved` and `reclean_declined`.
+- **WP-CLI** (`wp cc-bookings aftercare …`):
+
+| Command | What it does |
+|---|---|
+| `status` | Shows settings, queued reminders/reviews and open claims |
+| `policy <ref> [--hours-before=<n>]` | Shows the refund a cancellation would get now, or at n hours before |
+| `cancel <ref>` | Cancels as the customer would, applying the policy |
+| `reschedule <ref> [<date>] [<slot>] [--force]` | Lists free slots, or moves the booking |
+| `complete <ref>` | Marks the job complete, which starts the follow-ups |
+| `run <ref> [--hook=<hook>]` | Runs the booking's queued reminders and review request now |
+
+- **Verified on the server** (15 Oct 2026, with "P3 Test" data, since deleted):
+  - Manage link loads (HTTP 200, `no-store`, `noindex`) and appears in all 16 customer templates.
+  - Customer reschedule, both by script and in the browser, fires `cc_booking_rescheduled` and moves the reminders. Phase 2 re-assigns the crew. A move inside the notice period is refused.
+  - Cancellations at 72h, 36h and 12h refund 100%, 50% and 0%. A Stripe payment with a failing refund becomes a pending manual refund with an admin alert; **Mark refund paid** clears it.
+  - Both reminders are sent to the customer and both cleaners when the queue runs.
+  - Completion sends the thank-you and admin notice and queues the review request for +2h. The review is skipped without a link and sent once one is set.
+  - Re-clean claim via a real multipart upload. Photos are stored privately (direct URL returns 403). Admin approve and decline work through wp-admin. The re-clean booking is £0, linked, dispatched and has reminders. Duplicate, late and forged claims are refused.
+  - Reports page renders, and both CSVs download with the right headers.
