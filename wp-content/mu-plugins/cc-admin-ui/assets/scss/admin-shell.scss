@@ -1,0 +1,522 @@
+// Shell layer: brand tokens, toolbar, sidebar and footer. Loaded on every skinned screen, including the block editor.
+// Everything is prefixed with body.cc-ui, so it only applies while the skin is on for the current user.
+@use "brand" as b;
+
+@include b.font-face("../fonts/");
+
+body.cc-ui.wp-admin {
+	@include b.tokens;
+}
+
+/* --------------------------------------------------------------------------
+   Toolbar: slim white top bar
+   ----------------------------------------------------------------------- */
+
+body.cc-ui #wpadminbar {
+	background: var(--ccui-surface);
+	box-shadow: 0 1px 0 var(--ccui-border);
+	color: var(--ccui-text);
+	font-family: var(--ccui-font-body);
+	transition: box-shadow var(--ccui-speed) var(--ccui-ease);
+
+	.ab-item,
+	a.ab-item,
+	> #wp-toolbar span.ab-label,
+	> #wp-toolbar span.noticon {
+		color: var(--ccui-text);
+	}
+
+	.ab-icon,
+	.ab-icon::before,
+	.ab-item::before,
+	.ab-item::after,
+	#adminbarsearch::before {
+		color: var(--ccui-muted);
+	}
+
+	.ab-top-menu > li.hover > .ab-item,
+	&.nojq .quicklinks .ab-top-menu > li > .ab-item:focus,
+	&:not(.mobile) .ab-top-menu > li:hover > .ab-item,
+	&:not(.mobile) .ab-top-menu > li > .ab-item:focus {
+		background: var(--ccui-hover);
+		color: var(--ccui-primary-active);
+	}
+
+	&:not(.mobile) > #wp-toolbar li:hover span.ab-label,
+	> #wp-toolbar li.hover span.ab-label,
+	&:not(.mobile) > #wp-toolbar a:focus span.ab-label {
+		color: var(--ccui-primary-active);
+	}
+
+	&:not(.mobile) li:hover .ab-icon::before,
+	&:not(.mobile) li:hover .ab-item::before,
+	&:not(.mobile) li:hover .ab-item::after,
+	&:not(.mobile) li:hover #adminbarsearch::before,
+	li.hover .ab-icon::before,
+	li.hover .ab-item::before,
+	li.hover .ab-item::after {
+		color: var(--ccui-primary);
+	}
+
+	// Dropdowns
+	.menupop .ab-sub-wrapper,
+	.shortlink-input {
+		background: var(--ccui-surface);
+		border: 1px solid var(--ccui-border);
+		border-top: 0;
+		border-radius: 0 0 var(--ccui-radius-l) var(--ccui-radius-l);
+		box-shadow: var(--ccui-shadow-m);
+	}
+
+	.quicklinks .menupop ul.ab-sub-secondary,
+	.quicklinks .menupop ul.ab-sub-secondary .ab-submenu {
+		background: var(--ccui-surface-alt);
+	}
+
+	.quicklinks .menupop ul.ab-sub-secondary {
+		border-radius: 0 0 var(--ccui-radius-l) var(--ccui-radius-l);
+	}
+
+	.ab-submenu .ab-item,
+	.quicklinks .menupop ul li a,
+	.quicklinks .menupop ul li a strong,
+	.quicklinks .menupop.hover ul li a,
+	&.nojs .quicklinks .menupop:hover ul li a {
+		color: var(--ccui-text);
+	}
+
+	.quicklinks .menupop ul li a:hover,
+	.quicklinks .menupop ul li a:focus,
+	.quicklinks .menupop ul li a:hover strong,
+	.quicklinks .menupop ul li a:focus strong,
+	.quicklinks .menupop.hover ul li a:hover,
+	.quicklinks .menupop.hover ul li a:focus,
+	.quicklinks .menupop.hover ul li div[tabindex]:hover,
+	.quicklinks .menupop.hover ul li div[tabindex]:focus,
+	&.nojs .quicklinks .menupop:hover ul li a:hover,
+	&.nojs .quicklinks .menupop:hover ul li a:focus,
+	.menupop li:hover > .ab-item,
+	.menupop li.hover > .ab-item,
+	.quicklinks .ab-sub-wrapper .menupop.hover > a,
+	.quicklinks .ab-sub-wrapper .menupop > a:focus {
+		background: var(--ccui-hover);
+		color: var(--ccui-primary-active);
+	}
+
+	.quicklinks li .blavatar::before,
+	.quicklinks li a:hover .blavatar::before,
+	.menupop .menupop > .ab-item::before {
+		color: var(--ccui-muted);
+	}
+
+	#wp-admin-bar-user-info .display-name {
+		color: var(--ccui-ink);
+	}
+
+	#wp-admin-bar-user-info .username {
+		color: var(--ccui-muted);
+	}
+
+	#wp-admin-bar-my-account.with-avatar > a img,
+	#wp-admin-bar-my-account.with-avatar > .ab-empty-item img {
+		border: 0;
+		border-radius: 50%;
+		box-shadow: 0 0 0 1px var(--ccui-border);
+	}
+
+	#wp-admin-bar-user-info img.avatar {
+		border-radius: 50%;
+	}
+
+	a:focus-visible,
+	.ab-item:focus-visible {
+		outline: 2px solid var(--ccui-primary);
+		outline-offset: -2px;
+	}
+
+	// Brand item (replaces "site name"; the WordPress logo menu is removed in PHP)
+	#wp-admin-bar-site-name > .ab-item {
+		color: var(--ccui-ink);
+		font-family: var(--ccui-font-heading);
+		font-weight: 700;
+		letter-spacing: -0.01em;
+	}
+
+	#wp-admin-bar-site-name > .ab-item::before,
+	#wp-admin-bar-site-name:hover > .ab-item::before,
+	#wp-admin-bar-site-name.hover > .ab-item::before {
+		@include b.brand-mark(20px);
+		top: 0;
+		margin: 6px 8px 0 2px;
+		padding: 0;
+		color: #fff;
+	}
+
+	// Mobile toolbar menu toggle
+	#wp-admin-bar-menu-toggle .ab-icon::before {
+		color: var(--ccui-ink);
+	}
+}
+
+body.cc-ui.cc-ui-scrolled #wpadminbar {
+	box-shadow: 0 1px 0 var(--ccui-border), 0 6px 20px rgb(8 57 74 / 0.07);
+}
+
+body.cc-ui.wp-responsive-open #wpadminbar #wp-admin-bar-menu-toggle a {
+	background: var(--ccui-hover);
+}
+
+body.cc-ui.wp-responsive-open #wpadminbar #wp-admin-bar-menu-toggle .ab-icon::before {
+	color: var(--ccui-primary);
+}
+
+// Desktop with the sidebar expanded: the brand item sits in a dark "logo zone" above the sidebar.
+@media screen and (min-width: 961px) {
+	body.cc-ui:not(.folded) #wpadminbar #wp-admin-bar-site-name > .ab-item {
+		box-sizing: border-box;
+		width: var(--ccui-menu-w);
+		padding-left: 18px;
+		overflow: hidden;
+		background: var(--ccui-sidebar);
+		color: #fff;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	body.cc-ui:not(.folded) #wpadminbar #wp-admin-bar-site-name:hover > .ab-item,
+	body.cc-ui:not(.folded) #wpadminbar #wp-admin-bar-site-name.hover > .ab-item,
+	body.cc-ui:not(.folded) #wpadminbar #wp-admin-bar-site-name > .ab-item:focus {
+		background: var(--ccui-sidebar);
+		color: #fff;
+	}
+}
+
+@media screen and (max-width: 782px) {
+	body.cc-ui #wpadminbar #wp-admin-bar-site-name > .ab-item::before,
+	body.cc-ui #wpadminbar #wp-admin-bar-site-name:hover > .ab-item::before {
+		width: 30px;
+		height: 30px;
+		margin: 8px 0 0 10px;
+		border-radius: 9px;
+		font-size: 16px;
+	}
+}
+
+/* --------------------------------------------------------------------------
+   Sidebar
+   ----------------------------------------------------------------------- */
+
+body.cc-ui {
+	#adminmenuback,
+	#adminmenuwrap,
+	#adminmenu,
+	#adminmenu .wp-submenu {
+		background-color: var(--ccui-sidebar);
+	}
+
+	#adminmenu {
+		margin: 14px 0;
+	}
+
+	#adminmenu a {
+		color: var(--ccui-sidebar-text);
+	}
+
+	#adminmenu a.menu-top,
+	#adminmenu .wp-submenu-head {
+		font-family: var(--ccui-font-heading);
+		font-size: 13.5px;
+		font-weight: 500;
+		letter-spacing: -0.005em;
+	}
+
+	#adminmenu div.wp-menu-image::before {
+		color: var(--ccui-sidebar-muted);
+		transition: color var(--ccui-speed) var(--ccui-ease);
+	}
+
+	#adminmenu .wp-menu-image img {
+		opacity: 0.75;
+	}
+
+	// Core draws a 4px inset bar on hover/focus; pills replace it.
+	#adminmenu a:hover,
+	#adminmenu a:focus,
+	&.folded #adminmenu .wp-submenu-head:hover {
+		box-shadow: none;
+	}
+
+	#adminmenu li.menu-top:hover,
+	#adminmenu li.opensub > a.menu-top,
+	#adminmenu li > a.menu-top:focus {
+		background-color: transparent;
+		color: #fff;
+	}
+
+	#adminmenu li.menu-top:hover > a.menu-top,
+	#adminmenu li.opensub > a.menu-top,
+	#adminmenu li > a.menu-top:focus {
+		background-color: var(--ccui-sidebar-hover);
+		color: #fff;
+	}
+
+	#adminmenu a:hover,
+	#adminmenu li.menu-top > a:focus,
+	#adminmenu .wp-submenu a:hover,
+	#adminmenu .wp-submenu a:focus {
+		color: #fff;
+	}
+
+	#adminmenu li:hover div.wp-menu-image::before,
+	#adminmenu li a:focus div.wp-menu-image::before,
+	#adminmenu li.opensub div.wp-menu-image::before {
+		color: #fff;
+	}
+
+	#adminmenu a:focus-visible,
+	#collapse-button:focus-visible {
+		outline: 2px solid var(--ccui-highlight);
+		outline-offset: -2px;
+	}
+
+	// Current section: brand pill
+	#adminmenu li.wp-has-current-submenu a.wp-has-current-submenu,
+	#adminmenu li.current a.menu-top,
+	#adminmenu .wp-has-current-submenu .wp-submenu .wp-submenu-head {
+		background: var(--ccui-sidebar-active);
+		color: #fff;
+		font-weight: 600;
+	}
+
+	#adminmenu li.wp-has-current-submenu:hover div.wp-menu-image::before,
+	#adminmenu .wp-has-current-submenu div.wp-menu-image::before,
+	#adminmenu .current div.wp-menu-image::before,
+	#adminmenu a.wp-has-current-submenu:hover div.wp-menu-image::before,
+	#adminmenu a.current:hover div.wp-menu-image::before,
+	#adminmenu li.wp-has-current-submenu a:focus div.wp-menu-image::before,
+	#adminmenu li.wp-has-current-submenu.opensub div.wp-menu-image::before {
+		color: #fff;
+	}
+
+	#adminmenu li.wp-has-current-submenu .wp-menu-image img {
+		opacity: 1;
+	}
+
+	// Speech-bubble arrows next to the current item and flyouts
+	ul#adminmenu a.wp-has-current-submenu::after,
+	ul#adminmenu > li.current > a.current::after,
+	#adminmenu li.wp-has-submenu.wp-not-current-submenu:hover::after,
+	#adminmenu li.wp-has-submenu.wp-not-current-submenu:focus-within::after {
+		display: none;
+	}
+
+	// Submenus
+	#adminmenu .wp-submenu a {
+		color: var(--ccui-sidebar-muted);
+		font-size: 13px;
+	}
+
+	#adminmenu .wp-submenu li.current a,
+	#adminmenu .wp-submenu li.current,
+	#adminmenu .opensub .wp-submenu li.current a,
+	#adminmenu a.wp-has-current-submenu:focus + .wp-submenu li.current a,
+	#adminmenu .wp-submenu li.current a:hover,
+	#adminmenu .wp-submenu li.current a:focus {
+		color: #fff;
+		font-weight: 600;
+	}
+
+	#adminmenu .wp-has-current-submenu .wp-submenu {
+		background: transparent;
+	}
+
+	// Flyouts (hovering a section that is not open, or any section while folded)
+	#adminmenu .wp-not-current-submenu .wp-submenu,
+	&.folded #adminmenu .wp-has-current-submenu .wp-submenu {
+		padding: 6px;
+		border: 0;
+		border-radius: var(--ccui-radius-l);
+		background: var(--ccui-sidebar-raised);
+		box-shadow: 0 16px 40px rgb(0 0 0 / 0.28);
+	}
+
+	#adminmenu .wp-not-current-submenu li > a,
+	&.folded #adminmenu .wp-has-current-submenu li > a,
+	&.folded #adminmenu li.menu-top .wp-submenu > li > a {
+		padding: 7px 12px;
+		border-radius: var(--ccui-radius-s);
+	}
+
+	#adminmenu .wp-not-current-submenu li > a:hover,
+	#adminmenu .wp-not-current-submenu li > a:focus,
+	&.folded #adminmenu .wp-submenu li > a:hover,
+	&.folded #adminmenu .wp-submenu li > a:focus {
+		background: var(--ccui-sidebar-hover);
+	}
+
+	#adminmenu .wp-submenu .wp-submenu-head {
+		color: #fff;
+		font-weight: 600;
+		border-radius: var(--ccui-radius-s);
+	}
+
+	// Counters ("Bookings 3", plugin updates)
+	#adminmenu .awaiting-mod,
+	#adminmenu .update-plugins,
+	#adminmenu .menu-counter,
+	#adminmenu li.current a .awaiting-mod,
+	#adminmenu li a.wp-has-current-submenu .update-plugins {
+		background-color: var(--ccui-highlight);
+		color: var(--ccui-ink);
+		font-family: var(--ccui-font-body);
+		font-weight: 700;
+	}
+
+	// Separators become hairlines
+	#adminmenu li.wp-menu-separator {
+		height: 1px;
+		margin: 10px 16px;
+		background: rgb(255 255 255 / 0.08);
+	}
+
+	&.folded #adminmenu li.wp-menu-separator {
+		margin: 10px 6px;
+	}
+
+	#adminmenu div.separator {
+		display: none;
+	}
+
+	#collapse-menu {
+		margin-top: 10px;
+	}
+
+	#collapse-button {
+		color: var(--ccui-sidebar-muted);
+	}
+
+	#collapse-button:hover,
+	#collapse-button:focus {
+		color: #fff;
+		box-shadow: none;
+	}
+
+	// Footer
+	#wpfooter {
+		color: var(--ccui-muted);
+	}
+
+	#footer-thankyou,
+	.cc-ui-footer {
+		font-style: normal;
+		font-weight: 500;
+	}
+}
+
+@mixin pills($inset: 10px) {
+	#adminmenu li.menu-top {
+		box-sizing: border-box;
+		padding: 1px $inset;
+	}
+
+	#adminmenu a.menu-top {
+		border-radius: var(--ccui-radius-m);
+	}
+
+	#adminmenu .wp-has-current-submenu .wp-submenu {
+		padding: 4px 0 8px;
+	}
+
+	#adminmenu .wp-has-current-submenu ul > li > a {
+		margin: 1px 0;
+		padding: 6px 10px 6px 36px;
+		border-radius: var(--ccui-radius-s);
+	}
+
+	#adminmenu .wp-has-current-submenu ul > li > a:hover,
+	#adminmenu .wp-has-current-submenu ul > li > a:focus {
+		background: var(--ccui-sidebar-hover);
+	}
+
+	#adminmenu .wp-has-current-submenu ul > li.current > a {
+		background: rgb(255 255 255 / 0.09);
+	}
+
+	#collapse-button {
+		box-sizing: border-box;
+		width: calc(100% - #{$inset * 2});
+		margin: 0 $inset;
+		border-radius: var(--ccui-radius-m);
+	}
+}
+
+// Desktop, expanded: wider sidebar with pill items. Folded (36px) and the ≤960px auto-fold keep core geometry.
+@media screen and (min-width: 961px) {
+	body.cc-ui:not(.folded) {
+		#adminmenuback,
+		#adminmenuwrap,
+		#adminmenu {
+			width: var(--ccui-menu-w);
+		}
+
+		#adminmenu .wp-has-current-submenu .wp-submenu {
+			width: auto;
+		}
+
+		#adminmenu .wp-not-current-submenu .wp-submenu {
+			left: var(--ccui-menu-w);
+		}
+
+		#wpcontent,
+		#wpfooter {
+			margin-left: var(--ccui-menu-w);
+		}
+
+		@include pills(10px);
+	}
+}
+
+// Auto-folded tablet range: the open section becomes a flyout too.
+@media screen and (max-width: 960px) and (min-width: 783px) {
+	body.cc-ui.auto-fold #adminmenu .wp-has-current-submenu .wp-submenu {
+		padding: 6px;
+		border: 0;
+		border-radius: var(--ccui-radius-l);
+		background: var(--ccui-sidebar-raised);
+		box-shadow: 0 16px 40px rgb(0 0 0 / 0.28);
+	}
+
+	body.cc-ui.auto-fold #adminmenu li.wp-menu-separator {
+		margin: 10px 6px;
+	}
+}
+
+// Phones: WordPress' slide-out menu, a little wider and with pills.
+@media screen and (max-width: 782px) {
+	body.cc-ui.auto-fold #adminmenu,
+	body.cc-ui.auto-fold #adminmenuback,
+	body.cc-ui.auto-fold #adminmenuwrap {
+		width: 248px;
+	}
+
+	body.cc-ui.auto-fold {
+		@include pills(8px);
+
+		#adminmenu .wp-submenu,
+		#adminmenu .wp-has-current-submenu .wp-submenu {
+			background: transparent;
+			box-shadow: none;
+		}
+
+		#adminmenu li.menu-top .wp-submenu > li > a {
+			padding: 10px 10px 10px 40px;
+		}
+	}
+}
+
+@media (forced-colors: active) {
+	body.cc-ui #adminmenu li.wp-has-current-submenu a.wp-has-current-submenu,
+	body.cc-ui #adminmenu li.current a.menu-top {
+		outline: 2px solid CanvasText;
+	}
+}

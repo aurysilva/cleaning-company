@@ -369,6 +369,14 @@ final class Recurring_Cli {
 			Queue::cancel( 'cc_bookings_quote_followup', [ (int) $q['id'], 'expiring' ] );
 			Queue::cancel( 'cc_bookings_quote_expire', [ (int) $q['id'] ] );
 		}
+		if ( $quote_ids && function_exists( 'as_get_scheduled_actions' ) ) {
+			$holds = as_get_scheduled_actions( [ 'hook' => 'cc_bookings_hold_expire', 'group' => Queue::GROUP, 'status' => \ActionScheduler_Store::STATUS_PENDING, 'per_page' => -1 ] );
+			foreach ( $holds as $action ) {
+				if ( in_array( (int) ( $action->get_args()[0] ?? 0 ), $quote_ids, true ) ) {
+					Queue::cancel( 'cc_bookings_hold_expire', $action->get_args() );
+				}
+			}
+		}
 		if ( $booking_ids ) {
 			$claims = array_map( 'intval', array_column( Db::all( Reclean::TABLE, [ 'booking_id' => $booking_ids ] ), 'id' ) );
 			if ( $claims ) {

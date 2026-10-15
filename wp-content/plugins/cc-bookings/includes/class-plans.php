@@ -88,7 +88,7 @@ final class Plans {
 			[ 'Regular plan', $plan['ref'] . ( 'active' === $plan['status'] ? '' : ' (' . strtolower( Recurring::PLAN_STATUSES[ $plan['status'] ] ?? $plan['status'] ) . ')' ) ],
 			[ 'How often', Recurring::label( (string) $plan['frequency'] ) . ( $plan['next_date'] ? ', ' . self::weekday_label( $plan ) . ', ' . Slots::label( (string) $plan['slot'] ) : '' ) ],
 			[ 'Price per visit', Money::format( (int) $plan['price_pence'] ) ],
-			[ 'Payment', $plan['card_label'] ? sprintf( '%s, charged %d hours before each visit', $plan['card_label'], $charge ) : sprintf( 'Charged %d hours before each visit', $charge ) ],
+			[ 'Payment', 'cancelled' === $plan['status'] ? 'No more charges' : ( $plan['card_label'] ? sprintf( '%s, charged %d hours before each visit', $plan['card_label'], $charge ) : sprintf( 'Charged %d hours before each visit', $charge ) ) ],
 			[ 'Upcoming visits', $next ? implode( "\n", $next ) : ( 'active' === $plan['status'] ? 'Being arranged' : 'None' ) ],
 		];
 	}
