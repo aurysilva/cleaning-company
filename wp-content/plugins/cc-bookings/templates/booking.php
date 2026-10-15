@@ -20,6 +20,8 @@ defined( 'ABSPATH' ) || exit;
 $service = Catalog::get( $booking['service_slug'] );
 $items   = Bookings::items( (int) $booking['id'] );
 $crew    = array_filter( array_map( fn( $o ) => $o['cleaner'] ? Notify::first_name( $o['cleaner']['name'] ) : '', Bookings::crew( (int) $booking['id'] ) ) );
+// Filtered before get_header() so a callback can enqueue its styles in the head.
+$crew_html = $crew ? (string) apply_filters( 'cc_bookings_booking_crew', '', $booking ) : '';
 
 get_header();
 ?>
@@ -41,7 +43,11 @@ get_header();
 			<?php else : ?>
 				<div class="cc-notice cc-notice--success">
 					<strong>Your booking is confirmed.</strong>
-					<p><?php echo $crew ? esc_html( 'Your cleaner' . ( count( $crew ) > 1 ? 's: ' : ': ' ) . implode( ', ', $crew ) . '.' ) : 'We\'ll let you know who your cleaner is before the day.'; ?></p>
+					<?php if ( $crew_html ) : ?>
+						<?php echo wp_kses_post( $crew_html ); ?>
+					<?php else : ?>
+						<p><?php echo $crew ? esc_html( 'Your cleaner' . ( count( $crew ) > 1 ? 's: ' : ': ' ) . implode( ', ', $crew ) . '.' ) : 'We\'ll let you know who your cleaner is before the day.'; ?></p>
+					<?php endif; ?>
 				</div>
 			<?php endif; ?>
 

@@ -27,7 +27,15 @@ final class Plan_Manage {
 		if ( ! $booking ) {
 			return;
 		}
-		$url = Bookings::url( $booking, $token );
+		self::handle_action( $booking, Bookings::url( $booking, $token ) );
+	}
+
+	/**
+	 * Run a posted plan action for a booking the caller has already authorised (by token, or as the
+	 * logged-in client), then redirect back to $url.
+	 */
+	public static function handle_action( array $booking, string $url ): void {
+		$action = sanitize_key( wp_unslash( (string) ( $_POST['cc_manage'] ?? '' ) ) ); // phpcs:ignore WordPress.Security.NonceVerification -- checked below.
 		if ( ! wp_verify_nonce( sanitize_text_field( wp_unslash( (string) ( $_POST['_ccnonce'] ?? '' ) ) ), Manage::NONCE . $booking['id'] ) ) {
 			self::redirect( $url, 'error', 'This page had expired, so nothing was changed. Please try again.' );
 		}
@@ -41,7 +49,7 @@ final class Plan_Manage {
 		$plan_id = (int) $plan['id'];
 
 		if ( 'plan_pay' === $action ) {
-			$result = Plan_Charges::pay_session( $booking, $token );
+			$result = Plan_Charges::pay_session( $booking, '', $url );
 			if ( is_wp_error( $result ) ) {
 				self::redirect( $url, 'error', $result->get_error_message() );
 			}
@@ -54,7 +62,7 @@ final class Plan_Manage {
 
 		switch ( $action ) {
 			case 'plan_card':
-				$result = Plan_Charges::card_session( $plan, $booking, $token );
+				$result = Plan_Charges::card_session( $plan, $booking, '', $url );
 				if ( is_wp_error( $result ) ) {
 					self::redirect( $url, 'error', $result->get_error_message() );
 				}

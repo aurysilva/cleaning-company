@@ -305,8 +305,15 @@ final class Manage {
 		if ( ! $booking ) {
 			return;
 		}
-		$url    = Bookings::url( $booking, $token );
-		$action = sanitize_key( wp_unslash( (string) $_POST['cc_manage'] ) );
+		self::handle_action( $booking, Bookings::url( $booking, $token ) );
+	}
+
+	/**
+	 * Run a posted booking action for a booking the caller has already authorised (by token, or as the
+	 * logged-in client), then redirect back to $url.
+	 */
+	public static function handle_action( array $booking, string $url ): void {
+		$action = sanitize_key( wp_unslash( (string) ( $_POST['cc_manage'] ?? '' ) ) ); // phpcs:ignore WordPress.Security.NonceVerification -- checked below.
 
 		if ( ! wp_verify_nonce( sanitize_text_field( wp_unslash( (string) ( $_POST['_ccnonce'] ?? '' ) ) ), self::NONCE . $booking['id'] ) ) {
 			self::redirect( $url, 'error', 'This page had expired, so nothing was changed. Please try again.' );

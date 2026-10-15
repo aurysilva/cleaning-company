@@ -101,6 +101,9 @@ final class Frontend {
 
 		wp_enqueue_script( 'cc-bookings-quote', CC_BOOKINGS_URL . 'assets/quote-form.js', [], self::asset_version( 'assets/quote-form.js' ), [ 'in_footer' => true, 'strategy' => 'defer' ] );
 		wp_localize_script( 'cc-bookings-quote', 'ccBookings', [ 'rest' => esc_url_raw( rest_url( Rest::NS . '/' ) ) ] );
+		if ( in_array( $template, Cleaner_Chrome::TEMPLATES, true ) ) {
+			Cleaner_Chrome::start( $template, $vars );
+		}
 
 		$file = locate_template( 'cc-bookings/' . $template . '.php' ) ?: CC_BOOKINGS_DIR . '/templates/' . $template . '.php';
 		extract( $vars, EXTR_SKIP ); // phpcs:ignore WordPress.PHP.DontExtract

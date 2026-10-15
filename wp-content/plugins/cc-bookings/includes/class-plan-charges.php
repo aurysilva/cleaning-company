@@ -406,7 +406,7 @@ final class Plan_Charges {
 	 * ------------------------------------------------------------------ */
 
 	/** @return string|\WP_Error Checkout URL for paying a payment-due visit. */
-	public static function pay_session( array $visit, string $token ) {
+	public static function pay_session( array $visit, string $token, string $return = '' ) {
 		$visit = Bookings::get( (int) $visit['id'] );
 		$plan  = $visit ? Plans::get( (int) $visit['series_id'] ) : null;
 		if ( ! $visit || ! $plan || ! in_array( $visit['status'], [ 'payment_due', 'scheduled' ], true ) || Plans::is_paid( $visit ) ) {
@@ -420,7 +420,7 @@ final class Plan_Charges {
 			return new \WP_Error( 'late', 'It\'s too late to pay online for this visit. Please call us.' );
 		}
 		$expires = min( time() + DAY_IN_SECONDS - 300, $release );
-		$url     = Bookings::url( $visit, $token );
+		$url     = $return ?: Bookings::url( $visit, $token );
 		$meta    = [ 'type' => 'visit', 'source' => 'pay_link', 'visit_id' => (int) $visit['id'], 'visit_ref' => $visit['ref'], 'plan_id' => (int) $plan['id'], 'plan_ref' => $plan['ref'] ];
 		$params  = [
 			'mode'                => 'payment',
@@ -477,11 +477,11 @@ final class Plan_Charges {
 	}
 
 	/** @return string|\WP_Error Checkout URL (setup mode) for saving a new card on the plan. */
-	public static function card_session( array $plan, array $booking, string $token ) {
+	public static function card_session( array $plan, array $booking, string $token, string $return = '' ) {
 		if ( ! Stripe::enabled() ) {
 			return new \WP_Error( 'disabled', 'Card updates online aren\'t available. Please call us.' );
 		}
-		$url    = Bookings::url( $booking, $token );
+		$url    = $return ?: Bookings::url( $booking, $token );
 		$meta   = [ 'type' => 'card_update', 'plan_id' => (int) $plan['id'], 'plan_ref' => $plan['ref'], 'booking_id' => (int) $booking['id'] ];
 		$params = [
 			'mode'                 => 'setup',

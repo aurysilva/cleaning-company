@@ -88,22 +88,26 @@ final class Job_Pages {
 
 	/** POST from the job page. The signed URL is the credential; actions are idempotent by status. */
 	private static function handle( array $offer ): void {
-		// phpcs:disable WordPress.Security.NonceVerification -- authorised by the signed link; no logged-in session.
-		$do = sanitize_key( (string) ( $_POST['cc_job_action'] ?? '' ) );
-		if ( ! Security::rate_limit( 'job:' . $offer['id'], 20, HOUR_IN_SECONDS ) ) {
-			$result = [ 'code' => 'limit' ];
-		} else {
-			$result = match ( $do ) {
-				'accept'   => Dispatch::accept( (int) $offer['id'] ),
-				'decline'  => Dispatch::decline( (int) $offer['id'] ),
-				'drop'     => Dispatch::drop( (int) $offer['id'], (string) wp_unslash( $_POST['reason'] ?? '' ) ),
-				'complete' => Dispatch::complete( (int) $offer['id'], Files::from_request( $_FILES ) ),
-				default    => [ 'code' => 'error' ],
-			};
-		}
-		// phpcs:enable
+		// phpcs:ignore WordPress.Security.NonceVerification -- authorised by the signed link; no logged-in session.
+		$result = self::act( $offer, sanitize_key( (string) ( $_POST['cc_job_action'] ?? '' ) ) );
 		wp_safe_redirect( add_query_arg( 'r', $result['code'], self::current_url() ), 303 );
 		exit;
+	}
+
+	/** Run a job-page action (accept | decline | drop | complete) for an offer; also used by the cleaner portal. */
+	public static function act( array $offer, string $do ): array {
+		// phpcs:disable WordPress.Security.NonceVerification -- callers authorise the request (signed link or portal nonce).
+		if ( ! Security::rate_limit( 'job:' . $offer['id'], 20, HOUR_IN_SECONDS ) ) {
+			return [ 'code' => 'limit' ];
+		}
+		return match ( $do ) {
+			'accept'   => Dispatch::accept( (int) $offer['id'] ),
+			'decline'  => Dispatch::decline( (int) $offer['id'] ),
+			'drop'     => Dispatch::drop( (int) $offer['id'], (string) wp_unslash( $_POST['reason'] ?? '' ) ),
+			'complete' => Dispatch::complete( (int) $offer['id'], Files::from_request( $_FILES ) ),
+			default    => [ 'code' => 'error' ],
+		};
+		// phpcs:enable
 	}
 
 	/**

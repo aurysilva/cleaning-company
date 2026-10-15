@@ -73,7 +73,7 @@ final class Cleaner_Profiles_Screen {
 				esc_html( Availability::week_label( (int) $c['id'] ) ),
 				esc_html( $c['pay_rate_pence'] ? Money::format( (int) $c['pay_rate_pence'] ) . ( 'per_job' === $c['pay_type'] ? '/job' : '/hr' ) : '—' ),
 				count( Cleaners::jobs( (int) $c['id'] ) ),
-				esc_html( ucfirst( $c['status'] ) )
+				apply_filters( 'cc_bookings_admin_cleaner_status', esc_html( ucfirst( $c['status'] ) ), $c ) // phpcs:ignore WordPress.Security.EscapeOutput
 			);
 		}
 		echo '</tbody></table>';
@@ -110,6 +110,7 @@ final class Cleaner_Profiles_Screen {
 		$text( 'phone', 'Mobile', $c['phone'], 'tel', 'Offers and job changes are also texted here.' );
 		$select( 'type', 'Type', Cleaners::TYPES, $c['type'], 'Employed: assigned automatically. Self-employed: offered jobs, first to accept gets them.' );
 		$select( 'status', 'Status', [ 'active' => 'Active', 'inactive' => 'Inactive (no new jobs, links stop working)' ], $c['status'] );
+		do_action( 'cc_bookings_admin_cleaner_form', $c );
 
 		echo '<tr><th colspan="2"><h2>Where and what</h2></th></tr>';
 		$areas = self::areas();
@@ -180,6 +181,7 @@ final class Cleaner_Profiles_Screen {
 		echo '</div><div>';
 
 		if ( ! $new ) {
+			do_action( 'cc_bookings_admin_cleaner_sidebar', $c );
 			echo '<h2>"My jobs" link</h2><p class="description">A private link where the cleaner sees their upcoming jobs and open offers. Every job email and text also carries a link to that job.</p><div class="cc-admin__actions">';
 			echo Admin::button( 'dispatch_cleaner_link', [ 'id' => $c['id'] ], 'Email & text the link', 'button button-primary' ); // phpcs:ignore WordPress.Security.EscapeOutput
 			echo Admin::button( 'dispatch_cleaner_show', [ 'id' => $c['id'] ], 'Show link' ); // phpcs:ignore WordPress.Security.EscapeOutput

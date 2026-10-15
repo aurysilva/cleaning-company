@@ -41,6 +41,7 @@ register_deactivation_hook( __FILE__, [ CC\Bookings\Plugin::class, 'deactivate' 
 add_action( 'plugins_loaded', [ CC\Bookings\Plugin::class, 'boot' ] );
 add_action( 'cc_bookings_loaded', [ CC\Bookings\Aftercare::class, 'init' ] );
 add_action( 'cc_bookings_loaded', [ CC\Bookings\Recurring::class, 'init' ] );
+add_action( 'cc_bookings_loaded', [ CC\Bookings\Cleaner_Accounts::class, 'init' ] );
 
 /**
  * The multi-step quote form, rendered by the theme's {cc_quote_form} tag.

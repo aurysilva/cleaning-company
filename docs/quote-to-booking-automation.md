@@ -543,3 +543,141 @@ Phase 4 lives in its own files: `class-recurring.php` (bootstrap, settings, pric
   - In the browser: skip, change frequency, pause, resume, update card (the real setup-mode Checkout opened, card only, and was expired) and end plan. The admin list, detail and visit sidebar render without notices.
   - Signed webhook POSTs: a foreign PaymentIntent gets 200 "ignored", an unknown visit gets 200, and a bad signature gets 400.
   - Quote, booking and job pages send `no-store` and `noindex`. Home, contact and a service page contain no "£". All 169 plugin PHP files pass `php -l` on PHP 8.3.35, and there are no cc-bookings warnings in the logs.
+
+### Cleaner accounts (built)
+
+Cleaner accounts live in their own files: `class-cleaner-accounts.php` (bootstrap, schema, statuses, emails, lockdown, retention), `class-cleaner-invites.php`, `class-cleaner-auth.php` (password, magic link and reset), `class-cleaner-setup.php` (the setup wizard), `class-cleaner-portal.php` (routes and portal pages), `class-cleaner-profile.php` (saving each section), `class-cleaner-forms.php`, `class-cleaner-docs.php`, `class-cleaner-bank.php`, `class-cleaner-accounts-cli.php`, `admin/class-cleaner-accounts-screen.php`, the templates `cleaner-login.php`, `cleaner-setup.php`, `cleaner-portal.php` and `cleaner-message.php`, and `assets/cleaners.css` / `cleaners.js`. It is switched on by one line in `cc-bookings.php` (`add_action( 'cc_bookings_loaded', [ Cleaner_Accounts::class, 'init' ] )`).
+
+Edits to shared files only add hooks:
+- `Notify` gains the `cc_bookings_email_html_vars` filter.
+- `Job_Pages::act()` is now public, so the portal accepts and declines through the same dispatch code as the one-tap links.
+- `templates/job.php` gains `cc_bookings_job_form` and an optional `$jobs_label`.
+- `templates/booking.php` gains the `cc_bookings_booking_crew` filter.
+- The Cleaners admin screen gains `cc_bookings_admin_cleaner_status`, `cc_bookings_admin_cleaner_form` and `cc_bookings_admin_cleaner_sidebar`.
+- `admin.css` gains the account and document badge styles.
+
+**The flow**
+1. **Admin sets up the cleaner** on **Bookings → Cleaners** (name, email, mobile, type, pay, areas…). "Email an invite" is ticked by default for new cleaners. Saving creates a WordPress user with the `cc_cleaner` role (read only) linked through `cleaners.user_id`, and emails the invite. The profile sidebar shows the account status and has **Send invite / Resend invite**. Resending issues a new link, and the old one stops working.
+2. **Invite link** `/cleaners/setup/{token}/`: a 43-character random token. Only its SHA-256 hash is stored. It works once and expires after 7 days (setting). A used, expired, replaced or tampered link gets a 410 page that says to ask the office for a new one.
+3. **Setup wizard** (mobile-first, theme colours, progress saved after every step, Back/Continue, a step list at the top):
+   1. **Your details:** confirm name, mobile (UK) and home address with a full postcode, and choose a password. Choosing the password uses up the invite, logs the cleaner in and ends any other sessions.
+   2. **Availability & areas:** Area pages plus extra postcode districts, car, weekly hours (any time, or set times per day) and the most jobs in a day.
+   3. **Services** (at least one).
+   4. **Profile photo:** JPG/PNG/WebP, cropped to 600×600.
+   5. **Emergency contact:** name, relationship, and a phone number that differs from the cleaner's.
+   6. **Documents:** photo ID with an expiry, right to work, DBS (optional recheck date), and public liability insurance with an expiry (required for self-employed). PDF, JPG, PNG, WebP or HEIC, up to 10 MB each.
+   7. **Bank details:** name, sort code and account number.
+   8. **Agreement** (always last): the cleaner terms (employed) or the contractor agreement (self-employed). Ticking "I agree" stores the type, version, SHA-256 of the exact text, time, IP address and browser. The exact text of every version agreed is kept in the option `cc_bookings_cleaner_terms_history`.
+   
+   Then the "Submitted — we'll review your documents" page. The status becomes **Awaiting approval**, and the office gets `cleaner_setup_submitted`.
+4. **Admin review** in the profile sidebar:
+   - Each document can be viewed, **Approved**, **Rejected** with a reason (emails `cleaner_doc_rejected` asking for a new copy) or given an expiry date.
+   - **Activate** is refused until every required document and the photo are approved, the bank details and agreement are in, and setup is finished.
+   - Activating emails `cleaner_approved` (with the login link).
+   - **Bookings → Cleaner accounts** lists accounts waiting for approval, accounts still in setup and documents expiring in the next 45 days, and holds the settings and both agreements.
+5. **Active:** only Active cleaners (plus legacy cleaners, below) are offered jobs or count towards bookable slots. This uses the `cc_bookings_dispatch_cleaners` filter at priority 5.
+6. **Deactivate / Reactivate** (sidebar button):
+   - Deactivating sets the cleaner inactive and blocks login.
+   - It ends all sessions, clears magic-link and reset keys, and rotates the signing keys for the "My jobs" link and every job link.
+   - It withdraws open offers and alerts the office about upcoming jobs that need reassigning.
+   - Reactivating returns the cleaner to the status they had before. An invite that was pending at deactivation is not revived, so send a new one.
+
+**Statuses** (`cleaners.account_status`): `none` Not invited · `invited` Invited · `setup` Setup in progress · `review` Awaiting approval · `active` Active · `deactivated` Deactivated · `legacy` No account. Cleaners who existed before this feature were set to `legacy`. They keep working exactly as before (dispatch, slots, one-tap links), and can be sent an invite at any time. Only `setup`, `review` and `active` can log in, and only while the cleaner record itself is Active.
+
+**Login** (`/cleaners/`): one card with two tabs, **Password** (the default) and **No password?** (ARIA tabs, arrow keys, instant switching). Without JavaScript the tabs are links, and `?method=link` opens the second tab. After a link request, or an error, the page comes back on the tab that was used.
+- **Email and password.** The error is always generic: "That email address and password don't match an active cleaner account." "Forgot password?" sits under the password field.
+- **"Email me a login link":** a single-use magic link that lasts 15 minutes (setting). The page always says "Check your email. If that address belongs to a cleaner account, we've sent it a login link." Opening the link shows a **Log me in** button, so email scanners can't use it up.
+- **Forgotten password** (`/cleaners/forgot/`): uses WordPress reset keys, valid for 60 minutes and single use. Setting the new password logs the cleaner in and logs out every other device.
+- **Password rules:** 10–128 characters. Under 16 characters needs 3 of lower case, upper case, digits and symbols. No runs of 4 or more of the same character, no parts of the cleaner's name or email, and no common passwords. A live strength hint mirrors these rules.
+- **Rate limits:**
+  - Logins: 20 per IP per 15 minutes, and 5 failures per account per 15 minutes.
+  - Login-link and reset requests: 6 per IP per hour, and 3 per account per hour.
+  - Setup and portal forms: per IP.
+- **wp-login.php** also refuses cleaners who aren't allowed in (`authenticate` filter at priority 99).
+
+**Portal** (logged-in cleaners; every page is `no-store`, `noindex`, `X-Frame-Options: DENY`, `Referrer-Policy: no-referrer`, and is never cached by LiteSpeed):
+- **My jobs** (`/cleaners/`): things needing attention (rejected or expiring documents), offers waiting with **Accept / Decline**, and upcoming jobs. Each links to `/cleaners/job/{offer}/`, the same job page as the signed links, with "Can't make it" and "Mark job complete".
+- **Availability:** areas, districts, car, weekly hours and daily limit; time off (add/remove; a clash with an existing job alerts the office).
+- **Profile:** details, photo (a new photo goes back to review), emergency contact and change password.
+- **Documents:** status of each document, view your own copy, upload a new copy (it goes back to review).
+- **Bank details:** shows only `•••• 1234`. New details replace the old ones, and the office is told when an Active cleaner changes them.
+- **Earnings:** completed jobs and pay by month. Pay is the offer's agreed pay, otherwise the cleaner's rate. Pay amounts appear only here and on the job pages, never on public pages.
+- **Log out** (POST with a nonce), in the header.
+- **Cleaner terms** (`/cleaners/terms/`): the agreement for the cleaner's type (the exact wording they agreed, if kept), or both kinds when logged out.
+
+**Header and footer.** Every cleaner page (`/cleaners/…`, plus the `/job/…` signed links) uses the plugin's own header and footer instead of the marketing site's Bricks templates (`Cleaner_Chrome`: Bricks' header and footer are switched off for these routes only, through `bricks/active_templates`). The header has the logo and a "Cleaner portal" label. When a cleaner is logged in it also has the tabs **Jobs · Availability · Earnings · Profile** (Documents and Bank details are sub-tabs of Profile), their first name and **Log out**. On phones (768px and under) the tabs become a fixed bottom tab bar with icons, clear of the iPhone home bar. The setup wizard and logged-out pages show the logo and label only. The slim footer has the office phone and email, Cleaner terms, Privacy and ©. Marketing and customer pages (quote and booking) are unchanged.
+- Cleaners are sent to `/cleaners/` if they open wp-admin. They never see the admin bar, have no author archive (404), and are left out of REST user lists and the user sitemap.
+
+**Existing one-tap links** (`/job/{offer}/{sig}/`, `/job/me/{cleaner}/{sig}/`) work unchanged for everyone, and stop working when an account is deactivated.
+
+**Customer side:** the private booking page and the `cleaner_customer` email show each cleaner's first name and photo, but only when the account is Active and the photo is approved. Otherwise they fall back to the previous text. The photo URL `/cleaners/photo/{id}/{sig}/` is HMAC-signed for that exact photo, so a new photo gets a new URL. A bad signature gets a 404, and so does any photo whose cleaner is no longer Active.
+
+**Owner steps**
+1. **Write the real agreements** under **Bookings → Cleaner accounts → Settings**: one for employed cleaners (cleaner terms) and one for self-employed (contractor agreement). The current text is a DRAFT placeholder and says so. Give each a version (for example `2026-11`). Changing the version makes the new text apply to future agreements; earlier agreements and their exact text stay on record. Have an adviser check the employment-status wording.
+2. **Decide the retention policy** and set it on the same page. The defaults are: documents and photo deleted 730 days after deactivation, and bank details 90 days after. Then write it into a staff/contractor privacy notice (see the GDPR notes below). Set either to 0 to keep that data until it is deleted by hand.
+3. **Back up the encryption key.** `CC_BOOKINGS_ENC_KEY` (64 hex characters) was added to `wp-config.php`. Store a copy somewhere safe and offline. Without it, saved bank details can't be read, and cleaners would have to enter them again. Never change it once bank details are stored. If it is missing, bank details are refused and the office is alerted.
+4. **Invite the cleaners**, legacy ones included, from their profiles. Review their documents, then activate.
+5. **Email wording** for `cleaner_invite`, `cleaner_setup_submitted`, `cleaner_doc_rejected`, `cleaner_approved`, `cleaner_magic_link`, `cleaner_password_reset`, `cleaner_doc_expiring` and `cleaner_doc_expiring_admin` is under **Settings → Emails**. If you have already customised `cleaner_customer`, add `{cleaner_card}` to it to show the photo.
+
+**UK GDPR notes**
+- **Lawful bases:**
+  - Contract and legal obligation for identity, right-to-work and payment data.
+  - Legitimate interests for the emergency contact and for showing the photo to customers. The setup text tells the cleaner the photo is shown to customers.
+  - DBS certificates are criminal-offence data (Article 10). Keep them only as long as your appropriate-policy document says. The DBS expiry field can hold a recheck date.
+- **Data minimisation:** only the last 4 digits of the account number are ever shown. Full bank details are decrypted only for an administrator who presses **Show full details**, and each reveal is logged (`bank_revealed`, with the user).
+- **Security:**
+  - Bank details are encrypted with libsodium `secretbox` (XSalsa20-Poly1305) and stored as `v1:` + base64 (nonce + ciphertext).
+  - Documents are stored in `uploads/cc-bookings-private/cleaners/{id}/` with random file names. Direct access is denied (403), and files are served by PHP only to the cleaner who owns them and to administrators, with `no-store` and `nosniff`.
+  - Images are re-encoded on upload, which strips metadata. PDFs must start with `%PDF-`.
+- **Access and erasure:** the cleaner can see and update their own details and documents in the portal. Ask the office for a full copy or deletion. `wp cc-bookings cleaners retention` applies the policy on demand. The daily job also applies it to accounts deactivated longer ago than the set periods.
+- **Audit trail:** every invite, setup step, upload, review, status change, login, logout, password change, bank change and reveal is in **Bookings → Activity** under the cleaner.
+
+**Technical notes**
+- **Schema:** separate installer (option `cc_bookings_cleaner_accounts_schema`, version 1). It changes:
+  - **Table `wp_cc_cleaner_accounts`** (one row per cleaner): invite hash, expiry and time; `was_legacy`; `status_before`; address; emergency (JSON); bank (encrypted); `bank_last4`; `bank_updated_at`; terms (JSON); setup steps done (JSON); `submitted_at`; `approved_at` / `approved_by`; `deactivated_at`.
+  - **Table `wp_cc_cleaner_docs`**: type, status (pending/approved/rejected/expired/replaced), file, mime, size, original name, `expires_on`, reminders sent, reason, reviewer and time.
+  - **Column `cleaners.account_status`.**
+  - **Role `cc_cleaner`.**
+  
+  The core schema version is unchanged.
+- **Settings** are stored under `accounts.*`, with defaults in `Cleaner_Accounts::DEFAULTS`: `invite_days` (7), `magic_minutes` (15), `reset_minutes` (60), `reminder_days` ("30,7"), `retention_docs_days` (730), `retention_bank_days` (90), `terms_employed`, `terms_employed_version`, `terms_self_employed` and `terms_self_employed_version`.
+- **Key:** `CC_BOOKINGS_ENC_KEY` in `wp-config.php`, 32 bytes as hex or base64. `wp cc-bookings cleaners check-encryption` checks it without printing it.
+- **Routes** (rewrite rules on `cc_bookings_rewrites`): `/cleaners/`, `/cleaners/{availability|profile|documents|bank|earnings|setup|forgot|logout|terms}/`, `/cleaners/setup/{token}/`, `/cleaners/magic/{token}/`, `/cleaners/reset/{user}/{key}/`, `/cleaners/job/{offer}/`, `/cleaners/file/{doc}/` and `/cleaners/photo/{cleaner}/{sig}/`. Every form has a nonce, and the portal accepts only same-site `next` redirects.
+- **Queue action:** `cc_bookings_cleaner_daily`. It sends document expiry reminders at 30 and 7 days (to the cleaner and the office), marks documents expired once the date passes, and applies retention. Expired documents trigger alerts but don't block dispatch on their own; the office decides whether to deactivate.
+- **Hooks fired:** `cc_cleaner_invited( $cleaner_id )`, `cc_cleaner_account_status( $cleaner_id, $to, $from )`, `cc_cleaner_setup_submitted( $cleaner_id )`, `cc_cleaner_activated( $cleaner_id )`, `cc_cleaner_deactivated( $cleaner_id )`, `cc_cleaner_doc_uploaded( $doc_id, $cleaner_id )`, `cc_cleaner_doc_reviewed( $doc_id, $status )` and `cc_cleaner_availability_changed( $cleaner_id )`.
+- **Filters:** `cc_bookings_cleaner_doc_types` (add or change document types), plus the shared-file filters above.
+- **Listens to:** `cc_cleaner_saved` (sends the invite), `cc_bookings_dispatch_cleaners` (priority 5), `cc_bookings_email_defaults` (priority 20), `cc_bookings_email_vars` (priority 30, adds `{cleaner_card}`), `cc_bookings_booking_crew`, `authenticate`, `after_password_reset`, `login_redirect`, `admin_init`, `show_admin_bar`, `rest_user_query`, `wp_sitemaps_users_query_args`, `cc_bookings_admin_pages` and `cc_bookings_admin_action_cacct_*`.
+- **Known limits:**
+  - Manual **Assign** on the admin booking and Dispatch screens still lists every Active cleaner record, which lets the office override.
+  - Expired documents don't block dispatch automatically.
+  - There is no in-portal document deletion; the office handles that on request.
+- **WP-CLI** (`wp cc-bookings cleaners …`; printed links are live credentials, so treat them like passwords):
+
+| Command | What it does |
+|---|---|
+| `list [--format=]` | All cleaners with cleaner and account status, and whether they can be dispatched |
+| `create --name= --email= [--phone= --type= --pay-rate= --pay-type= --invite]` | Adds a cleaner as the admin form does |
+| `invite <id>` | Emails a new invite (the old link stops working) |
+| `setup-link <id>` | Prints a new setup link without emailing it |
+| `status <id>` | Account, setup steps, masked bank, agreement, missing items and documents |
+| `login-link <id>` / `reset-link <id>` | Prints a single-use login link or password-reset link |
+| `approve-doc <doc> [--all]` / `reject-doc <doc> --reason=` / `doc-expiry <doc> [<date>]` | Document review |
+| `activate <id> [--force]` / `deactivate <id> [--reason=]` / `reactivate <id>` | Account status |
+| `reminders` / `retention [--dry-run]` | Runs the daily jobs now |
+| `check-encryption` | Checks the key and an encrypt/decrypt round trip |
+| `purge-test [--yes]` | Deletes only cleaners and customers named "CL Test…" and all their data |
+
+- **Verified on the server** (15 Oct 2026, with "CL Test" data, since deleted; emails in log-only mode and the slot source set to capacity during the test, both since restored):
+  - The admin save path created the cleaner and the `cc_cleaner` user and logged the invite. In the browser, the setup link ran all 8 steps:
+    - A weak password was refused with the inputs kept.
+    - Missing services, a duplicate emergency phone, a fake PDF and a 5-digit sort code were refused. Bank fields are never echoed back.
+    - A photo and four documents were uploaded through the real multipart form.
+    - The done page appeared, and the used link then returned 410.
+  - The bank column holds `v1:…` ciphertext with no digits. The admin sidebar shows `•••• 5678` and never the full number. Direct URLs to a document and its folder return 403. Through PHP, the owner gets the file with `no-store`/`nosniff`, and a missing id gets 404.
+  - A rejected DBS showed its reason in the portal, and a re-upload put it back to review. **Activate** was refused while documents were pending and succeeded once they were approved; the cleaner then became eligible for dispatch.
+  - A password login worked, and a wrong password and an unknown email got the same message. Requesting a login link showed the generic message and logged the email. The link logged in once, and reusing it redirected with "link used". The reset form and link worked, and reusing the reset link returned 410.
+  - As a cleaner, `/wp-admin/` and `/wp-admin/profile.php` redirect to `/cleaners/`. The author archive returns 404, the cleaner is not in `/wp-json/wp/v2/users`, and `/users/{id}` returns 401.
+  - A simulated payment for a "CL Test Customer" booking offered the job to the cleaner. **Accept** in the portal gave "The job is yours" with the full details, and the office got `dispatch_admin`. The one-tap offer and "My jobs" links still returned 200. The customer booking page showed the first name and the signed photo (200 `image/jpeg`; a bad signature gave 404). The daily job sent the 30-day insurance reminders.
+  - Deactivation ended the session (1 → 0), took the cleaner out of dispatch, alerted the office about the upcoming job and refused both portal login and `wp_authenticate`.
+  - A second cleaner's fresh invite returned 200; once expired it returned 410, and a tampered token returned 410. The portal is laid out for a 390 px-wide phone screen with no sideways scrolling.
+  - All changed PHP files pass `php -l` on PHP 8.3.

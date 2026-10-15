@@ -162,7 +162,7 @@ final class Notify {
 	public static function render( string $key, array $vars ): array {
 		$template  = self::template( $key );
 		$vars     += self::site_vars();
-		$html_vars = [ 'items', 'details', 'job_details' ];
+		$html_vars = (array) apply_filters( 'cc_bookings_email_html_vars', [ 'items', 'details', 'job_details' ] );
 
 		$replace_text = function ( string $text ) use ( $vars ): string {
 			return preg_replace_callback( '/\{([a-z_]+)\}/', fn( $m ) => array_key_exists( $m[1], $vars ) && ! is_array( $vars[ $m[1] ] ) ? wp_strip_all_tags( (string) $vars[ $m[1] ] ) : $m[0], $text );

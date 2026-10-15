@@ -103,6 +103,7 @@ get_header();
 							<?php if ( $offer['expires_at'] && Db::timestamp( $offer['expires_at'] ) > time() ) : ?>
 								<p class="cc-small">Offer open until <?php echo esc_html( wp_date( 'D j M, H:i', Db::timestamp( $offer['expires_at'] ) ) ); ?>.</p>
 							<?php endif; ?>
+							<?php do_action( 'cc_bookings_job_form', $offer ); ?>
 							<button type="submit" name="cc_job_action" value="accept" class="cc-btn cc-btn--primary cc-btn--block">Accept job</button>
 							<?php if ( 'open' === $view ) : ?>
 								<button type="submit" name="cc_job_action" value="decline" class="cc-btn cc-btn--outline cc-btn--block">Decline</button>
@@ -116,6 +117,7 @@ get_header();
 								<p class="cc-private__total-label">Finished?</p>
 								<label for="cc-job-photos" class="cc-small">Add photos (optional, up to 6)</label>
 								<input id="cc-job-photos" type="file" name="photos[]" accept="image/*" multiple>
+								<?php do_action( 'cc_bookings_job_form', $offer ); ?>
 								<button type="submit" name="cc_job_action" value="complete" class="cc-btn cc-btn--primary cc-btn--block">Mark job complete</button>
 							</form>
 						<?php else : ?>
@@ -129,12 +131,13 @@ get_header();
 							<form method="post" action="<?php echo esc_url( $action ); ?>" onsubmit="return confirm('Tell the office you can\'t do this job? It will be offered to someone else.');">
 								<label for="cc-job-reason">Reason (optional)</label>
 								<textarea id="cc-job-reason" name="reason" rows="3" maxlength="255"></textarea>
+								<?php do_action( 'cc_bookings_job_form', $offer ); ?>
 								<button type="submit" name="cc_job_action" value="drop" class="cc-btn cc-btn--outline">I can't make it</button>
 							</form>
 						</details>
 					<?php endif; ?>
 
-					<p><a class="cc-btn cc-btn--outline" href="<?php echo esc_url( $jobs ); ?>">My upcoming jobs</a></p>
+					<p><a class="cc-btn cc-btn--outline" href="<?php echo esc_url( $jobs ); ?>"><?php echo esc_html( $jobs_label ?? 'My upcoming jobs' ); ?></a></p>
 				</aside>
 			</div>
 		</div>
