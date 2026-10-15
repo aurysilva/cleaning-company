@@ -192,9 +192,10 @@ final class Plans {
 			$earliest = time() + ( Recurring::charge_hours() + 1 ) * HOUR_IN_SECONDS;
 			$date     = (string) $plan['next_date'];
 			$count    = count( self::upcoming( $plan_id ) );
+			$skipped  = array_flip( (array) ( $plan['meta']['skip_dates'] ?? [] ) );
 			for ( $guard = 0; $guard < 60 && $count < $horizon; $guard++ ) {
 				$start = Slots::start_timestamp( $date, (string) $plan['slot'] );
-				if ( $start >= $earliest ) {
+				if ( $start >= $earliest && ! isset( $skipped[ $date ] ) ) {
 					if ( Slots::is_working_day( $date ) ) {
 						self::create_visit( $plan, $date );
 						$created++;
@@ -325,6 +326,12 @@ final class Plans {
 			return new \WP_Error( 'paid', 'That visit has already been paid for, so it can\'t be skipped here. You can cancel it from its own booking page.' );
 		}
 		Bookings::set_status( $visit_id, 'skipped', 'Skipped by ' . $actor );
+		// Remember the date so a later frequency change or resume doesn't book it again.
+		$meta  = (array) $plan['meta'];
+		$today = wp_date( 'Y-m-d' );
+		$dates = array_filter( array_merge( (array) ( $meta['skip_dates'] ?? [] ), [ (string) $visit['job_date'] ] ), fn( $d ) => $d >= $today );
+		$meta['skip_dates'] = array_values( array_unique( $dates ) );
+		Db::update( Recurring::TABLE, $plan_id, [ 'meta' => $meta ] );
 		self::generate( $plan_id );
 		self::notify( $plan_id, 'skip', sprintf( 'You\'ve skipped your visit on %s. No payment will be taken for it.', Bookings::start_label( $visit ) ), $actor, 'visit skipped' );
 		return true;
@@ -351,7 +358,7 @@ final class Plans {
 		}
 		Db::update( Recurring::TABLE, $plan_id, [ 'status' => 'paused', 'paused_at' => Db::now() ] );
 		$kept = self::skip_unpaid( $plan_id, 'Plan paused by ' . $actor );
-		self::notify( $plan_id, 'pause', 'Your regular plan is paused. We won\'t book or charge any more visits until you resume it.' . ( $kept ? ' Your visit on ' . implode( ' and ', $kept ) . ' is already paid and still goes ahead; cancel it from its booking page if you don\'t need it.' : '' ), $actor, 'paused' );
+		self::notify( $plan_id, 'pause', 'Your regular plan is paused. We won\'t book or charge any more visits until you resume it.' . self::kept_note( $kept ), $actor, 'paused' );
 		return true;
 	}
 
@@ -363,8 +370,8 @@ final class Plans {
 		}
 		Db::update( Recurring::TABLE, $plan_id, [ 'status' => 'active', 'paused_at' => null, 'next_date' => self::restart_date( $plan ) ] );
 		self::generate( $plan_id );
-		$next = self::upcoming( $plan_id )[0] ?? null;
-		self::notify( $plan_id, 'resume', 'Your regular plan is back on.' . ( $next ? sprintf( ' Your next visit is %s; we\'ll charge %s to your card %d hours before.', Bookings::start_label( $next ), Money::format( (int) $next['total_pence'] ), Recurring::charge_hours() ) : '' ), $actor, 'resumed' );
+		$next = array_values( array_filter( self::upcoming( $plan_id ), fn( $v ) => ! self::is_paid( $v ) ) )[0] ?? null;
+		self::notify( $plan_id, 'resume', 'Your regular plan is back on.' . ( $next ? sprintf( ' Your next new visit is %s; we\'ll charge %s to your card %d hours before.', Bookings::start_label( $next ), Money::format( (int) $next['total_pence'] ), Recurring::charge_hours() ) : '' ), $actor, 'resumed' );
 		return true;
 	}
 
@@ -428,8 +435,20 @@ final class Plans {
 		}
 		Db::update( Recurring::TABLE, $plan_id, [ 'status' => 'cancelled', 'cancelled_at' => Db::now() ] + ( $reason ? [ 'admin_note' => trim( (string) $plan['admin_note'] . "\nCancelled: " . $reason ) ] : [] ) );
 		$kept = self::skip_unpaid( $plan_id, 'Plan cancelled by ' . $actor );
-		self::notify( $plan_id, 'cancel', 'Your regular plan has ended and we won\'t take any more payments.' . ( $kept ? ' Your visit on ' . implode( ' and ', $kept ) . ' is already paid and still goes ahead; cancel it from its booking page if you don\'t need it.' : '' ), $actor, 'cancelled' );
+		self::notify( $plan_id, 'cancel', 'Your regular plan has ended and we won\'t take any more payments.' . self::kept_note( $kept ), $actor, 'cancelled' );
 		return true;
+	}
+
+	/** " Your visit(s) on … already paid …" for pause / cancel messages. */
+	private static function kept_note( array $kept ): string {
+		if ( ! $kept ) {
+			return '';
+		}
+		if ( 1 === count( $kept ) ) {
+			return ' Your visit on ' . $kept[0] . ' is already paid and still goes ahead; cancel it from its booking page if you don\'t need it.';
+		}
+		$last = array_pop( $kept );
+		return ' Your visits on ' . implode( ', ', $kept ) . ' and ' . $last . ' are already paid and still go ahead; cancel them from their booking pages if you don\'t need them.';
 	}
 
 	/** Save a new card for off-session charges, then retry any visit waiting for payment. */

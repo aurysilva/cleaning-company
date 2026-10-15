@@ -376,6 +376,7 @@ KEY quote_id (quote_id)
 			return $params;
 		}
 		$params['customer_creation']                         = 'always';
+		$params['payment_method_types']                      = Plan_Charges::PAYMENT_METHOD_TYPES;
 		$params['payment_intent_data']['setup_future_usage'] = 'off_session';
 		$params['payment_intent_data']['metadata']['plan']   = $plan['frequency'];
 		$params['metadata']['plan']                          = $plan['frequency'];

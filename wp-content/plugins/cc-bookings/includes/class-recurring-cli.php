@@ -254,7 +254,8 @@ final class Recurring_Cli {
 	 * : Don't wait for the cutoff.
 	 */
 	public function release( array $args, array $assoc ): void {
-		$this->done( Plan_Charges::release( (int) $this->visit( $args[0] )['id'], isset( $assoc['force'] ) ) );
+		$result = Plan_Charges::release( (int) $this->visit( $args[0] )['id'], isset( $assoc['force'] ) );
+		str_starts_with( $result, 'released' ) ? \WP_CLI::success( $result ) : \WP_CLI::warning( $result );
 	}
 
 	/**

@@ -20,6 +20,9 @@ final class Plan_Charges {
 	const CHARGE_HOOK  = 'cc_bookings_plan_charge';
 	const RELEASE_HOOK = 'cc_bookings_plan_release';
 
+	/** Saved for off-session charges, so cards only (Apple Pay / Google Pay count as cards); redirect methods can't be charged unattended. */
+	const PAYMENT_METHOD_TYPES = [ 'card' ];
+
 	const DECLINE_REASONS = [
 		'authentication_required' => 'your bank asked you to confirm the payment yourself',
 		'card_declined'           => 'your card was declined',
@@ -426,6 +429,7 @@ final class Plan_Charges {
 			'cancel_url'          => $url . '#cc-plan',
 			'expires_at'          => $expires,
 			'locale'              => 'en-GB',
+			'payment_method_types' => self::PAYMENT_METHOD_TYPES,
 			'line_items'          => [
 				[
 					'quantity'   => 1,
@@ -482,6 +486,7 @@ final class Plan_Charges {
 		$params = [
 			'mode'                 => 'setup',
 			'currency'             => 'gbp',
+			'payment_method_types' => self::PAYMENT_METHOD_TYPES,
 			'client_reference_id'  => $plan['ref'],
 			'success_url'          => add_query_arg( 'card', 'updated', $url ) . '#cc-plan',
 			'cancel_url'           => $url . '#cc-plan',
