@@ -599,7 +599,7 @@ final class Sections {
 		$instant = T::el( 'text-basic', array_merge( [ 'text' => '{cc_quote_form}', 'tag' => 'div' ], T::when_filled( '{cc_quote_form}' ) ), [], 'Instant quote form' );
 
 		return [
-			self::page_hero( 'Get a free quote', 'Tell us about your property and the clean you need. Most cleans get an instant fixed price you can book online; anything bespoke, we\'ll price personally — usually within the hour during opening times.', 'Contact us', false ),
+			self::page_hero( 'Get a free quote', 'Tell us about your property and the clean you need. We\'ll email your fixed-price quote to your secure client area — most within minutes; anything bespoke we\'ll price personally, usually within the hour during opening times.', 'Contact us', false ),
 			T::section( '', [
 				T::container( 'cc-quote-layout', [
 					T::div( 'cc-quote-layout__form cc-panel', [

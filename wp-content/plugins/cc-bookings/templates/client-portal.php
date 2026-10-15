@@ -100,6 +100,7 @@ get_header();
 											$q['job_date'] ? Slots::date_label( $q['job_date'], 'D j M' ) . ( $q['slot'] ? ', ' . strtolower( Slots::label( $q['slot'] ) ) : '' ) : 'Date to be agreed',
 											null !== $q['total_pence'] && 'draft' !== $q['status'] ? Money::format( (int) $q['total_pence'] ) : '',
 											'ready' === $state && $q['expires_at'] ? 'held until ' . wp_date( 'D j M', Db::timestamp( $q['expires_at'] ) ) : '',
+											'ready' === $state && ! empty( $q['revised_at'] ) ? 'updated ' . wp_date( 'D j M', Db::timestamp( $q['revised_at'] ) ) : '',
 										] ) ) );
 										?>
 									</span>

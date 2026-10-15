@@ -21,6 +21,9 @@ final class Cli {
 	 * [--twice]
 	 * : Deliver the same event twice, to check idempotency.
 	 *
+	 * [--revision=<n>]
+	 * : Quote revision the payment was started on. Defaults to the latest; an older one is refused.
+	 *
 	 * @subcommand simulate-payment
 	 */
 	public function simulate_payment( array $args, array $assoc ): void {
@@ -43,7 +46,7 @@ final class Cli {
 					'currency'       => 'gbp',
 					'payment_intent' => 'pi_sim_' . $quote['id'],
 					'customer'       => 'cus_sim_' . $quote['id'],
-					'metadata'       => [ 'type' => 'booking', 'quote_id' => (string) $quote['id'], 'quote_ref' => $quote['ref'] ],
+					'metadata'       => [ 'type' => 'booking', 'quote_id' => (string) $quote['id'], 'quote_ref' => $quote['ref'], 'revision' => (string) ( isset( $assoc['revision'] ) ? (int) $assoc['revision'] : Quote_Revisions::revision( $quote ) ) ],
 				],
 			],
 		];

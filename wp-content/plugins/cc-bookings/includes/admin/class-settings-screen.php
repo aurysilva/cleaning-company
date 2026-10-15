@@ -167,6 +167,20 @@ final class Settings_Screen {
 	}
 
 	private static function templates(): void {
+		echo '<h2>Emails to the office</h2><p class="description">Untick any you don\'t want. Customer and cleaner emails aren\'t affected, and everything still appears in Activity.</p><table class="form-table"><tbody><tr><th>Send these to the office</th><td>';
+		$off = (array) Settings::get( 'emails.admin_off', [] );
+		foreach ( Notify::defaults() as $key => $default ) {
+			if ( 'admin' === ( $default['to'] ?? '' ) ) {
+				printf(
+					'<input type="hidden" name="s[emails][admin_on][%1$s]" value="0"><label style="display:block;margin-bottom:6px;"><input type="checkbox" name="s[emails][admin_on][%1$s]" value="1"%2$s> %3$s</label>',
+					esc_attr( $key ),
+					checked( empty( $off[ $key ] ), true, false ),
+					esc_html( preg_replace( '/\s*\(admin\)/', '', $default['label'] ) )
+				);
+			}
+		}
+		echo '</td></tr></tbody></table>';
+
 		echo '<h2>Email wording</h2><p class="description">Leave a box empty to use the default. Placeholders such as {first_name}, {service}, {date}, {total}, {ref}, {items}, {details}, {phone} and {brand} are filled in automatically.</p>';
 		foreach ( Notify::defaults() as $key => $default ) {
 			$custom = (array) Settings::get( 'emails.templates.' . $key, [] );
@@ -273,6 +287,14 @@ final class Settings_Screen {
 				}
 			}
 			$stored['emails']['templates'] = $templates;
+
+			$off = [];
+			foreach ( (array) ( $input['emails']['admin_on'] ?? [] ) as $key => $on ) {
+				if ( ! $on && 'admin' === ( Notify::defaults()[ $key ]['to'] ?? '' ) ) {
+					$off[ $key ] = 1;
+				}
+			}
+			$stored['emails']['admin_off'] = $off;
 		}
 
 		Settings::save( $stored );

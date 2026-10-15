@@ -8,15 +8,16 @@ defined( 'ABSPATH' ) || exit;
  */
 final class Events {
 	public static function log( string $type, int $id, string $event, string $message = '', array $data = [], string $actor = '' ): void {
-		Db::insert( 'events', [
+		$actor = $actor ?: self::actor();
+		$row   = Db::insert( 'events', [
 			'object_type' => $type,
 			'object_id'   => $id,
 			'event'       => $event,
 			'message'     => $message,
 			'data'        => $data,
-			'actor'       => $actor ?: self::actor(),
+			'actor'       => $actor,
 		] );
-		do_action( 'cc_bookings_event', $type, $id, $event, $message, $data );
+		do_action( 'cc_bookings_event', $type, $id, $event, $message, $data, $actor, $row );
 	}
 
 	public static function actor(): string {

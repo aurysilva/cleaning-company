@@ -21,6 +21,8 @@ final class Notify {
 		add_action( 'cc_booking_refunded', [ self::class, 'booking_refunded' ], 10, 3 );
 		add_action( 'cc_booking_cancelled', [ self::class, 'booking_cancelled' ], 10, 2 );
 		add_action( 'cc_booking_topup_created', [ self::class, 'topup_created' ], 10, 2 );
+		add_action( 'cc_booking_topup_paid', [ self::class, 'topup_paid' ], 10, 2 );
+		add_action( 'cc_quote_amended', [ self::class, 'quote_amended' ], 10, 3 );
 		add_action( 'cc_bookings_admin_alert', [ self::class, 'admin_alert' ], 10, 3 );
 	}
 
@@ -37,9 +39,25 @@ final class Notify {
 				'label'      => 'Quote ready (customer)',
 				'to'         => 'customer',
 				'subject'    => 'Your {service} quote {ref}',
-				'body'       => "Hi {first_name},\n\nThanks for asking {brand} to quote. Your quote for {service} on {date} is ready in your secure client area, with your fixed price and everything that's included.\n\nYour quote is held until {expires}. When you're ready, {next_step}.\n\n{link_note}",
+				'body'       => "Hi {first_name},\n\nThanks for asking {brand} to quote. Your quote for {service} on {date} is ready in your secure client area, with your fixed price and everything that's included.\n\n{client_note}\n\nYour quote is held until {expires}. When you're ready, {next_step}.\n\n{link_note}",
 				'button'     => 'View my quote',
 				'button_url' => 'quote_url',
+			],
+			'quote_updated'       => [
+				'label'      => 'Quote updated by us (customer)',
+				'to'         => 'customer',
+				'subject'    => 'Your quote has been updated: {service} {ref}',
+				'body'       => "Hi {first_name},\n\nWe've updated your quote {ref} for {service}. Here's what has changed:\n\n{changes}\n\n{client_note}\n\nYour updated quote is held until {expires}. When you're ready, {next_step}.\n\n{link_note}",
+				'button'     => 'View my updated quote',
+				'button_url' => 'quote_url',
+			],
+			'quote_changed_admin' => [
+				'label'      => 'Client changed their quote (admin)',
+				'to'         => 'admin',
+				'subject'    => 'Quote changed by {name}: {ref} ({service})',
+				'body'       => "{name} ({email}, {customer_phone}) changed their quote {old_ref}. It has been replaced by {ref}.\n\n{changes}\n\n{status_note}\n\n{details}",
+				'button'     => 'Open quote',
+				'button_url' => 'admin_url',
 			],
 			'bespoke_received'    => [
 				'label'   => 'Bespoke request received (customer)',
@@ -96,10 +114,10 @@ final class Notify {
 				'button_url' => 'booking_url',
 			],
 			'booking_admin'       => [
-				'label'      => 'New booking (admin)',
+				'label'      => 'Payment received (admin) — new bookings, regular-plan visits, pay links and top-ups',
 				'to'         => 'admin',
-				'subject'    => 'New booking {ref}: {service} on {date_short}',
-				'body'       => "A new booking has been paid ({paid}).\n\n{details}\n\n{items}",
+				'subject'    => 'Payment received: {amount} for {ref} ({service}, {date_short})',
+				'body'       => "{name} has paid {amount} — {payment_kind}.\n\n{details}\n\n{items}",
 				'button'     => 'Open booking',
 				'button_url' => 'admin_url',
 			],
@@ -174,7 +192,10 @@ final class Notify {
 			if ( ! array_key_exists( $m[1], $vars ) || is_array( $vars[ $m[1] ] ) ) {
 				return $m[0];
 			}
-			return in_array( $m[1], $html_vars, true ) ? "\n\n<!--html-->" . base64_encode( (string) $vars[ $m[1] ] ) . "<!--/html-->\n\n" : nl2br( esc_html( (string) $vars[ $m[1] ] ) );
+			if ( in_array( $m[1], $html_vars, true ) ) {
+				return '' === (string) $vars[ $m[1] ] ? '' : "\n\n<!--html-->" . base64_encode( (string) $vars[ $m[1] ] ) . "<!--/html-->\n\n";
+			}
+			return nl2br( esc_html( (string) $vars[ $m[1] ] ) );
 		}, $body );
 		$body = wpautop( $body );
 		$body = preg_replace_callback( '/(?:<p>)?<!--html-->([A-Za-z0-9+\/=]+)<!--\/html-->(?:<\/p>)?/', fn( $m ) => base64_decode( $m[1] ), $body );
@@ -197,8 +218,13 @@ final class Notify {
 	 * @param array $object [ object_type, object_id ] for the mail log.
 	 */
 	public static function send( string $key, string $to, array $vars, array $object = [ 'system', 0 ] ): bool {
-		$to = sanitize_email( $to );
-		if ( ! $to || ! self::template( $key ) ) {
+		$to       = sanitize_email( $to );
+		$template = self::template( $key );
+		if ( ! $to || ! $template ) {
+			return false;
+		}
+		if ( 'admin' === ( $template['to'] ?? '' ) && self::admin_off( $key ) ) {
+			Events::log( (string) $object[0], (int) $object[1], 'email_off', sprintf( '"%s" not sent: turned off in Settings → Emails', $template['label'] ), [ 'template' => $key ] );
 			return false;
 		}
 		$vars     = (array) apply_filters( 'cc_bookings_email_vars', $vars, $key, $object );
@@ -232,6 +258,11 @@ final class Notify {
 
 	public static function short_circuit(): bool {
 		return true;
+	}
+
+	/** Admin emails can be switched off one by one (Settings → Emails). */
+	public static function admin_off( string $key ): bool {
+		return ! empty( ( (array) Settings::get( 'emails.admin_off', [] ) )[ $key ] );
 	}
 
 	/** Phase 2 plugs an SMS provider into this filter and returns true when sent. */
@@ -372,11 +403,22 @@ final class Notify {
 	 * Listeners
 	 * ------------------------------------------------------------------ */
 
+	/** "Your quote is ready", or "Your quote has been updated" when there are changes the client hasn't been told about. */
 	public static function quote_sent( $quote_id, $context = [] ): void {
 		$quote = Quotes::get( (int) $quote_id );
-		if ( $quote ) {
-			self::send( 'quote_ready', $quote['email'], self::quote_vars( $quote, (string) ( $context['url'] ?? '' ) ), [ 'quote', $quote['id'] ] );
+		if ( ! $quote ) {
+			return;
 		}
+		$vars    = self::quote_vars( $quote, (string) ( $context['url'] ?? '' ) );
+		$pending = Quote_Revisions::pending( $quote );
+		$vars['client_note'] = Quote_Revisions::note_html( array_unique( array_merge( $pending['notes'], [ (string) ( $context['client_note'] ?? '' ) ] ) ) );
+		if ( $pending['changes'] ) {
+			$vars['changes'] = Quote_Revisions::html( $pending['changes'], null === $quote['total_pence'] ? null : (int) $quote['total_pence'], '' );
+			self::send( 'quote_updated', $quote['email'], $vars, [ 'quote', $quote['id'] ] );
+		} else {
+			self::send( 'quote_ready', $quote['email'], $vars, [ 'quote', $quote['id'] ] );
+		}
+		Quote_Revisions::mark_notified( $pending['ids'] );
 	}
 
 	public static function bespoke_requested( $quote_id, $context = [] ): void {
@@ -386,7 +428,27 @@ final class Notify {
 		}
 		$vars = self::quote_vars( $quote );
 		self::send( 'bespoke_received', $quote['email'], $vars, [ 'quote', $quote['id'] ] );
-		self::send( 'bespoke_admin', self::admin_to(), $vars, [ 'quote', $quote['id'] ] );
+		// A customer's change that now needs pricing is covered by the "client changed their quote" email.
+		if ( ! (int) $quote['replaces_id'] ) {
+			self::send( 'bespoke_admin', self::admin_to(), $vars, [ 'quote', $quote['id'] ] );
+		}
+	}
+
+	/** `cc_quote_amended`: the customer changed their quote ("Change details" made a new one). */
+	public static function quote_amended( $quote_id, $old_id = 0, $changes = [] ): void {
+		$quote = Quotes::get( (int) $quote_id );
+		$old   = Quotes::get( (int) $old_id );
+		if ( ! $quote ) {
+			return;
+		}
+		$total = null === $quote['total_pence'] ? null : (int) $quote['total_pence'];
+		self::send( 'quote_changed_admin', self::admin_to(), [
+			'old_ref'     => $old['ref'] ?? '',
+			'changes'     => $changes ? Quote_Revisions::html( (array) $changes, $total, 'What they changed' ) : '<p>Nothing the customer can see changed.</p>',
+			'status_note' => $quote['is_bespoke']
+				? sprintf( 'The new version needs a tailored price (%s). Price it and send it from the quote.', implode( '; ', (array) $quote['bespoke_reasons'] ) )
+				: 'The new price was worked out automatically and the customer has been emailed it.',
+		] + self::quote_vars( $quote ), [ 'quote', $quote['id'] ] );
 	}
 
 	public static function accept_requested( $quote_id ): void {
@@ -409,7 +471,37 @@ final class Notify {
 			return;
 		}
 		self::send( 'booking_confirmed', $booking['email'], self::booking_vars( $booking, (string) ( $context['booking_url'] ?? '' ) ), [ 'booking', $booking['id'] ] );
-		self::send( 'booking_admin', self::admin_to(), self::booking_vars( $booking ), [ 'booking', $booking['id'] ] );
+		// Payments the office recorded itself (paid by hand) don't need an email back to the office.
+		if ( ! in_array( (string) ( $context['provider'] ?? '' ), [ 'manual', 'reclean' ], true ) ) {
+			self::payment_admin( $booking, (int) $booking['paid_pence'], self::payment_kind( $booking, (array) $context ) );
+		}
+	}
+
+	/** One "Payment received" email to the office for every customer payment. */
+	public static function payment_admin( array $booking, int $amount, string $kind ): void {
+		self::send( 'booking_admin', self::admin_to(), [ 'amount' => Money::format( $amount ), 'payment_kind' => $kind ] + self::booking_vars( $booking ), [ 'booking', $booking['id'] ] );
+	}
+
+	private static function payment_kind( array $booking, array $context ): string {
+		if ( ! empty( $context['plan_id'] ) ) {
+			$visit = (int) ( $booking['meta']['visit_no'] ?? 0 );
+			$how   = (string) ( $context['how'] ?? '' );
+			$hows  = [
+				'automatic charge' => 'automatic charge to the saved card',
+				'pay link'         => 'paid with the pay link after the automatic charge failed',
+				'card_updated'     => 'charged after the customer updated their card',
+			];
+			return sprintf( 'regular plan visit%s, %s', $visit ? ' ' . $visit : '', $hows[ $how ] ?? 'card payment' );
+		}
+		return (int) $booking['series_id'] ? 'new regular plan booked (first visit confirmed)' : 'new booking confirmed';
+	}
+
+	public static function topup_paid( $booking_id, $payment_id ): void {
+		$booking = Bookings::get( (int) $booking_id );
+		$payment = Db::get( 'payments', (int) $payment_id );
+		if ( $booking && $payment ) {
+			self::payment_admin( $booking, (int) $payment['amount_pence'], 'top-up: ' . ( $payment['note'] ?: 'additional charge' ) );
+		}
 	}
 
 	public static function booking_assigned( $booking_id, $cleaner_id, $offer_id = 0 ): void {

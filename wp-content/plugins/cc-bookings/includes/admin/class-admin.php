@@ -33,11 +33,10 @@ final class Admin {
 	}
 
 	public static function menu(): void {
-		$cap     = current_user_can( Plugin::CAP ) ? Plugin::CAP : 'manage_options';
-		$waiting = Db::count( 'quotes', [ 'status' => 'draft', 'booking_id' => 0 ] ) + Db::count( 'bookings', [ 'status' => 'confirmed' ] );
-		$badge   = $waiting ? sprintf( ' <span class="awaiting-mod count-%1$d"><span class="pending-count">%1$d</span></span>', $waiting ) : '';
+		$cap = current_user_can( Plugin::CAP ) ? Plugin::CAP : 'manage_options';
 
-		add_menu_page( 'Bookings', 'Bookings' . $badge, $cap, 'cc-bookings', [ Dashboard::class, 'render' ], 'dashicons-calendar-alt', 26 );
+		// Unread-notification bubbles are added by Notifications::badges().
+		add_menu_page( 'Bookings', 'Bookings', $cap, 'cc-bookings', [ Dashboard::class, 'render' ], 'dashicons-calendar-alt', 26 );
 		foreach ( self::pages() as $slug => [ $title, $callback ] ) {
 			add_submenu_page( 'cc-bookings', $title . ' — Bookings', $title, $cap, $slug, $callback );
 		}

@@ -151,7 +151,7 @@ get_header();
 
 				<aside class="cc-private__aside">
 					<?php if ( $payable ) : ?>
-						<form class="cc-panel cc-private__pay" novalidate data-cc-accept data-ref="<?php echo esc_attr( $quote['ref'] ); ?>" data-token="<?php echo esc_attr( $token ); ?>">
+						<form class="cc-panel cc-private__pay" novalidate data-cc-accept data-ref="<?php echo esc_attr( $quote['ref'] ); ?>" data-token="<?php echo esc_attr( $token ); ?>" data-revision="<?php echo (int) CC\Bookings\Quote_Revisions::revision( $quote ); ?>">
 							<p class="cc-private__total-label"><?php echo esc_html( apply_filters( 'cc_bookings_quote_pay_label', 'Total to pay', $quote ) ); ?></p>
 							<p class="cc-private__total"><?php echo esc_html( Money::format( (int) $quote['total_pence'] ) ); ?></p>
 							<p class="cc-small">Quote held until <?php echo esc_html( wp_date( 'l j F', CC\Bookings\Db::timestamp( $quote['expires_at'] ) ) ); ?>.</p>

@@ -665,7 +665,7 @@
 			error.hidden = true;
 			button.disabled = true;
 			button.textContent = 'Please wait…';
-			const res = await api(base, `quotes/${encodeURIComponent(form.dataset.ref)}/accept`, { body: { token: form.dataset.token, terms: true, early_start: !!(early && early.checked), recurring: !!(recurring && recurring.checked) } });
+			const res = await api(base, `quotes/${encodeURIComponent(form.dataset.ref)}/accept`, { body: { token: form.dataset.token, revision: form.dataset.revision || '', terms: true, early_start: !!(early && early.checked), recurring: !!(recurring && recurring.checked) } });
 			if (res.ok && res.url) {
 				window.location.href = res.url;
 				return;

@@ -141,3 +141,10 @@
 .cc-admin__warn { color: #8a4b00; }
 .cc-admin__steps li { margin-bottom: 8px; }
 .cc-admin .search-box { margin: 8px 0; }
+
+.cc-admin__tabs { margin-bottom: 12px; }
+.cc-admin__tabs .awaiting-mod { display: inline-block; min-width: 18px; height: 18px; margin-left: 4px; padding: 0 5px; border-radius: 9px; background: #d63638; color: #fff; font-size: 11px; line-height: 1.6; text-align: center; vertical-align: text-top; box-sizing: border-box; }
+.cc-admin__notifications tr.cc-admin__unread td { background: #fcf9e8; }
+.cc-admin__notifications tr.cc-admin__unread td:first-child { box-shadow: inset 3px 0 0 #dba617; }
+.cc-admin__amend { margin: 12px 0; padding: 8px 12px; background: #fff; border: 1px solid #dcdcde; border-radius: 4px; }
+.cc-admin__amend summary { cursor: pointer; }

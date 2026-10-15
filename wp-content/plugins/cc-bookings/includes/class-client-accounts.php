@@ -35,7 +35,7 @@ final class Client_Accounts {
 		'email_hours'     => 24,
 	];
 
-	const QUOTE_TEMPLATES = [ 'quote_ready', 'quote_reminder', 'quote_expiring' ];
+	const QUOTE_TEMPLATES = [ 'quote_ready', 'quote_updated', 'quote_reminder', 'quote_expiring' ];
 
 	private static array $current = [];
 

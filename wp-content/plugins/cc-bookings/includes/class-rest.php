@@ -174,6 +174,7 @@ final class Rest {
 			'early_start' => rest_sanitize_boolean( $request->get_param( 'early_start' ) ),
 			'recurring'   => rest_sanitize_boolean( $request->get_param( 'recurring' ) ),
 			'token'       => (string) $request->get_param( 'token' ),
+			'revision'    => (string) $request->get_param( 'revision' ),
 		] );
 		return is_wp_error( $result ) ? self::from_wp_error( $result ) : new \WP_REST_Response( [ 'ok' => true ] + $result );
 	}

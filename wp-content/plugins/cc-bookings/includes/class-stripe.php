@@ -107,7 +107,7 @@ final class Stripe {
 	}
 
 	public static function expire_session( string $session_id ): void {
-		if ( self::enabled() && str_starts_with( $session_id, 'cs_' ) ) {
+		if ( self::enabled() && str_starts_with( $session_id, 'cs_' ) && ! str_starts_with( $session_id, 'cs_sim_' ) ) {
 			self::request( 'POST', 'checkout/sessions/' . rawurlencode( $session_id ) . '/expire' );
 		}
 	}

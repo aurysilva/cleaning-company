@@ -304,7 +304,7 @@ final class Plan_Charges {
 		}
 
 		$visit = Bookings::get( $visit_id );
-		do_action( 'cc_booking_confirmed', $visit_id, [ 'booking_url' => Bookings::link( $visit ), 'provider' => $provider, 'plan_id' => (int) $visit['series_id'] ] );
+		do_action( 'cc_booking_confirmed', $visit_id, [ 'booking_url' => Bookings::link( $visit ), 'provider' => $provider, 'plan_id' => (int) $visit['series_id'], 'how' => $how ] );
 		do_action( 'cc_plan_visit_paid', $visit_id, $payment_id );
 		Plans::generate( (int) $visit['series_id'] );
 		return 'confirmed visit ' . $visit['ref'];

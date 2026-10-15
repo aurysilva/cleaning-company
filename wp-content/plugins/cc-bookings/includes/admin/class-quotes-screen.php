@@ -8,6 +8,7 @@ use CC\Bookings\Events;
 use CC\Bookings\Files;
 use CC\Bookings\Money;
 use CC\Bookings\Pricing;
+use CC\Bookings\Quote_Revisions;
 use CC\Bookings\Quotes;
 use CC\Bookings\Schema;
 use CC\Bookings\Slots;
@@ -129,6 +130,8 @@ final class Quotes_Screen {
 			self::items_table( (array) $q['items'], $q['total_pence'] );
 		}
 
+		self::revisions( $q );
+
 		echo '<h2>History</h2>';
 		echo Admin::timeline( Events::for_object( 'quote', $id ) ); // phpcs:ignore WordPress.Security.EscapeOutput
 
@@ -220,7 +223,88 @@ final class Quotes_Screen {
 		printf( '<tr><th>Date and arrival</th><td><input type="date" name="job_date" value="%s"> <select name="slot">%s</select><p class="description">The customer\'s preferred date is pre-filled. Capacity is checked again when they pay.</p></td></tr>', esc_attr( (string) $q['job_date'] ), $slots ); // phpcs:ignore WordPress.Security.EscapeOutput
 		printf( '<tr><th>Internal note</th><td><textarea name="admin_note" rows="2" class="large-text">%s</textarea></td></tr>', esc_textarea( (string) $q['admin_note'] ) );
 		echo '</tbody></table>';
-		echo '<p><button class="button" name="then" value="save">Save</button> <button class="button button-primary" name="then" value="send">Save &amp; send to customer</button></p></form>';
+
+		$service = Quotes::service( $q );
+		if ( $service ) {
+			echo '<details class="cc-admin__amend"><summary><strong>Property details and extras</strong></summary><table class="form-table"><tbody>';
+			self::answer_fields( $service, (array) $q['answers'] );
+			echo '<tr><th>Price lines</th><td><label><input type="checkbox" name="reprice" value="1"> Recalculate the price lines, hours and cleaners from the price list (replaces the lines above)</label></td></tr>';
+			echo '</tbody></table></details>';
+		}
+
+		$sent = (bool) $q['sent_at'];
+		echo '<table class="form-table"><tbody>';
+		printf(
+			'<tr><th>Note to client</th><td><textarea name="client_note" rows="3" class="large-text" maxlength="2000" placeholder="Optional — shown in the email, e.g. why the price changed."></textarea><p class="description">%s</p></td></tr>',
+			$sent ? 'The customer has already been sent this quote. Changes they can see are saved as a new version, the old version can no longer be paid, and "Save &amp; email the update" sends them a "Your quote has been updated" email listing what changed.' : 'Included in the quote email.'
+		);
+		echo '</tbody></table>';
+		printf(
+			'<p><button class="button" name="then" value="save">Save</button> <button class="button button-primary" name="then" value="send">%s</button></p></form>',
+			$sent ? 'Save &amp; email the update' : 'Save &amp; send to customer'
+		);
+	}
+
+	/** Editable property details (as the customer's form, without photos) and add-ons. */
+	private static function answer_fields( array $service, array $answers ): void {
+		foreach ( Catalog::fields( $service ) as $field ) {
+			$name  = $field['name'];
+			$input = '';
+			switch ( $field['type'] ) {
+				case 'select':
+				case 'size':
+					$options = 'size' === $field['type'] ? array_map( fn( $s ) => $s['label'], (array) $service['sizes'] ) : $field['options'];
+					$input   = '<option value="">—</option>';
+					foreach ( $options as $value => $label ) {
+						$input .= sprintf( '<option value="%s"%s>%s</option>', esc_attr( (string) $value ), selected( (string) ( $answers[ $name ] ?? '' ), (string) $value, false ), esc_html( (string) $label ) );
+					}
+					$input = sprintf( '<select name="answers[%s]">%s</select>', esc_attr( $name ), $input );
+					break;
+				case 'quantities':
+					foreach ( (array) $service['sizes'] as $index => $size ) {
+						$input .= sprintf( '<label style="display:inline-block;margin:0 12px 6px 0;"><input type="number" min="0" max="20" name="answers[quantities][%d]" value="%s" class="small-text"> %s</label>', (int) $index, esc_attr( (string) ( $answers['quantities'][ $index ] ?? '' ) ), esc_html( $size['label'] ) );
+					}
+					break;
+				case 'textarea':
+					$input = sprintf( '<textarea name="answers[%s]" rows="2" class="large-text">%s</textarea>', esc_attr( $name ), esc_textarea( (string) ( $answers[ $name ] ?? '' ) ) );
+					break;
+			}
+			if ( '' !== $input ) {
+				printf( '<tr><th>%s</th><td>%s</td></tr>', esc_html( rtrim( str_replace( ' (optional)', '', $field['label'] ), '?' ) ), $input ); // phpcs:ignore WordPress.Security.EscapeOutput -- built above.
+			}
+		}
+		if ( $service['addons'] ) {
+			$input = '';
+			foreach ( (array) $service['addons'] as $index => $addon ) {
+				$qty    = (int) ( $answers['addons'][ $index ] ?? 0 );
+				$input .= $addon['per']
+					? sprintf( '<label style="display:block;margin-bottom:4px;"><input type="number" min="0" max="20" name="answers[addons][%d]" value="%s" class="small-text"> %s</label>', (int) $index, $qty ? $qty : '', esc_html( $addon['name'] ) )
+					: sprintf( '<label style="display:block;margin-bottom:4px;"><input type="checkbox" name="answers[addons][%d]" value="1"%s> %s</label>', (int) $index, checked( $qty > 0, true, false ), esc_html( $addon['name'] ) );
+			}
+			printf( '<tr><th>Extras</th><td>%s</td></tr>', $input ); // phpcs:ignore WordPress.Security.EscapeOutput -- built above.
+		}
+	}
+
+	private static function revisions( array $q ): void {
+		$rows = Quote_Revisions::all( (int) $q['id'] );
+		if ( ! $rows ) {
+			return;
+		}
+		echo '<h2>Versions</h2><table class="widefat striped"><thead><tr><th>Version</th><th>What changed</th><th>Note to client</th><th>Emailed</th></tr></thead><tbody>';
+		foreach ( $rows as $row ) {
+			$user = $row['created_by'] ? get_userdata( (int) $row['created_by'] ) : null;
+			printf(
+				'<tr><td>%s<br><span class="description">%s%s</span></td><td>%s</td><td>%s</td><td>%s</td></tr>',
+				(int) $row['revision'] === Quote_Revisions::revision( $q ) ? '<strong>' . (int) $row['revision'] . ' (current)</strong>' : (int) $row['revision'],
+				esc_html( Admin::when( $row['created_at'] ) ),
+				$user ? ' · ' . esc_html( $user->display_name ) : '',
+				esc_html( Quote_Revisions::text( (array) ( $row['data']['changes'] ?? [] ) ) ),
+				esc_html( (string) $row['client_note'] ?: '—' ),
+				esc_html( $row['notified_at'] ? Admin::when( $row['notified_at'] ) : 'Not yet' )
+			);
+		}
+		printf( '<tr><td>1<br><span class="description">%s</span></td><td colspan="3">First version sent to the customer</td></tr>', esc_html( Admin::when( $q['created_at'] ) ) );
+		echo '</tbody></table><p class="description">Each version lists what changed from the one before. Only the current version can be paid.</p>';
 	}
 
 	public static function handle( string $do ): void {
@@ -244,13 +328,43 @@ final class Quotes_Screen {
 					$type    = sanitize_key( (string) ( $row['type'] ?? 'base' ) ) ?: 'base';
 					$items[] = Pricing::line( $unit < 0 ? 'adjustment' : $type, $label, $qty, $unit );
 				}
-				$date = preg_match( '/^\d{4}-\d{2}-\d{2}$/', Admin::text( 'job_date' ) ) ? Admin::text( 'job_date' ) : '';
-				$slot = isset( Slots::definitions()[ Admin::text( 'slot' ) ] ) ? Admin::text( 'slot' ) : '';
-				Quotes::update_pricing( $id, $items, max( 0, (float) Admin::text( 'hours' ) ), max( 1, Admin::int( 'cleaners' ) ), $date, $slot, Admin::textarea( 'admin_note' ) );
-				if ( 'send' !== Admin::text( 'then' ) ) {
-					Admin::done( $back, 'Price saved.' );
+				$date     = preg_match( '/^\d{4}-\d{2}-\d{2}$/', Admin::text( 'job_date' ) ) ? Admin::text( 'job_date' ) : '';
+				$slot     = isset( Slots::definitions()[ Admin::text( 'slot' ) ] ) ? Admin::text( 'slot' ) : '';
+				$hours    = max( 0, (float) Admin::text( 'hours' ) );
+				$cleaners = max( 1, Admin::int( 'cleaners' ) );
+				$service  = Quotes::service( $quote );
+				$answers  = null;
+				if ( $service && isset( $_POST['answers'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+					[ $clean ] = Catalog::sanitize_answers( $service, (array) wp_unslash( $_POST['answers'] ) ); // phpcs:ignore WordPress.Security.NonceVerification, WordPress.Security.ValidatedSanitizedInput
+					$editable  = array_merge( array_column( Catalog::fields( $service ), 'name' ), [ 'addons' ] );
+					$answers   = array_diff_key( (array) $quote['answers'], array_flip( $editable ) ) + $clean;
 				}
-				// Falls through to send.
+				if ( $service && Admin::text( 'reprice' ) ) {
+					$price = Pricing::price( $service, $answers ?? (array) $quote['answers'], $date, $slot );
+					if ( $price['reasons'] ) {
+						Admin::done( $back, 'The price list can\'t price this (' . esc_html( implode( '; ', $price['reasons'] ) ) . '). Nothing was saved — enter the price lines by hand instead.', 'error' );
+					}
+					[ $items, $hours, $cleaners ] = [ $price['items'], (float) $price['hours'], (int) $price['cleaners'] ];
+				}
+				if ( ! $items ) {
+					Admin::done( $back, 'Add at least one price line. Nothing was saved.', 'error' );
+				}
+				$client_note = Admin::textarea( 'client_note' );
+				$result      = Quotes::update_pricing( $id, $items, $hours, $cleaners, $date, $slot, Admin::textarea( 'admin_note' ), $answers, $client_note );
+				if ( is_wp_error( $result ) ) {
+					Admin::done( $back, $result->get_error_message(), 'error' );
+				}
+				$saved = $result['revised'] ? sprintf( 'Saved as version %d (%d change%s).', $result['revision'], count( $result['changes'] ), 1 === count( $result['changes'] ) ? '' : 's' ) : 'Saved.';
+				if ( 'send' !== Admin::text( 'then' ) ) {
+					Admin::done( $back, $saved . ( $result['revised'] ? ' The customer hasn\'t been emailed yet — use "Save &amp; email the update" or "Re-send quote email" when ready.' : '' ) );
+				}
+				$url = Quotes::send( $id, '', $result['revised'] ? '' : $client_note );
+				if ( is_wp_error( $url ) ) {
+					Admin::done( $back, $url->get_error_message(), 'error' );
+				}
+				Admin::done( $back, $saved . ' ' . ( $quote['sent_at'] ? 'Update' : 'Quote' ) . ' emailed to ' . esc_html( $quote['email'] ) . '.' );
+				break;
+
 			case 'quote_send':
 				$url = Quotes::send( $id );
 				if ( is_wp_error( $url ) ) {

@@ -451,6 +451,7 @@ final class Client_Portal {
 					'early_start' => ! empty( $post['early_start'] ),
 					'recurring'   => ! empty( $post['recurring'] ),
 					'token'       => '',
+					'revision'    => (string) ( $post['revision'] ?? '' ),
 				] );
 				if ( is_wp_error( $result ) ) {
 					$data = (array) $result->get_error_data();

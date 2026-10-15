@@ -34,8 +34,8 @@ final class Checkout {
 			return new \WP_Error( 'early_start', 'Please confirm you\'d like us to start within the 14-day cancellation period.', [ 'status' => 400, 'errors' => [ 'early_start' => 'Required' ] ] );
 		}
 
-		// Server-side re-price for instant quotes; admin-priced quotes keep the agreed price.
-		if ( ! $quote['is_bespoke'] ) {
+		// Server-side re-price for instant quotes; admin-priced (or admin-changed) quotes keep the agreed price.
+		if ( ! $quote['is_bespoke'] && empty( $quote['admin_priced'] ) ) {
 			$price = Pricing::for_quote( $quote );
 			if ( $price['bespoke'] || $price['total'] !== (int) $quote['total_pence'] ) {
 				Db::update( 'quotes', $quote['id'], [ 'items' => $price['items'], 'total_pence' => $price['total'], 'hours' => $price['hours'], 'cleaners' => $price['cleaners'] ] );

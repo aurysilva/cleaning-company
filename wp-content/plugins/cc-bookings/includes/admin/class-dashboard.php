@@ -4,6 +4,7 @@ namespace CC\Bookings\Admin;
 use CC\Bookings\Bookings;
 use CC\Bookings\Db;
 use CC\Bookings\Money;
+use CC\Bookings\Notifications;
 use CC\Bookings\Queue;
 use CC\Bookings\Schema;
 use CC\Bookings\Security;
@@ -28,6 +29,7 @@ final class Dashboard {
 		), ARRAY_A ) ?: [] );
 
 		echo '<div class="cc-admin__cards">';
+		self::card( 'Unread notifications', Notifications::counts()['total'], Admin::url( 'cc-bookings-activity', [ 'unread' => '1' ] ) );
 		self::card( 'Quotes to price', count( $draft ), Admin::url( 'cc-bookings-quotes', [ 'status' => 'draft' ] ) );
 		self::card( 'Bookings needing a cleaner', count( $needs ), Admin::url( 'cc-bookings-bookings', [ 'status' => 'confirmed' ] ) );
 		self::card( 'Jobs in the next 14 days', count( $upcoming ), Admin::url( 'cc-bookings-bookings' ) );

@@ -14,6 +14,7 @@ use CC\Bookings\Client_Portal;
 use CC\Bookings\Db;
 use CC\Bookings\Money;
 use CC\Bookings\Pricing;
+use CC\Bookings\Quote_Revisions;
 use CC\Bookings\Quotes;
 use CC\Bookings\Settings;
 use CC\Bookings\Slots;
@@ -34,6 +35,7 @@ $addons   = $service ? Catalog::addon_names( $service, (array) $quote['answers']
 $policy   = (string) Settings::get( 'quotes.cancellation_policy', '' );
 $address  = implode( ', ', array_filter( [ $quote['address_1'], $quote['address_2'], $quote['town'], $quote['postcode'] ] ) );
 $nonce    = Client_Portal::nonce_action( $client );
+$changes  = ! $booking && ! $closed && ! empty( $quote['revised_at'] ) ? Quote_Revisions::latest_changes( $quote ) : [];
 $requote  = function ( string $label, string $class = 'cc-btn cc-btn--outline' ) use ( $nonce ): void {
 	echo '<form method="post" class="cc-client__inline">';
 	Client_Portal::nonce_field( $nonce );
@@ -60,6 +62,9 @@ get_header();
 						Here's your fixed price. Check the details, then <?php echo Stripe::enabled() ? 'accept and pay securely to confirm your booking' : 'accept your quote and we\'ll call you to confirm'; ?>.
 					<?php endif; ?>
 				</p>
+				<?php if ( ! empty( $quote['revised_at'] ) ) : ?>
+					<p class="cc-small cc-client__updated">Updated on <?php echo esc_html( wp_date( 'l j F Y, g:ia', Db::timestamp( $quote['revised_at'] ) ) ); ?></p>
+				<?php endif; ?>
 			</header>
 
 			<?php if ( $flash ) : ?>
@@ -98,6 +103,12 @@ get_header();
 
 			<div class="cc-private__grid">
 				<div class="cc-private__main">
+					<?php if ( $changes ) : ?>
+						<section class="cc-panel cc-private__card cc-client__changes">
+							<h2 class="cc-private__heading">What we've changed</h2>
+							<?php echo Quote_Revisions::html( $changes, null === $quote['total_pence'] ? null : (int) $quote['total_pence'], '' ); // phpcs:ignore WordPress.Security.EscapeOutput -- escaped in Quote_Revisions::line_html(). ?>
+						</section>
+					<?php endif; ?>
 					<?php if ( $priced ) : ?>
 						<section class="cc-panel cc-private__card">
 							<h2 class="cc-private__heading">Your price</h2>
@@ -173,6 +184,7 @@ get_header();
 						<form class="cc-panel cc-private__pay" method="post" id="cc-accept">
 							<?php Client_Portal::nonce_field( $nonce ); ?>
 							<input type="hidden" name="cc_do" value="accept">
+							<input type="hidden" name="revision" value="<?php echo (int) Quote_Revisions::revision( $quote ); ?>">
 							<p class="cc-private__total-label"><?php echo esc_html( apply_filters( 'cc_bookings_quote_pay_label', 'Total to pay', $quote ) ); ?></p>
 							<p class="cc-private__total"><?php echo esc_html( Money::format( (int) $quote['total_pence'] ) ); ?></p>
 							<p class="cc-small">Quote held until <?php echo esc_html( wp_date( 'l j F', Db::timestamp( $quote['expires_at'] ) ) ); ?>.</p>

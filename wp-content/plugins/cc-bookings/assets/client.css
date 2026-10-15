@@ -88,10 +88,31 @@
 }
 
 .cc-client__profile {
-	display: flex;
-	flex-direction: column;
+	display: grid;
 	gap: var(--cc-space-m, 1.5rem);
-	max-width: 40rem;
+	align-items: start;
+}
+
+.cc-client__profile > * {
+	margin: 0;
+	min-width: 0;
+}
+
+@media (min-width: 900px) {
+	.cc-client__profile {
+		grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+		grid-template-areas:
+			"details email"
+			"details password"
+			"marketing password"
+			"delete delete";
+	}
+
+	.cc-client__profile > :nth-child(1) { grid-area: details; }
+	.cc-client__profile > :nth-child(2) { grid-area: email; }
+	.cc-client__profile > :nth-child(3) { grid-area: password; }
+	.cc-client__profile > :nth-child(4) { grid-area: marketing; }
+	.cc-client__profile > :nth-child(5) { grid-area: delete; }
 }
 
 .cc-client__profile .cc-private__heading {

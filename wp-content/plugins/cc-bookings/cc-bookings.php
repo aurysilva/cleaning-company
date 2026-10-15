@@ -43,6 +43,9 @@ add_action( 'cc_bookings_loaded', [ CC\Bookings\Aftercare::class, 'init' ] );
 add_action( 'cc_bookings_loaded', [ CC\Bookings\Recurring::class, 'init' ] );
 add_action( 'cc_bookings_loaded', [ CC\Bookings\Cleaner_Accounts::class, 'init' ] );
 add_action( 'cc_bookings_loaded', [ CC\Bookings\Client_Accounts::class, 'init' ] );
+add_action( 'cc_bookings_loaded', [ CC\Bookings\Quote_Revisions::class, 'init' ] );
+add_action( 'cc_bookings_loaded', [ CC\Bookings\Notifications::class, 'init' ] );
+add_action( 'cc_bookings_loaded', [ CC\Bookings\Admin\Activity_Screen::class, 'init' ] );
 
 /**
  * The multi-step quote form, rendered by the theme's {cc_quote_form} tag.

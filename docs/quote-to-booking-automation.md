@@ -752,7 +752,7 @@ Edits to shared files:
 3. **Check the wording** of the form line and the `quote_ready`, `client_login_link`, `client_password_reset`, `client_email_verify`, `client_email_changed` and `client_delete_request` emails (**Bookings → Clients** and **Settings → Emails**).
 4. **Turnstile:** add a site key and secret to protect the quote form.
 5. **Stripe:** the Checkout page shows the Stripe account's display name. Set it to the business name in the Stripe dashboard.
-6. **Reword the contact page** intro ("Most cleans get an instant fixed price you can book online"). The price is now shown in the client area after an email, not instantly on the form.
+6. ~~**Reword the contact page** intro~~ Done: see "Quote updates, office emails and notifications" below.
 
 **Technical notes**
 - **Schema:** separate installer (option `cc_bookings_client_accounts_schema`, version 1); the core schema version is unchanged. It adds:
@@ -787,3 +787,43 @@ Edits to shared files:
   - **Marketing pages:** home, contact and service pages are unchanged and contain no "£".
   - **Layouts:** checked in a desktop browser and at 390 px wide.
   - All changed PHP files pass `php -l` on PHP 8.3.
+
+### Quote updates, office emails and notifications (built)
+
+**1. The office amends a quote**
+- **Where:** the quote page in admin (while the quote is still open). Under the price lines, **Change property details** opens the customer's answers: size, rooms, condition, quantities, notes and add-ons. Tick **Recalculate the price from these details** to reprice them with the normal pricing engine; otherwise the price lines are kept as typed. A new **Note to client** box goes into the email.
+- **Button:** "Save & email the update" once the quote has been sent, otherwise "Save & send to customer".
+- **Revisions:** every saved change creates a new version in `wp_cc_quote_revisions` (number, snapshot JSON, what changed, note, who, when emailed). Quotes gain `revision`, `revised_at` and `admin_priced`. An admin-priced quote is never repriced at checkout. The quote page shows a **Versions** table.
+- **Email:** `quote_updated` ("Your quote has been updated: …", editable in Settings → Emails) replaces `quote_ready` when a sent quote changes. It lists items and add-ons added or removed, date and slot, property details, and the old total struck through next to the new one, plus the note. **View my updated quote** uses the client-area link flow (choose a password if none is set, otherwise log in). `quote_ready` now also shows the note when there is one.
+- **Portal:** the quote shows "Updated on …" and a "What we've changed" panel; the Quotes list shows "updated {date}".
+- **Only the latest version can be paid:**
+  - Saving a change releases any held slot and expires the open Checkout session.
+  - Accept carries the version number. An older page gets "We've just updated this quote…" and reloads, before Stripe is contacted.
+  - If an old session is still paid (a race), no booking is made: the payment is recorded with "refund needed", `payment_refused` is logged, and the office is alerted to refund and ask the customer to accept the new version. The customer stays on the "confirming" page.
+
+**2. Emails to the office**
+- **Client changed their quote** (`quote_changed_admin`): the client name, old and new reference, exactly what changed, and an **Open quote** button. Sent when a customer resubmits a quote that replaces an open one. The "bespoke request" email isn't also sent for these.
+- **Payment received** (`booking_admin`, now merged with "New booking"): the amount, what it was for (new booking, new regular plan, plan visit charged, pay-link payment or top-up), service, date and slot, client, details, items and an **Open booking** button. Top-ups use the same template. Failed-charge alerts are unchanged. Manual and re-clean bookings don't send it.
+- **Toggles:** Bookings → Settings → Emails → **Emails to the office** has a tick per office email (stored as `emails.admin_off`). A switched-off email is logged as `email_off` in Activity.
+
+**3. Notifications, badges and Activity**
+- **Recorded:** anything a client or cleaner does, plus payments: quote changes, questions, bespoke requests, accepts, payments, top-ups, failed charges, reschedules, cancellations, re-clean claims, plan changes, profile, email and deletion requests, offer replies, availability, time off, documents, bank details and accounts awaiting review. Admin actions never notify. Background jobs and CLI only count for payment-type events. The `wp_cc_notifications` table is fed from `Events::log` through the new `cc_bookings_event` hook; the rules are in `Notifications::RULES`.
+- **Badges:** WordPress-style bubbles on Quotes, Bookings, Regular plans, Clients, Cleaners and Cleaner accounts; the parent **Bookings** menu shows the total. They replace the old "waiting" badge.
+- **Read state is per admin** (user meta `cc_bookings_notif_state`). Opening a submenu marks that section seen, and opening a quote, booking, plan, client or cleaner marks its items read. Counts are cached per user and cleared on a new notification or a read.
+- **Activity:** the **Notifications** tab (default) shows when, who, what happened, the record link and the section, with section and unread filters and **Mark all as read**. The old log is the **Full log** tab. The dashboard has an "Unread notifications" card.
+
+**4. Contact page.** The hero now reads: "Tell us about your property and the clean you need. We'll email your fixed-price quote to your secure client area — most within minutes; anything bespoke we'll price personally, usually within the hour during opening times." (`class-sections.php`, rebuilt with `wp cc pages --only=contact`).
+
+**Technical notes**
+- **New files:** `class-quote-revisions.php`, `class-notifications.php` and `admin/class-activity-screen.php`. Separate schema options: `cc_bookings_quote_revisions_schema` and `cc_bookings_notifications_schema` (version 2).
+- **Hooks fired:** `cc_quote_revised( $quote_id, $revision, $changes )`, `cc_quote_amended( $new_id, $old_id, $changes )` and `cc_bookings_event( $type, $id, $event, $message, $data, $actor, $row_id )`.
+- **Filters used:** `cc_bookings_checkout_params`, `cc_bookings_checkout_consent` and `cc_bookings_stripe_event`.
+- **CLI:** `wp cc-bookings simulate-payment` takes `--revision=<n>`.
+- **Known limit:** the one-click landing page for a no-password customer still says "Your quote is ready" when the link came from an update email.
+- **Verified on the server** (15 Oct 2026, "CP Test" data, since deleted; emails in log-only mode, since restored):
+  - **Office amend:** a raised price, an added oven clean and a new date and note produced version 2 and the update email with the diff, the struck-through total and the note.
+  - **Client link:** the link led to choosing a password, then the updated quote. Version 1 was refused at accept and at payment.
+  - **Client change:** a client's change sent the office email and set a Quotes badge.
+  - **Payment:** a simulated payment sent "Payment received" and set a Bookings badge.
+  - **Cleaners:** cleaner availability, a document and an accepted offer set the Cleaners and Cleaner accounts badges.
+  - **Read state:** badges cleared per admin on viewing; a second admin's counts were unaffected. **Mark all as read** worked.

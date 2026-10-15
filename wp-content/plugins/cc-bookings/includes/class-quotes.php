@@ -6,7 +6,8 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Quote lifecycle: create from the form (auto-priced or bespoke), send, view, follow-ups, expiry.
  * Hooks fired: cc_quote_created, cc_quote_sent, cc_quote_bespoke_requested, cc_quote_viewed,
- * cc_quote_expired, cc_quote_status_changed.
+ * cc_quote_expired, cc_quote_status_changed, cc_quote_amended( $new_id, $old_id, $changes ) when a customer's
+ * "Change details" replaces a quote.
  */
 final class Quotes {
 	public static function init(): void {
@@ -188,6 +189,11 @@ final class Quotes {
 		Events::log( 'quote', $id, 'created', $bespoke ? 'Bespoke quote requested' : 'Instant quote ' . Money::format( $price['total'] ), [ 'reasons' => $reasons ], 'customer' );
 
 		$quote = self::get( $id );
+		if ( $replaced ) {
+			$changes = Quote_Revisions::diff( $replaced, $quote );
+			Events::log( 'quote', $id, 'client_amended', sprintf( 'Changed their quote %s: %s', $replaced['ref'], $changes ? Quote_Revisions::text( $changes ) : 'no visible changes' ), [ 'replaces' => (int) $replaced['id'] ], 'customer' );
+			do_action( 'cc_quote_amended', $id, (int) $replaced['id'], $changes );
+		}
 		$token = Tokens::issue( 'quotes', $id );
 		$url   = self::url( $quote, $token );
 
@@ -207,11 +213,13 @@ final class Quotes {
 	}
 
 	/**
-	 * Send (or re-send) a priced quote: used by admin after pricing a bespoke request.
+	 * Send (or re-send) a priced quote: used by admin after pricing a bespoke request or changing a quote. Changes the
+	 * client hasn't been told about make it the "Your quote has been updated" email.
 	 *
+	 * @param string $client_note Optional message to the client, shown in the email.
 	 * @return string|\WP_Error The new quote link.
 	 */
-	public static function send( int $id, string $note = '' ) {
+	public static function send( int $id, string $note = '', string $client_note = '' ) {
 		$quote = self::get( $id );
 		if ( ! $quote ) {
 			return new \WP_Error( 'missing', 'Quote not found.' );
@@ -235,23 +243,37 @@ final class Quotes {
 		$url   = self::link( $quote );
 		self::unschedule( $id );
 		self::schedule( $quote );
-		do_action( 'cc_quote_sent', $id, [ 'url' => $url ] );
+		do_action( 'cc_quote_sent', $id, [ 'url' => $url, 'client_note' => $client_note ] );
 		return $url;
 	}
 
-	/** Admin pricing of a bespoke (or any open) quote. */
-	public static function update_pricing( int $id, array $items, float $hours, int $cleaners, string $date, string $slot, string $note ): void {
+	/**
+	 * Admin pricing or change of a bespoke (or any open) quote. The office's price is kept at payment (no re-pricing).
+	 * Changes to a quote the client has already been sent become a new revision (Quote_Revisions::amend).
+	 *
+	 * @param array|null $answers New property details and add-ons, or null to keep them.
+	 * @return array{revision: int, changes: array, revised: bool}|\WP_Error
+	 */
+	public static function update_pricing( int $id, array $items, float $hours, int $cleaners, string $date, string $slot, string $note, ?array $answers = null, string $client_note = '' ) {
 		$total = Pricing::sum( $items );
-		Db::update( 'quotes', $id, [
-			'items'       => $items,
-			'total_pence' => $total,
-			'hours'       => $hours,
-			'cleaners'    => max( 1, $cleaners ),
-			'job_date'    => $date ?: null,
-			'slot'        => $slot,
-			'admin_note'  => $note,
-		] );
-		Events::log( 'quote', $id, 'priced', 'Priced at ' . Money::format( $total ), [ 'items' => count( $items ), 'hours' => $hours, 'cleaners' => $cleaners ] );
+		$data  = [
+			'items'        => $items,
+			'total_pence'  => $total,
+			'hours'        => $hours,
+			'cleaners'     => max( 1, $cleaners ),
+			'job_date'     => $date ?: null,
+			'slot'         => $slot,
+			'admin_note'   => $note,
+			'admin_priced' => 1,
+		];
+		if ( null !== $answers ) {
+			$data['answers'] = $answers;
+		}
+		$result = Quote_Revisions::amend( $id, $data, $client_note );
+		if ( ! is_wp_error( $result ) ) {
+			Events::log( 'quote', $id, 'priced', 'Priced at ' . Money::format( $total ), [ 'items' => count( $items ), 'hours' => $hours, 'cleaners' => $cleaners ] );
+		}
+		return $result;
 	}
 
 	public static function set_status( int $id, string $to, string $note = '', bool $force = false ): bool {
