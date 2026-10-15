@@ -83,7 +83,12 @@ final class Rest {
 			$preview = Pricing::public_preview( [ 'bespoke' => true, 'reasons' => [ 'Outside our usual area' ], 'items' => [], 'total' => null ] + $price );
 		}
 		$preview = (array) apply_filters( 'cc_bookings_price_preview', $preview, $service, $answers, $price );
-		return new \WP_REST_Response( [ 'ok' => true ] + $preview );
+		// The form shows no prices (they're only in the client area), so only say whether it needs a personal quote.
+		return new \WP_REST_Response( [
+			'ok'      => true,
+			'bespoke' => ! empty( $preview['bespoke'] ),
+			'reasons' => ! empty( $preview['bespoke'] ) ? array_values( array_map( 'strval', (array) ( $preview['reasons'] ?? [] ) ) ) : [],
+		] );
 	}
 
 	public static function slots( \WP_REST_Request $request ): \WP_REST_Response {
@@ -137,10 +142,15 @@ final class Rest {
 				'ok'      => true,
 				'status'  => 'bespoke',
 				'ref'     => $result['quote']['ref'],
-				'message' => 'Thanks! This one needs a tailored price, so we\'ll look at the details and email your quote — usually within the hour during opening times.',
+				'message' => 'This one needs a tailored price, so we\'ll look at the details and email your quote — usually within the hour during opening times. The email has a link to your secure client area, where you can view and book it.',
 			] );
 		}
-		return new \WP_REST_Response( [ 'ok' => true, 'status' => 'quoted', 'ref' => $result['quote']['ref'], 'url' => $result['url'] ] );
+		return new \WP_REST_Response( [
+			'ok'      => true,
+			'status'  => 'quoted',
+			'ref'     => $result['quote']['ref'],
+			'message' => 'We\'ve emailed your quote. Tap "View my quote" in the email to open your secure client area, where you can see the price and book. It can take a minute or two to arrive — check your spam folder if you can\'t see it.',
+		] );
 	}
 
 	public static function prefill( \WP_REST_Request $request ): \WP_REST_Response {

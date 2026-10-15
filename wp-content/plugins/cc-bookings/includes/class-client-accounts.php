@@ -51,6 +51,7 @@ final class Client_Accounts {
 		add_action( 'cc_plan_visit_created', [ self::class, 'visit_created' ], 1, 2 );
 		add_filter( 'show_admin_bar', [ self::class, 'admin_bar' ], 99 );
 		add_action( 'admin_init', [ self::class, 'block_admin' ], 1 );
+		add_action( 'admin_page_access_denied', [ self::class, 'block_admin' ], 1 );
 		add_filter( 'login_redirect', [ self::class, 'login_redirect' ], 20, 3 );
 		add_action( 'template_redirect', [ self::class, 'block_author' ], 0 );
 		add_filter( 'rest_user_query', [ self::class, 'hide_users' ] );
@@ -576,7 +577,7 @@ KEY client_purpose (client_id,purpose)
 				'label'      => 'Login link (client)',
 				'to'         => 'customer',
 				'subject'    => 'Your login link for {brand}',
-				'body'       => "Hi {first_name},\n\nTap the button to log in to your client area, where you can see your quotes and manage your bookings. The link works once and expires in {minutes} minutes.\n\nIf you didn't ask for this, you can ignore this email.",
+				'body'       => "Hi {first_name},\n\nTap the button to log in to your client area, where you can see your quotes and manage your bookings. The link works once and expires in {lasts}.\n\nIf you didn't ask for this, you can ignore this email.",
 				'button'     => 'Log in',
 				'button_url' => 'login_url',
 			],
@@ -584,7 +585,7 @@ KEY client_purpose (client_id,purpose)
 				'label'      => 'Password reset (client)',
 				'to'         => 'customer',
 				'subject'    => 'Reset your password for {brand}',
-				'body'       => "Hi {first_name},\n\nSomeone (hopefully you) asked to reset the password for your client account. Tap the button to choose a new one. The link works once and expires in {minutes} minutes.\n\nIf you didn't ask for this, you can ignore this email — your password won't change.",
+				'body'       => "Hi {first_name},\n\nSomeone (hopefully you) asked to reset the password for your client account. Tap the button to choose a new one. The link works once and expires in {lasts}.\n\nIf you didn't ask for this, you can ignore this email — your password won't change.",
 				'button'     => 'Choose a new password',
 				'button_url' => 'reset_url',
 			],
@@ -592,7 +593,7 @@ KEY client_purpose (client_id,purpose)
 				'label'      => 'Confirm a new email address (client)',
 				'to'         => 'customer',
 				'subject'    => 'Confirm your new email address for {brand}',
-				'body'       => "Hi {first_name},\n\nPlease confirm that you'd like to use this email address for your client account with {brand}. The link expires in {hours} hours.\n\nIf you didn't ask for this, you can ignore this email and nothing will change.",
+				'body'       => "Hi {first_name},\n\nPlease confirm that you'd like to use this email address to log in to your client area. The link works once and expires in {lasts}.\n\nIf you didn't ask for this, you can ignore this email and nothing will change.",
 				'button'     => 'Confirm my new email',
 				'button_url' => 'verify_url',
 			],

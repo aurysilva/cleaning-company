@@ -434,7 +434,9 @@ final class Client_Portal {
 			Quotes::expire( $quote['id'] );
 		}
 		$quote = Quotes::get( (int) $quote['id'] );
-		Frontend::render( 'client-quote', [ 'quote' => $quote, 'client' => $client, 'flash' => self::flash_message() ], 'Quote ' . $quote['ref'] );
+		$notice = self::notice();
+		$flash  = self::flash_message() ?: ( $notice ? [ 'type' => $notice[0], 'message' => $notice[1] ] : null );
+		Frontend::render( 'client-quote', [ 'quote' => $quote, 'client' => $client, 'flash' => $flash ], 'Quote ' . $quote['ref'] );
 	}
 
 	private static function quote_action( array $client, array $quote, string $url, string $do ): void {
@@ -609,7 +611,7 @@ final class Client_Portal {
 					Client_Auth::revoke_links( $id, 'email' );
 					$hours = max( 1, (int) Client_Accounts::opt( 'email_hours' ) );
 					$raw   = Client_Auth::issue_link( $id, 'email', $hours * HOUR_IN_SECONDS, 0, [ 'email' => $new ] );
-					Notify::send( 'client_email_verify', $new, Client_Accounts::vars( $client ) + [ 'verify_url' => home_url( '/account/email/' . $raw . '/' ), 'hours' => $hours ], [ 'client', $id ] );
+					Notify::send( 'client_email_verify', $new, Client_Accounts::vars( $client ) + [ 'verify_url' => home_url( '/account/email/' . $raw . '/' ), 'hours' => $hours, 'lasts' => Client_Auth::lasts( $hours * 60 ) ], [ 'client', $id ] );
 				}
 				Events::log( 'client', $id, 'email_change_requested', 'Asked to change their email address (confirmation sent to the new address)', [], 'client:' . $id );
 				return [ true, 'email_sent' ];

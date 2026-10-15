@@ -1,6 +1,7 @@
 /**
  * Multi-step quote form ({cc_quote_form}) and the private quote page (Accept & pay, questions).
- * Prices only come from the REST price endpoint; the server re-prices on submit and again at payment.
+ * The form shows no prices: the server prices the quote on submit and emails a link to the client area,
+ * and re-prices again at payment.
  */
 (() => {
 	const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -237,7 +238,7 @@
 			});
 		};
 
-		/* Price preview (from step 3) */
+		/* Bespoke check (from step 3). The form never shows a price: quotes are sent to the client area. */
 
 		let previewTimer = 0;
 		const updatePreview = () => {
@@ -247,15 +248,8 @@
 					return;
 				}
 				const seq = ++state.previewSeq;
-				summary.hidden = false;
-				summary.classList.add('is-loading');
 				const res = await api(config.rest, 'price', { body: { service: state.service.slug, answers: collect(), date: state.date, slot: state.slot, postcode: postcode.value } });
-				if (seq !== state.previewSeq) {
-					return;
-				}
-				summary.classList.remove('is-loading');
-				if (!res.ok) {
-					summary.innerHTML = `<p>${esc(res.message || 'We couldn\'t work out a price just now.')}</p>`;
+				if (seq !== state.previewSeq || !res.ok) {
 					return;
 				}
 				state.preview = res;
@@ -266,23 +260,14 @@
 
 		const renderSummary = () => {
 			const p = state.preview;
-			if (!p || STEPS[state.step] === 'service' || STEPS[state.step] === 'details') {
+			if (!p || !isBespokeRoute() || STEPS[state.step] === 'service' || STEPS[state.step] === 'details') {
 				summary.hidden = true;
 				return;
 			}
 			summary.hidden = false;
-			if (isBespokeRoute()) {
-				summary.innerHTML = '<p class="cc-quote__summary-title">We\'ll price this one personally</p>'
-					+ '<p>Send your details and we\'ll email a tailored quote — usually within the hour during opening times.</p>'
-					+ (p.reasons && p.reasons.length ? `<ul class="cc-quote__reasons">${p.reasons.map((r) => `<li>${esc(r)}</li>`).join('')}</ul>` : '');
-				return;
-			}
-			summary.innerHTML = '<p class="cc-quote__summary-title">Your price</p>'
-				+ `<ul class="cc-quote__lines">${p.items.map((i) => `<li><span>${esc(i.label)}</span><span>${esc(i.amount)}</span></li>`).join('')}</ul>`
-				+ `<p class="cc-quote__total"><span>Total</span><strong>${esc(p.total)}</strong></p>`
-				+ (p.duration ? `<p class="cc-quote__duration">${esc(p.duration)}</p>` : '')
-				+ (p.note ? `<p class="cc-quote__small">${esc(p.note)}</p>` : '')
-				+ (!state.date ? '<p class="cc-quote__small">Weekend or short-notice dates may add a small surcharge.</p>' : '');
+			summary.innerHTML = '<p class="cc-quote__summary-title">We\'ll price this one personally</p>'
+				+ '<p>Send your details and we\'ll email a tailored quote — usually within the hour during opening times.</p>'
+				+ (p.reasons && p.reasons.length ? `<ul class="cc-quote__reasons">${p.reasons.map((r) => `<li>${esc(r)}</li>`).join('')}</ul>` : '');
 		};
 
 		/* Step 4: dates and arrival slots */
@@ -444,7 +429,11 @@
 			btnBack.hidden = state.step === 0;
 			btnNext.hidden = last;
 			btnSubmit.hidden = !last;
-			btnSubmit.textContent = isBespokeRoute() ? 'Send my request' : 'See my price';
+			btnSubmit.textContent = isBespokeRoute() ? 'Send my request' : 'Get my quote';
+			const notice = q('[data-form-notice]');
+			if (notice) {
+				notice.hidden = !last;
+			}
 			form.querySelectorAll('[data-progress]').forEach((li) => {
 				const i = STEPS.indexOf(li.dataset.progress);
 				li.classList.toggle('is-current', i === state.step);
@@ -578,12 +567,6 @@
 			btnBack.disabled = false;
 			btnSubmit.textContent = label;
 
-			if (res.ok && res.status === 'quoted' && res.url) {
-				btnSubmit.disabled = true;
-				btnSubmit.textContent = 'Opening your quote…';
-				window.location.href = res.url;
-				return;
-			}
 			if (res.ok) {
 				form.querySelectorAll('[data-step]').forEach((el) => {
 					el.hidden = el.dataset.step !== 'done';
@@ -591,6 +574,9 @@
 				q('[data-done-message]').textContent = res.message || '';
 				summary.hidden = true;
 				q('.cc-quote__nav').hidden = true;
+				if (q('[data-form-notice]')) {
+					q('[data-form-notice]').hidden = true;
+				}
 				q('.cc-quote__progress').hidden = true;
 				q('.cc-quote__progress-bar').hidden = true;
 				scrollIntoViewIfNeeded(form);

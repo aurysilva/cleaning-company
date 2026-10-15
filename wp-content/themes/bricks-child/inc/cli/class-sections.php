@@ -601,22 +601,28 @@ final class Sections {
 		return [
 			self::page_hero( 'Get a free quote', 'Tell us about your property and the clean you need. Most cleans get an instant fixed price you can book online; anything bespoke, we\'ll price personally — usually within the hour during opening times.', 'Contact us', false ),
 			T::section( '', [
-				T::container( 'cc-split', [
-					T::div( 'cc-split__main cc-panel', [
+				T::container( 'cc-quote-layout', [
+					T::div( 'cc-quote-layout__form cc-panel', [
 						$instant,
 						T::div( '', [
 							T::heading( 'Request a quote', 'h2', 'cc-h3' ),
 							$form,
 						], 'Fallback form (plugin inactive)', T::when_empty( '{cc_quote_form}' ) ),
 					] ),
-					T::div( 'cc-split__aside', [
-						T::heading( 'Contact details', 'h2', 'cc-h3' ),
-						T::block( '{cc_contact_list}', 'Contact list' ),
-						T::heading( 'Opening hours', 'h2', 'cc-h3' ),
-						T::block( '{cc_opening_hours}', 'Opening hours' ),
-						T::heading( 'Areas we cover', 'h2', 'cc-h3' ),
-						T::block( '{cc_area_links:regions}', 'Areas' ),
-					] ),
+					T::div( 'cc-contact-strip', [
+						T::div( 'cc-contact-strip__item cc-panel', [
+							T::heading( 'Contact details', 'h2', 'cc-h3' ),
+							T::block( '{cc_contact_list}', 'Contact list' ),
+						] ),
+						T::div( 'cc-contact-strip__item cc-panel', [
+							T::heading( 'Opening hours', 'h2', 'cc-h3' ),
+							T::block( '{cc_opening_hours}', 'Opening hours' ),
+						] ),
+						T::div( 'cc-contact-strip__item cc-contact-strip__item--wide cc-panel', [
+							T::heading( 'Areas we cover', 'h2', 'cc-h3' ),
+							T::block( '{cc_area_links:regions}', 'Areas' ),
+						] ),
+					], 'Contact details' ),
 				] ),
 			], 'Contact' ),
 		];

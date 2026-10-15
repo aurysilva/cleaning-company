@@ -1,0 +1,111 @@
+/**
+ * Client area (/account/): extends cleaners.css, which provides the shared header, tab bar, footer, forms and lists.
+ */
+
+.cc-client__back {
+	margin: 0 0 var(--cc-space-2xs, 0.5rem);
+	font-size: var(--cc-text-s, 0.9375rem);
+}
+
+.cc-client__back a {
+	text-decoration: none;
+}
+
+.cc-client__inline {
+	display: inline-block;
+	margin: 0.5rem 0 0;
+}
+
+.cc-client__steps {
+	margin: 0 0 var(--cc-space-s, 1rem);
+	padding-left: 1.25rem;
+	list-style: decimal;
+}
+
+/* The theme stacks check-label text as a column; keep inline links (terms) in the sentence. */
+.cc-client .cc-quote__check > span {
+	display: block;
+}
+
+.cc-client__steps li + li {
+	margin-top: 0.25rem;
+}
+
+.cc-client__status {
+	display: inline-block;
+	padding: 0.15em 0.65em;
+	border-radius: var(--cc-radius-pill, 999px);
+	background: #eef3f6;
+	color: var(--cc-color-text-muted, #556b78);
+	font-size: var(--cc-text-xs, 0.8125rem);
+	font-weight: 700;
+	white-space: nowrap;
+}
+
+.cc-client__status--ready,
+.cc-client__status--confirmed,
+.cc-client__status--dispatching,
+.cc-client__status--assigned,
+.cc-client__status--active,
+.cc-client__status--booked {
+	background: #e3f6ee;
+	color: #0d6b48;
+}
+
+.cc-client__status--pending,
+.cc-client__status--scheduled,
+.cc-client__status--payment_due,
+.cc-client__status--paused {
+	background: #fff4dc;
+	color: #7a5200;
+}
+
+.cc-client__status--expired,
+.cc-client__status--cancelled {
+	background: #fde8e6;
+	color: #9b2c20;
+}
+
+.cc-client__payments {
+	margin: var(--cc-space-xs, 0.75rem) 0 0;
+	padding: 0;
+	list-style: none;
+	font-size: var(--cc-text-s, 0.9375rem);
+}
+
+.cc-client__payments li {
+	display: flex;
+	justify-content: space-between;
+	gap: 1rem;
+	padding: 0.35rem 0;
+	border-top: 1px solid var(--cc-color-border, #dbe6eb);
+}
+
+.cc-client__addresses {
+	margin: 0.25rem 0 0;
+	padding-left: 1.25rem;
+	font-size: var(--cc-text-s, 0.9375rem);
+}
+
+.cc-client__profile {
+	display: flex;
+	flex-direction: column;
+	gap: var(--cc-space-m, 1.5rem);
+	max-width: 40rem;
+}
+
+.cc-client__profile .cc-private__heading {
+	margin-top: 0;
+}
+
+.cc-btn--small {
+	padding: 0.45em 0.9em;
+	font-size: var(--cc-text-s, 0.9375rem);
+}
+
+/* Bottom tab bar: 3 or 4 tabs (Plans only shows for clients with a regular plan). */
+@media (max-width: 768px) {
+	.cc-client-area .cc-cl-tabs__list {
+		grid-template-columns: repeat(var(--cc-tabs, 4), minmax(0, 1fr));
+	}
+}

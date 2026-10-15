@@ -681,3 +681,109 @@ Edits to shared files only add hooks:
   - Deactivation ended the session (1 → 0), took the cleaner out of dispatch, alerted the office about the upcoming job and refused both portal login and `wp_authenticate`.
   - A second cleaner's fresh invite returned 200; once expired it returned 410, and a tampered token returned 410. The portal is laid out for a 390 px-wide phone screen with no sideways scrolling.
   - All changed PHP files pass `php -l` on PHP 8.3.
+
+### Client portal (built)
+
+Customers get a private client area at `/account/`. Prices now appear only there, never on the quote form or in its REST responses. The feature lives in its own files: `class-client-accounts.php` (bootstrap, schema, linking, lockdown, emails), `class-client-auth.php` (password, magic link, reset, signed links), `class-client-portal.php` (routes and pages), `class-client-chrome.php` (header and footer), `class-client-accounts-cli.php`, `admin/class-clients-screen.php`, the templates `client-login.php`, `client-setup.php`, `client-portal.php`, `client-quote.php`, `client-booking.php` and `client-message.php`, and `assets/client.css`. It is switched on by one line in `cc-bookings.php` (`add_action( 'cc_bookings_loaded', [ Client_Accounts::class, 'init' ] )`).
+
+Edits to shared files:
+- `class-rest.php` and `assets/quote-form.js`: the quote endpoint and the form no longer return or show any price. After submitting, the form says "Thanks — check your email" (or, for quotes that need a tailored price, that the office will email it), with no redirect.
+- `class-form.php`: the editable line under the submit button (setting `clients.form_notice`).
+- `class-notify.php`: the `quote_ready` email now points to the client area, with a **View my quote** button.
+- `class-frontend.php`: hands client templates to `Client_Chrome`.
+- `class-manage.php`, `class-plan-manage.php` and `class-plan-charges.php`: small hooks so booking management and Plan_Manage can run inside the account pages.
+
+**The flow**
+1. **Quote form.** No prices anywhere. Under the submit button: "We'll create your secure client area so you can view your quote and manage bookings." (editable on **Bookings → Clients**).
+2. **On submit** (`cc_quote_created`; bespoke admin-priced quotes use `cc_quote_sent`, so they follow the same flow when the office sends them):
+   - A client record is found or created by email (`wp_cc_clients`), plus a WordPress user with the `cc_client` role (read only).
+   - If the email already has a client account, the quote is attached silently. The customer sees the same "check your email" message either way, so the form doesn't reveal whether an account exists.
+   - If the email belongs to another kind of website login (an administrator or a cleaner, say), no client login is created. That customer keeps the old tokenised links (logged as `no_login` in Activity).
+3. **"Your quote is ready" email** with a **View my quote** button: `/account/q/{token}/`, a single-use signed link (only its SHA-256 hash is stored) that lasts 7 days by default (setting `clients.quote_link_days`).
+4. **Opening the link:**
+   - **No password yet:** a "Your quote is ready" page with a **View my quote** button (a click is needed, so email scanners can't use the link up). This signs the customer in and makes them choose a password and confirm their name and mobile before they see anything else.
+   - **Has a password:** the login page with the email filled in, then the quote.
+   - **Already logged in as that client:** straight to the quote. Logged in as someone else: a message asking them to log out first.
+   - **Used or expired link:** the login page with a "this link has already been used" message, or the Quotes tab if they're logged in.
+5. **Quote page** (`/account/quotes/Q-123/`):
+   - The itemised price, date and arrival slot, and address.
+   - What's included, the satisfaction guarantee and the cancellation policy.
+   - The T&Cs tick and the 14-day cancellation-rights tick, plus the plan-authority tick for regular cleans.
+   - **Accept & confirm** holds the slot and opens Stripe Checkout (rate-limited: 20 per IP per hour).
+6. **Stripe:** success returns to `/account/bookings/B-123/?checkout=success`, and cancel returns to the quote page (`cc_bookings_checkout_params`). Customer emails link to the account pages instead of the tokenised pages (`cc_bookings_email_vars`, priority 90).
+
+**Portal** (`/account/`, logged-in clients):
+- **Header:** logo, "My account", the tabs **Bookings · Quotes · Regular plans** (only shown when they have a plan) **· Profile**, their first name and **Log out**. On phones (768px and under) the tabs become a fixed bottom tab bar. The footer is slim. Logged-out pages show the logo only. Bricks' header and footer are switched off for these routes only (`bricks/active_templates`); marketing pages are unchanged.
+- **Bookings:** upcoming and past, status and cleaner. Each booking page (`/account/bookings/B-123/`) has reschedule and cancel, re-clean requests, the receipt and top-up payments, using the same rules as the old manage page.
+- **Quotes:** a list with status. Open and accept a quote; an expired quote can be re-quoted, and customers can send the office a question (5 per hour).
+- **Regular plans:** reuses Plan_Manage (skip, change frequency, pause, resume, update card, end plan).
+- **Profile:**
+  - Name, mobile and address, and the marketing opt-in.
+  - **Change email.** A confirmation link goes to the new address (single use, 24 hours; setting `clients.email_hours`), and the old address is told once it changes.
+  - **Change password.** The current password is required, and other devices are logged out.
+  - **Delete my account.** This records the request and emails the office (`client_delete_request`) to handle under UK GDPR. Nothing is deleted automatically, because bookings and payment records have legal retention needs.
+- **Login** (`/account/`): the same two-tab card as the cleaner login, **Password** and **No password?** (a 15-minute single-use magic link, with a **Log me in** button), plus **Forgot password?** (`/account/forgot/`, 60-minute WordPress reset key).
+
+**Old links keep working.** Tokenised `/quote/Q-…/{token}/` and `/booking/B-…/{token}/` links in emails already sent work exactly as before, and so do plan management links.
+
+**Admin: Bookings → Clients**
+- **List:** clients with their status and quote, booking and plan counts.
+- **Detail:** contact details, quotes, bookings and plans.
+- **Actions:** **Resend "View my quote"** per open quote (a new link; the old one stops working), **Email a login link**, and **Deactivate / Reactivate**. Deactivating logs the client out everywhere and cancels their emailed links; their quotes and bookings are kept.
+- **Settings:** the form line, quote-link days, magic-link minutes, reset minutes and email-confirmation hours.
+
+**Security**
+- **Lockdown.** Clients are sent to `/account/` from wp-admin, both through `admin_init` and through `admin_page_access_denied` (WordPress refuses some admin pages before `admin_init` runs). They never see the admin bar, have no author archive (404), and are left out of REST user lists and the user sitemap. `wp-login.php` sends them to `/account/`.
+- **Links.** Every emailed link is single use and expires, and only its SHA-256 hash is stored in `wp_cc_client_links`. Accepting a link needs a click with a nonce.
+- **Errors.** Login errors are generic, and link and reset requests always give the same answer whether or not the address has an account.
+- **Rate limits:**
+  - Logins: 20 per IP per 15 minutes, and 5 failures per account per 15 minutes.
+  - Login-link and reset requests: 6 per IP per hour.
+  - Quote links: 30 per IP per hour.
+  - Password changes: 10 per hour. Email changes: 5 per hour.
+- **Turnstile** protects the quote form once a site key is set.
+- **Sessions.** Setting or changing the password, a reset, and deactivation all end other sessions.
+- **Headers and caching.** Every `/account/` page sends `no-store`, `noindex`, `X-Frame-Options: DENY` and `Referrer-Policy: no-referrer`, and LiteSpeed never caches it. Every form has a nonce, and `next` redirects are limited to `/account/` paths.
+- **Prices** appear only on private account pages, never in public static HTML.
+
+**Owner steps**
+1. **Update the privacy policy.** Say that submitting a quote creates a client account (name, email, mobile, address, quotes, bookings and marketing choice), what it's used for (showing quotes, managing bookings and payments), how long it's kept, and that customers can ask for deletion from Profile or by contacting the office.
+2. **Create accounts for existing customers** (optional): `wp cc-bookings clients backfill` counts them, and `wp cc-bookings clients backfill --yes` creates the accounts. No emails are sent. Their next email will link to the client area.
+3. **Check the wording** of the form line and the `quote_ready`, `client_login_link`, `client_password_reset`, `client_email_verify`, `client_email_changed` and `client_delete_request` emails (**Bookings → Clients** and **Settings → Emails**).
+4. **Turnstile:** add a site key and secret to protect the quote form.
+5. **Stripe:** the Checkout page shows the Stripe account's display name. Set it to the business name in the Stripe dashboard.
+6. **Reword the contact page** intro ("Most cleans get an instant fixed price you can book online"). The price is now shown in the client area after an email, not instantly on the form.
+
+**Technical notes**
+- **Schema:** separate installer (option `cc_bookings_client_accounts_schema`, version 1); the core schema version is unchanged. It adds:
+  - **Table `wp_cc_clients`:** `user_id`, email (unique), name, phone, address, status (`active` / `deactivated`), `password_set`, `marketing_opt_in`, `is_test`, meta (JSON), `last_login_at`, `delete_requested_at` and `deactivated_at`.
+  - **Table `wp_cc_client_links`:** `client_id`, purpose (`quote` / `login` / `email`), `quote_id`, `token_hash`, data, `expires_at` and `used_at`.
+  - **Column `client_id`** on `quotes`, `bookings` and `plans`. Bookings confirmed from a quote, a plan visit or a re-clean inherit it.
+  - **Role `cc_client`** (read only).
+- **Settings** are stored under `clients.*`, with defaults in `Client_Accounts::DEFAULTS`: `form_notice`, `quote_link_days` (7), `magic_minutes` (15), `reset_minutes` (60) and `email_hours` (24).
+- **Routes** (rewrite rules on `cc_bookings_rewrites`): `/account/`, `/account/{bookings|quotes|plans|profile|forgot|logout|set-password}/`, `/account/{bookings|quotes|plans}/{B-|Q-|P-ref}/`, `/account/q/{token}/`, `/account/magic/{token}/`, `/account/email/{token}/` and `/account/reset/{user}/{key}/`.
+- **Listens to:** `cc_quote_created`, `cc_quote_sent`, `cc_booking_confirmed`, `cc_plan_created`, `cc_plan_visit_created`, `cc_bookings_email_defaults` (25), `cc_bookings_email_vars` (90), `cc_bookings_checkout_params` (20), `show_admin_bar`, `admin_init`, `admin_page_access_denied`, `login_redirect`, `rest_user_query`, `wp_sitemaps_users_query_args` and `cc_bookings_admin_action_client_*`.
+- **Fires:** `cc_quote_question( $quote_id, $message )`.
+- **Known limits:**
+  - A quote's 7-day validity can end before the job date (this was already the case).
+  - On the old public quote page, the terms-tick label still wraps oddly because of theme CSS. The client area overrides it.
+- **WP-CLI** (`wp cc-bookings clients …`; printed links are live credentials, so treat them like passwords):
+
+| Command | What it does |
+|---|---|
+| `list [--format=]` | All clients with status, login, password set, and quote, booking and plan counts |
+| `backfill [--yes]` | Links existing quotes (and their bookings and plans) to client accounts by email, creating accounts as needed. A dry run counts only; sends no emails |
+| `login-link <id\|email>` | Prints a single-use login link |
+| `purge-test [--yes]` | Deletes only clients, quotes, bookings and plans with a customer name starting "CP Test", with their logins, links and child rows |
+
+- **Verified on the server** (15 Oct 2026, with "CP Test" `@example.com` data, since deleted; emails were in log-only mode during the test, since restored):
+  - **New prospect:** the form showed no "£" and no price in the REST response, and showed the client-area line. Submitting created the client and the `cc_client` user and logged the "Your quote is ready" email. **View my quote** led to set password, name and mobile, then the quote with the itemised price, inclusions, guarantee, cancellation policy and ticks.
+  - **Payment:** **Accept & confirm** opened the real Stripe Checkout, which was expired unpaid. A simulated payment confirmed the booking, and the success URL showed it in the account.
+  - **Returning customer:** a second quote attached to the same account. Its link led to the login page with the email filled in, then the quote.
+  - **Links:** used, expired and tampered links were refused. An old tokenised booking link still worked.
+  - **Plans:** the Regular plans tab appeared only once the client had a plan, and Plan_Manage worked inside it.
+  - **Bespoke quote:** a quote priced and sent by the office followed the same flow.
+  - **Lockdown:** wp-admin pages, including `edit.php`, redirect to `/account/`.
+  - **Marketing pages:** home, contact and service pages are unchanged and contain no "£".
+  - **Layouts:** checked in a desktop browser and at 390 px wide.
+  - All changed PHP files pass `php -l` on PHP 8.3.

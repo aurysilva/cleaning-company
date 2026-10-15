@@ -104,7 +104,7 @@ final class Form {
 			. '</fieldset>'
 
 			. '<div class="cc-quote__step cc-quote__done" data-step="done" hidden>'
-			. '<p class="cc-quote__title" tabindex="-1">Thanks — we\'ve got your request</p>'
+			. '<p class="cc-quote__title" tabindex="-1">Thanks — check your email</p>'
 			. '<p data-done-message></p>'
 			. '</div>'
 
@@ -113,11 +113,18 @@ final class Form {
 			. '<div class="cc-quote__nav">'
 			. '<button type="button" class="cc-btn cc-btn--outline cc-quote__back" data-back hidden>Back</button>'
 			. '<button type="button" class="cc-btn cc-btn--primary cc-quote__next" data-next>Next</button>'
-			. '<button type="submit" class="cc-btn cc-btn--primary cc-quote__submit" data-submit hidden>See my price</button>'
+			. '<button type="submit" class="cc-btn cc-btn--primary cc-quote__submit" data-submit hidden>Get my quote</button>'
 			. '</div>'
+			. self::account_notice()
 			. '</form>'
 			. '</div>';
 
 		return $html;
+	}
+
+	/** The line under the submit button (Client accounts setting "form_notice"). */
+	private static function account_notice(): string {
+		$text = class_exists( __NAMESPACE__ . '\\Client_Accounts' ) ? trim( (string) Client_Accounts::opt( 'form_notice' ) ) : '';
+		return '' === $text ? '' : '<p class="cc-quote__small cc-quote__account-note" data-form-notice hidden>' . esc_html( $text ) . '</p>';
 	}
 }

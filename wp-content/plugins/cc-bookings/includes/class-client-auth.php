@@ -161,8 +161,17 @@ final class Client_Auth {
 		$client  = Client_Accounts::by_user( $user->ID );
 		$minutes = max( 1, (int) Client_Accounts::opt( 'magic_minutes' ) );
 		$raw     = self::issue_link( (int) $client['id'], 'login', $minutes * MINUTE_IN_SECONDS, 0, $next ? [ 'next' => $next ] : [] );
-		Notify::send( 'client_login_link', $user->user_email, Client_Accounts::vars( $client ) + [ 'login_url' => self::magic_url( $raw ), 'minutes' => $minutes ], [ 'client', (int) $client['id'] ] );
+		Notify::send( 'client_login_link', $user->user_email, Client_Accounts::vars( $client ) + [ 'login_url' => self::magic_url( $raw ), 'minutes' => $minutes, 'lasts' => self::lasts( $minutes ) ], [ 'client', (int) $client['id'] ] );
 		return true;
+	}
+
+	/** "15 minutes", "1 hour", "24 hours" — for email copy. */
+	public static function lasts( int $minutes ): string {
+		if ( $minutes >= 60 && 0 === $minutes % 60 ) {
+			$hours = intdiv( $minutes, 60 );
+			return $hours . ( 1 === $hours ? ' hour' : ' hours' );
+		}
+		return $minutes . ( 1 === $minutes ? ' minute' : ' minutes' );
 	}
 
 	/** An admin-sent login link (Clients screen), valid for a day. */
@@ -172,7 +181,7 @@ final class Client_Auth {
 			return false;
 		}
 		$raw = self::issue_link( (int) $client['id'], 'login', DAY_IN_SECONDS );
-		return Notify::send( 'client_login_link', $user->user_email, Client_Accounts::vars( $client ) + [ 'login_url' => self::magic_url( $raw ), 'minutes' => 24 * 60 ], [ 'client', (int) $client['id'] ] );
+		return Notify::send( 'client_login_link', $user->user_email, Client_Accounts::vars( $client ) + [ 'login_url' => self::magic_url( $raw ), 'minutes' => 24 * 60, 'lasts' => self::lasts( 24 * 60 ) ], [ 'client', (int) $client['id'] ] );
 	}
 
 	public static function magic_url( string $raw ): string {
@@ -194,7 +203,7 @@ final class Client_Auth {
 		$url = self::reset_url( $user );
 		if ( $url ) {
 			$client = Client_Accounts::by_user( $user->ID );
-			Notify::send( 'client_password_reset', $user->user_email, Client_Accounts::vars( $client ) + [ 'reset_url' => $url, 'minutes' => (int) Client_Accounts::opt( 'reset_minutes' ) ], [ 'client', (int) $client['id'] ] );
+			Notify::send( 'client_password_reset', $user->user_email, Client_Accounts::vars( $client ) + [ 'reset_url' => $url, 'minutes' => (int) Client_Accounts::opt( 'reset_minutes' ), 'lasts' => self::lasts( (int) Client_Accounts::opt( 'reset_minutes' ) ) ], [ 'client', (int) $client['id'] ] );
 		}
 		return true;
 	}

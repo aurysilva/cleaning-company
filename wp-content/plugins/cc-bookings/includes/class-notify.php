@@ -37,8 +37,8 @@ final class Notify {
 				'label'      => 'Quote ready (customer)',
 				'to'         => 'customer',
 				'subject'    => 'Your {service} quote {ref}',
-				'body'       => "Hi {first_name},\n\nThanks for asking {brand} to quote. Here's your price for {service} on {date}:\n\n{items}\n\nYour quote is held until {expires}. When you're ready, {next_step}.",
-				'button'     => 'View quote and book',
+				'body'       => "Hi {first_name},\n\nThanks for asking {brand} to quote. Your quote for {service} on {date} is ready in your secure client area, with your fixed price and everything that's included.\n\nYour quote is held until {expires}. When you're ready, {next_step}.\n\n{link_note}",
+				'button'     => 'View my quote',
 				'button_url' => 'quote_url',
 			],
 			'bespoke_received'    => [
@@ -59,16 +59,16 @@ final class Notify {
 				'label'      => 'Quote reminder after 24 hours (customer)',
 				'to'         => 'customer',
 				'subject'    => 'Your quote {ref} is still available',
-				'body'       => "Hi {first_name},\n\nJust a reminder that your quote for {service} on {date} is still available at {total}. Slots fill up, so book soon to keep your date.",
-				'button'     => 'View quote and book',
+				'body'       => "Hi {first_name},\n\nJust a reminder that your quote for {service} on {date} is still available. Slots fill up, so book soon to keep your date.\n\n{link_note}",
+				'button'     => 'View my quote',
 				'button_url' => 'quote_url',
 			],
 			'quote_expiring'      => [
 				'label'      => 'Quote expires tomorrow (customer)',
 				'to'         => 'customer',
 				'subject'    => 'Your quote {ref} expires tomorrow',
-				'body'       => "Hi {first_name},\n\nYour quote for {service} ({total}) expires on {expires}. After that we'll need to re-check prices and availability.",
-				'button'     => 'Book now',
+				'body'       => "Hi {first_name},\n\nYour quote for {service} expires on {expires}. After that we'll need to re-check prices and availability.\n\n{link_note}",
+				'button'     => 'View my quote',
 				'button_url' => 'quote_url',
 			],
 			'quote_question'      => [
@@ -190,7 +190,7 @@ final class Notify {
 		include CC_BOOKINGS_DIR . '/templates/email.php';
 		$html = (string) ob_get_clean();
 
-		return [ 'subject' => $subject, 'html' => $html, 'text' => trim( wp_strip_all_tags( $body ) ) ];
+		return [ 'subject' => $subject, 'html' => $html, 'text' => trim( wp_strip_all_tags( $body ) ), 'button_url' => $button ? $button['url'] : '' ];
 	}
 
 	/**
@@ -226,7 +226,7 @@ final class Notify {
 			'to'       => $to,
 			'log_only' => $log_only,
 			'excerpt'  => mb_substr( preg_replace( '/\s+/', ' ', $mail['text'] ), 0, 400 ),
-		] );
+		] + ( $log_only && $mail['button_url'] ? [ 'button_url' => $mail['button_url'] ] : [] ) );
 		return $sent;
 	}
 
@@ -322,6 +322,7 @@ final class Notify {
 			'reasons'    => implode( '; ', (array) $quote['bespoke_reasons'] ),
 			'expires'    => $quote['expires_at'] ? wp_date( 'l j F', Db::timestamp( $quote['expires_at'] ) ) : '',
 			'quote_url'  => $url,
+			'link_note'  => '',
 			'next_step'  => Stripe::enabled() ? 'open it to agree the terms and pay securely — your booking is confirmed straight away' : "open it to agree the terms and we'll call you to take payment and confirm your booking",
 			'admin_url'  => Quotes::admin_url( $quote['id'] ),
 			'customer_phone' => $quote['phone'],

@@ -103,6 +103,8 @@ final class Frontend {
 		wp_localize_script( 'cc-bookings-quote', 'ccBookings', [ 'rest' => esc_url_raw( rest_url( Rest::NS . '/' ) ) ] );
 		if ( in_array( $template, Cleaner_Chrome::TEMPLATES, true ) ) {
 			Cleaner_Chrome::start( $template, $vars );
+		} elseif ( class_exists( __NAMESPACE__ . '\\Client_Chrome' ) && in_array( $template, Client_Chrome::TEMPLATES, true ) ) {
+			Client_Chrome::start( $template, $vars );
 		}
 
 		$file = locate_template( 'cc-bookings/' . $template . '.php' ) ?: CC_BOOKINGS_DIR . '/templates/' . $template . '.php';
