@@ -44,16 +44,67 @@ function cc_seo_post_id(): int {
 	return 0;
 }
 
-add_filter( 'bricks/frontend/disable_opengraph', fn( $disable ) => cc_seo_enabled() ? true : $disable );
-add_filter( 'bricks/frontend/disable_seo', fn( $disable ) => cc_seo_enabled() ? true : $disable );
+// Either the theme or the SEO plugin prints these tags, so Bricks' own copies would be duplicates
+add_filter( 'bricks/frontend/disable_opengraph', '__return_true' );
+add_filter( 'bricks/frontend/disable_seo', '__return_true' );
+
+/**
+ * The SEO title without the brand: the seo_title field, or "{Service} in Hull & East Yorkshire" for services.
+ */
+function cc_seo_title( int $post_id ): string {
+	$title = trim( (string) cc_get( 'seo_title', $post_id ) );
+	if ( ! $title && get_post_type( $post_id ) === 'cc_service' ) {
+		// Filtered titles skip WordPress's escaping, and esc_html leaves stored entities such as &amp; intact
+		$title = esc_html( get_post_field( 'post_title', $post_id ) . ' in Hull & East Yorkshire' );
+	}
+	return $title;
+}
 
 add_filter( 'pre_get_document_title', function ( $title ) {
-	if ( ! cc_seo_enabled() || ! is_singular() ) {
+	if ( ! cc_seo_enabled() || ! is_singular() || is_front_page() ) {
 		return $title;
 	}
-	$custom = trim( (string) cc_get( 'seo_title', get_queried_object_id() ) );
-	return $custom && ! is_front_page() ? $custom . ' | ' . cc_brand_name() : $title;
+	$custom = cc_seo_title( get_queried_object_id() );
+	return $custom ? $custom . ' | ' . cc_brand_name() : $title;
 } );
+
+// Rank Math: a title or description set in its editor box wins, otherwise the theme's fields are used
+add_filter( 'rank_math/frontend/title', function ( $title ) {
+	$post_id = cc_seo_post_id();
+	if ( ! $post_id || is_front_page() || get_post_meta( $post_id, 'rank_math_title', true ) ) {
+		return $title;
+	}
+	$custom = cc_seo_title( $post_id );
+	return $custom ? $custom . ' | ' . cc_brand_name() : $title;
+} );
+
+add_filter( 'rank_math/frontend/description', function ( $description ) {
+	$post_id = cc_seo_post_id();
+	if ( ! $post_id || get_post_meta( $post_id, 'rank_math_description', true ) ) {
+		return $description;
+	}
+	return cc_seo_description( $post_id ) ?: $description;
+} );
+
+add_filter( 'rank_math/opengraph/facebook/og_locale', fn() => 'en_GB' );
+
+// Pages without a featured image (e.g. town pages) share the image the theme shows for them
+foreach ( [ 'facebook', 'twitter' ] as $network ) {
+	add_action( "rank_math/opengraph/{$network}/add_additional_images", function ( $images ) {
+		$post_id = cc_seo_post_id();
+		if ( ! $post_id ) {
+			return;
+		}
+		// Rank Math already picked a social image (editor box or featured image).
+		if ( get_post_meta( $post_id, 'rank_math_facebook_image_id', true ) || has_post_thumbnail( $post_id ) ) {
+			return;
+		}
+		$image = cc_post_image_id( $post_id );
+		if ( $image ) {
+			$images->add_image_by_id( $image );
+		}
+	} );
+}
 
 add_action( 'wp_head', function () {
 	if ( ! cc_seo_enabled() ) {

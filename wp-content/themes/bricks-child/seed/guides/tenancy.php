@@ -116,7 +116,7 @@ HTML,
 		'description' => 'How to get your deposit back in full: what landlords can deduct, how deposit protection works, and the cleaning and evidence that prevent disputes.',
 		'category'    => 'end-of-tenancy',
 		'service'     => 'end-of-tenancy-cleaning',
-		'related'     => [ 'end-of-tenancy-cleaning-checklist', 'deposit-dispute-cleaning-evidence', 'professionally-cleaned-tenancy-clause' ],
+		'related'     => [ 'end-of-tenancy-cleaning-checklist', 'check-out-cleaning-photos-guide', 'professionally-cleaned-tenancy-clause' ],
 		'image'       => 'house keys table',
 		'excerpt'     => 'What landlords can and can’t deduct, how deposit protection works, and the cleaning and evidence that help you get your full tenancy deposit back.',
 		'content'     => <<<'HTML'
@@ -179,7 +179,7 @@ HTML,
 <li>Reply in writing, explaining which items you dispute and why.</li>
 <li>If you still can't agree, raise a dispute with the deposit scheme. It's free, and both sides submit evidence to an independent adjudicator.</li>
 </ol>
-<p>Adjudicators decide on evidence, not on who argues hardest. Our guide to <a href="{{guide:deposit-dispute-cleaning-evidence}}">deposit disputes over cleaning</a> explains what makes evidence persuasive.</p>
+<p>Adjudicators decide on evidence, not on who argues hardest. Our guide to <a href="{{guide:how-to-get-your-deposit-back}}">deposit disputes over cleaning</a> explains what makes evidence persuasive.</p>
 <h2>Getting the property ready for check-out</h2>
 <p>If you're short on time or already moving into a new place, our team can clean the property to inventory standard before your inspection. We work across <a href="{{area:hull}}">Hull</a>, <a href="{{local:end-of-tenancy-cleaning-cottingham}}">Cottingham</a> and the wider East Riding, follow letting-agent checklists, and offer a re-clean guarantee if something isn't right.</p>
 <p>Read more about our <a href="{{service:end-of-tenancy-cleaning}}">end of tenancy cleaning</a>, or <a href="{{page:contact}}">contact us</a> for a fixed quote agreed before any work starts.</p>
@@ -198,7 +198,7 @@ HTML,
 		'description' => 'What letting agents check at check-out, room by room: ovens, limescale, carpets, damage and keys, plus how to pass your inspection and avoid deductions.',
 		'category'    => 'end-of-tenancy',
 		'service'     => 'end-of-tenancy-cleaning',
-		'related'     => [ 'end-of-tenancy-cleaning-checklist', 'how-to-get-your-deposit-back', 'deposit-dispute-cleaning-evidence' ],
+		'related'     => [ 'end-of-tenancy-cleaning-checklist', 'how-to-get-your-deposit-back', 'check-out-cleaning-photos-guide' ],
 		'image'       => 'property inspection clipboard',
 		'excerpt'     => 'How check-out inspections work, what letting agents and inventory clerks look for in each room, and how to pass first time without deposit deductions.',
 		'content'     => <<<'HTML'
@@ -281,7 +281,7 @@ HTML,
 <li>Attend the inspection if you can, so you can point out existing issues and discuss what counts as fair wear and tear.</li>
 </ol>
 <h2>What happens after the check-out report?</h2>
-<p>The landlord or agent compares the two reports and, if there's a problem, proposes deductions from your deposit. Each deduction should be explained, and costs must be reasonable and supported by evidence. Our guide on <a href="{{guide:how-to-get-your-deposit-back}}">how to get your full deposit back</a> covers negotiating with your landlord, and if you still can't agree, the deposit scheme's free dispute service will decide. Read <a href="{{guide:deposit-dispute-cleaning-evidence}}">how evidence wins deposit disputes over cleaning</a> before you submit anything.</p>
+<p>The landlord or agent compares the two reports and, if there's a problem, proposes deductions from your deposit. Each deduction should be explained, and costs must be reasonable and supported by evidence. Our guide on <a href="{{guide:how-to-get-your-deposit-back}}">how to get your full deposit back</a> covers negotiating with your landlord, and if you still can't agree, the deposit scheme's free dispute service will decide. Read <a href="{{guide:how-to-get-your-deposit-back}}">how evidence wins deposit disputes over cleaning</a> before you submit anything.</p>
 <p>Landlords who want fewer disagreements at check-out should start with a detailed inventory. Our guide to <a href="{{guide:landlord-inventory-cleaning-standards}}">recording cleanliness in a check-in inventory</a> explains how.</p>
 <h2>Getting the property ready for inspection</h2>
 <p>Our cleaners work from the same checklists that letting agents and inventory clerks use, so nothing on the report catches you out. We clean for tenants, landlords and agents across <a href="{{local:end-of-tenancy-cleaning-hull}}">Hull</a> and <a href="{{local:end-of-tenancy-cleaning-beverley}}">Beverley</a>, can invoice landlords and agents directly, and offer a re-clean guarantee if something isn't right.</p>
@@ -301,7 +301,7 @@ HTML,
 		'description' => 'Can a landlord make you pay for professional cleaning? What the Tenant Fees Act 2019 allows, when deductions are fair, and how to handle cleaning clauses.',
 		'category'    => 'end-of-tenancy',
 		'service'     => 'end-of-tenancy-cleaning',
-		'related'     => [ 'how-to-get-your-deposit-back', 'deposit-dispute-cleaning-evidence', 'what-letting-agents-check-at-check-out' ],
+		'related'     => [ 'how-to-get-your-deposit-back', 'check-out-cleaning-photos-guide', 'what-letting-agents-check-at-check-out' ],
 		'image'       => 'tenancy agreement paperwork',
 		'excerpt'     => 'Professional cleaning clauses explained: what the Tenant Fees Act 2019 bans, what tenants are still responsible for, and when cleaning deductions are fair.',
 		'content'     => <<<'HTML'
@@ -357,7 +357,7 @@ HTML,
 <li><strong>Compare the evidence:</strong> put the check-in inventory, check-out report and your own photos side by side.</li>
 <li><strong>Raise a dispute:</strong> if you can't agree, use the deposit scheme's free dispute service. The adjudicator decides on the evidence.</li>
 </ol>
-<p>Our guide to <a href="{{guide:deposit-dispute-cleaning-evidence}}">winning deposit disputes over cleaning</a> explains which evidence carries the most weight. The government's <a href="https://www.gov.uk/tenancy-deposit-protection" rel="noopener">tenancy deposit protection rules</a> explain how the schemes work.</p>
+<p>Our guide to <a href="{{guide:how-to-get-your-deposit-back}}">winning deposit disputes over cleaning</a> explains which evidence carries the most weight. The government's <a href="https://www.gov.uk/tenancy-deposit-protection" rel="noopener">tenancy deposit protection rules</a> explain how the schemes work.</p>
 <h2>Advice for landlords and letting agents</h2>
 <p>The simplest way to avoid cleaning disputes is a detailed check-in inventory with clear photos, so the expected standard is obvious to everyone. Our guide to <a href="{{guide:landlord-inventory-cleaning-standards}}">recording cleanliness at check-in</a> covers what to include. If a tenant does leave the property dirty, get an invoice or quote for the specific work needed and keep it with the check-out report.</p>
 <p>Our <a href="{{page:landlords}}">services for landlords</a> include cleans between tenancies, key holding and invoicing direct to landlords or agents.</p>
@@ -400,7 +400,7 @@ HTML,
 <p>These are estimates for a standard clean. Carpet cleaning, extra appliances and heavily soiled ovens come on top. When we quote for <a href="{{service:end-of-tenancy-cleaning}}">end of tenancy cleaning</a>, we ask about the property first so we can send the right size of team and give you a realistic timescale.</p>
 <h2>Which parts of an end of tenancy clean take longest?</h2>
 <h3>The oven</h3>
-<p>A lightly used oven is fairly quick, but one with years of carbon on the door glass and racks can take a long time on its own. Our guide to <a href="{{guide:how-long-does-oven-cleaning-take}}">how long professional oven cleaning takes</a> breaks this down. Some tenants book a dedicated <a href="{{service:oven-cleaning}}">oven clean</a> alongside the main clean so the rest of the work can carry on in parallel.</p>
+<p>A lightly used oven is fairly quick, but one with years of carbon on the door glass and racks can take a long time on its own. Our guide to <a href="{{guide:how-to-clean-an-oven}}">how long professional oven cleaning takes</a> breaks this down. Some tenants book a dedicated <a href="{{service:oven-cleaning}}">oven clean</a> alongside the main clean so the rest of the work can carry on in parallel.</p>
 <h3>Bathrooms and limescale</h3>
 <p>Hard water across much of East Yorkshire means limescale builds up quickly on taps, screens and toilets. Descaling products need time to work, and thick scale may need more than one application.</p>
 <h3>Kitchen cupboards and appliances</h3>
@@ -458,7 +458,7 @@ HTML,
 		'description' => 'What affects end of tenancy cleaning cost: property size, condition, ovens, carpets and access. Learn how fixed quotes work and how to avoid surprise extras.',
 		'category'    => 'end-of-tenancy',
 		'service'     => 'end-of-tenancy-cleaning',
-		'related'     => [ 'how-long-does-end-of-tenancy-cleaning-take', 'end-of-tenancy-cleaning-checklist', 'questions-to-ask-a-cleaning-company' ],
+		'related'     => [ 'how-long-does-end-of-tenancy-cleaning-take', 'end-of-tenancy-cleaning-checklist', 'how-to-choose-a-cleaner' ],
 		'image'       => 'cleaning supplies caddy',
 		'excerpt'     => 'The factors that shape the cost of an end of tenancy clean, what is usually included or extra, and how to get an accurate fixed quote.',
 		'content'     => <<<'HTML'
@@ -507,7 +507,7 @@ HTML,
 <li>Parking and access, including stairs and lifts</li>
 <li>Your check-out date and any checklist from the letting agent</li>
 </ol>
-<p>Our list of <a href="{{guide:questions-to-ask-a-cleaning-company}}">questions to ask a cleaning company</a> also covers insurance, vetting and guarantees.</p>
+<p>Our list of <a href="{{guide:how-to-choose-a-cleaner}}">questions to ask a cleaning company</a> also covers insurance, vetting and guarantees.</p>
 <h2>Why the cheapest quote can cost you more</h2>
 <p>A low quote can mean fewer hours on site, a smaller team or a shorter checklist. If the oven, limescale or skirting boards are missed, the letting agent may deduct the cost of a re-clean from your deposit, and you end up paying twice.</p>
 <p>Look for a company that:</p>
@@ -635,7 +635,7 @@ HTML,
 <li>Return every key, including window and bike shed keys, and get written confirmation.</li>
 <li>Give the agent forwarding addresses for everyone.</li>
 </ol>
-<p>Knowing <a href="{{guide:what-letting-agents-check-at-check-out}}">what letting agents check at check-out</a> helps you focus on the right areas. If you disagree with any deductions, the deposit scheme's free dispute service can decide, and our guide to <a href="{{guide:deposit-dispute-cleaning-evidence}}">deposit disputes over cleaning</a> explains how to present your evidence.</p>
+<p>Knowing <a href="{{guide:what-letting-agents-check-at-check-out}}">what letting agents check at check-out</a> helps you focus on the right areas. If you disagree with any deductions, the deposit scheme's free dispute service can decide, and our guide to <a href="{{guide:how-to-get-your-deposit-back}}">deposit disputes over cleaning</a> explains how to present your evidence.</p>
 <h2>Help with student house cleaning in Hull</h2>
 <p>If exams, travel or a summer job leave no time to clean, our team can do the whole house in one visit before your check-out, following the agent's inventory checklist. We clean student lets across <a href="{{local:end-of-tenancy-cleaning-hull}}">Hull</a> and Cottingham, with a fixed quote agreed up front that housemates can split, and a re-clean guarantee if something isn't right.</p>
 <p>Find out more about our <a href="{{service:end-of-tenancy-cleaning}}">end of tenancy cleaning</a>, or <a href="{{page:contact}}">get in touch</a> with your address and move-out date.</p>

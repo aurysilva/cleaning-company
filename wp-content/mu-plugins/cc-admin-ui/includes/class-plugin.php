@@ -38,10 +38,17 @@ final class Plugin {
 		return function_exists( 'cc_brand_name' ) ? (string) cc_brand_name() : get_bloginfo( 'name' );
 	}
 
-	/** Brand logo URL from the theme's Business Settings, if one has been uploaded. */
+	/** Brand logo for wp-login (horizontal lockup on a white pill). */
 	public static function logo_url(): string {
-		$logo = function_exists( 'cc_option' ) ? cc_option( 'logo' ) : null;
-		return is_array( $logo ) && ! empty( $logo['url'] ) ? (string) $logo['url'] : '';
+		$logo = function_exists( 'cc_business_logo' ) ? cc_business_logo( 'header' ) : null;
+		if ( is_array( $logo ) && ! empty( $logo['url'] ) ) {
+			return (string) $logo['url'];
+		}
+		if ( defined( 'CC_THEME_DIR' ) && is_readable( CC_THEME_DIR . '/assets/brand/northbank-cleaning-logo.png' ) ) {
+			$v = (string) filemtime( CC_THEME_DIR . '/assets/brand/northbank-cleaning-logo.png' );
+			return CC_THEME_URI . '/assets/brand/northbank-cleaning-logo.png?v=' . $v;
+		}
+		return '';
 	}
 
 	public static function classic( int $user_id = 0 ): bool {

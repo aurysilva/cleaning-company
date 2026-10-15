@@ -8,11 +8,14 @@ defined( 'ABSPATH' ) || exit;
 
 function cc_dynamic_tags(): array {
 	return [
-		'cc_logo'              => 'Logo',
+		'cc_logo'              => 'Logo (header)',
+		'cc_logo_footer'       => 'Logo (footer, white if set)',
+		'cc_tagline'           => 'Tagline',
 		'cc_brand'             => 'Brand name',
 		'cc_phone'             => 'Phone (display)',
 		'cc_phone_href'        => 'Phone (tel: link)',
 		'cc_phone_link'        => 'Phone link',
+		'cc_full_address'      => 'Full postal address',
 		'cc_email_link'        => 'Email link',
 		'cc_quote_url'         => 'Quote URL',
 		'cc_cta_primary'       => 'Primary CTA label',
@@ -87,7 +90,11 @@ function cc_render_dynamic_tag( string $name, string $arg, $post ): ?string {
 
 	switch ( $name ) {
 		case 'cc_logo':
-			return cc_logo_html();
+			return cc_logo_html( 'header' );
+		case 'cc_logo_footer':
+			return cc_logo_html( 'footer' );
+		case 'cc_tagline':
+			return cc_tagline_html();
 		case 'cc_brand':
 			return esc_html( cc_brand_name() );
 		case 'cc_phone':
@@ -96,6 +103,8 @@ function cc_render_dynamic_tag( string $name, string $arg, $post ): ?string {
 			return cc_phone_href();
 		case 'cc_phone_link':
 			return cc_phone_link();
+		case 'cc_full_address':
+			return esc_html( cc_full_address() );
 		case 'cc_email_link':
 			return cc_email_link();
 		case 'cc_quote_url':

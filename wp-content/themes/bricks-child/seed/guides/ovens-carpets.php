@@ -11,7 +11,7 @@ return [
 		'description' => 'How to clean an oven step by step, from bicarbonate of soda paste to soaking the racks, plus when a fume-free professional oven clean is worth booking.',
 		'category'    => 'kitchen-oven',
 		'service'     => 'oven-cleaning',
-		'related'     => [ 'how-often-clean-oven', 'how-long-does-oven-cleaning-take', 'kitchen-deep-clean-checklist' ],
+		'related'     => [ 'signs-oven-needs-professional-clean', 'clean-microwave-kettle-toaster', 'kitchen-deep-clean-checklist' ],
 		'image'       => 'oven cleaning kitchen',
 		'excerpt'     => 'A step-by-step guide to cleaning your oven at home with bicarb, vinegar and a bit of patience, and how to tell when it’s time to call in a professional.',
 		'content'     => <<<'HTML'
@@ -29,7 +29,7 @@ return [
 <li>Non-scratch scourer pads and a few microfibre cloths</li>
 <li>A bowl of warm water with a squeeze of washing-up liquid</li>
 </ul>
-<p>Before you start, make sure the oven is switched off and completely cold. Check the manual too. Some ovens have catalytic liners or a self-clean setting that changes what you should and shouldn't do, which we cover further down. If you prefer gentler products around the house, our guide to <a href="{{guide:eco-friendly-cleaning-products}}">eco-friendly cleaning that actually works</a> explains why bicarb and vinegar earn their place.</p>
+<p>Before you start, make sure the oven is switched off and completely cold. Check the manual too. Some ovens have catalytic liners or a self-clean setting that changes what you should and shouldn't do, which we cover further down. If you prefer gentler products around the house, our guide to <a href="{{guide:gentle-cleaning-hard-water-homes}}">eco-friendly cleaning that actually works</a> explains why bicarb and vinegar earn their place.</p>
 <h2>How to clean an oven with bicarbonate of soda, step by step</h2>
 <ol>
 <li><strong>Empty it.</strong> Take out the racks, shelves and trays and set them aside for soaking.</li>
@@ -70,7 +70,7 @@ return [
 <li><strong>Leaving residue behind.</strong> Any cleaner left inside will smoke and smell the next time you cook, so rinse thoroughly.</li>
 <li><strong>Forgetting the hob and extractor.</strong> A spotless oven under a greasy extractor filter still makes the kitchen look tired. Our <a href="{{guide:kitchen-deep-clean-checklist}}">kitchen deep clean checklist</a> covers the rest of the room.</li>
 </ul>
-<p>Little and often makes every clean easier. Our guide on <a href="{{guide:how-often-clean-oven}}">how often you should clean your oven</a> explains the warning signs and a sensible routine.</p>
+<p>Little and often makes every clean easier. Our guide on <a href="{{guide:signs-oven-needs-professional-clean}}">how often you should clean your oven</a> explains the warning signs and a sensible routine.</p>
 <h2>DIY vs professional oven cleaning: which is right for you?</h2>
 <p>DIY makes sense when the oven is in reasonable shape and you have an evening and a morning to spare. A professional clean is worth considering when:</p>
 <ul>
@@ -80,7 +80,7 @@ return [
 <li>You're moving out and the oven has to pass an inventory check. Ovens are one of the first things letting agents look at, which is why they feature heavily in our <a href="{{guide:end-of-tenancy-cleaning-checklist}}">end of tenancy cleaning checklist</a> and are included in every <a href="{{service:end-of-tenancy-cleaning}}">end of tenancy clean</a> we carry out</li>
 <li>You have a range cooker or AGA with several cavities, which our <a href="{{guide:aga-range-cooker-cleaning}}">AGA and range cooker cleaning guide</a> covers separately</li>
 </ul>
-<p>Our oven cleaning uses fume-free, non-caustic products. Racks, trays and removable parts are cleaned separately, the door glass is cleaned inside and out, and you can usually cook again the same day. If you're planning your day around it, see <a href="{{guide:how-long-does-oven-cleaning-take}}">how long professional oven cleaning takes</a>.</p>
+<p>Our oven cleaning uses fume-free, non-caustic products. Racks, trays and removable parts are cleaned separately, the door glass is cleaned inside and out, and you can usually cook again the same day. If you're planning your day around it, see <a href="{{guide:how-to-clean-an-oven}}">how long professional oven cleaning takes</a>.</p>
 <h2>Getting your oven cleaned properly</h2>
 <p>If the bicarb method hasn't done the job, or you'd rather not spend a weekend on your knees in front of the oven, our team can take it off your hands. We cover <a href="{{area:hull}}">Hull</a>, <a href="{{area:beverley}}">Beverley</a> and the surrounding towns, bring all our own equipment and agree a fixed quote before we start.</p>
 <p>You can book an <a href="{{service:oven-cleaning}}">oven clean</a> on its own or pair it with a <a href="{{service:deep-cleaning}}">deep clean</a> of the whole kitchen. <a href="{{page:contact}}">Get in touch</a> with the make and model of your oven and we'll take it from there.</p>
@@ -93,13 +93,13 @@ HTML,
 		],
 	],
 	[
-		'slug'        => 'how-long-does-oven-cleaning-take',
+		'slug'        => 'clean-microwave-kettle-toaster',
 		'title'       => 'How Long Does Professional Oven Cleaning Take?',
 		'seo_title'   => 'How Long Does Oven Cleaning Take? Times by Oven Type',
 		'description' => 'How long does professional oven cleaning take? Typical times for single, double and range cookers, what slows a clean down and how to prepare for the visit.',
 		'category'    => 'kitchen-oven',
 		'service'     => 'oven-cleaning',
-		'related'     => [ 'how-to-clean-an-oven', 'how-often-clean-oven', 'aga-range-cooker-cleaning' ],
+		'related'     => [ 'how-to-clean-an-oven', 'signs-oven-needs-professional-clean', 'aga-range-cooker-cleaning' ],
 		'image'       => 'clean oven interior',
 		'excerpt'     => 'Typical times for a professional oven clean by oven type, what makes a job take longer, and how to get your kitchen ready for the visit.',
 		'content'     => <<<'HTML'
@@ -132,7 +132,7 @@ HTML,
 <li><strong>Extras.</strong> Hobs, extractors, grill pans and microwaves all add time if you'd like them done in the same visit.</li>
 <li><strong>Access.</strong> A clear worktop and floor space in front of the oven lets our cleaner set up quickly.</li>
 </ul>
-<p>Regular cleaning keeps future visits shorter. Our guide to <a href="{{guide:how-often-clean-oven}}">how often to clean your oven</a> explains a sensible routine and the signs it's overdue.</p>
+<p>Regular cleaning keeps future visits shorter. Our guide to <a href="{{guide:signs-oven-needs-professional-clean}}">how often to clean your oven</a> explains a sensible routine and the signs it's overdue.</p>
 <h2>What happens during a professional oven clean?</h2>
 <p>Knowing the steps helps explain where the time goes. A typical visit runs like this:</p>
 <ol>
@@ -177,7 +177,7 @@ HTML,
 		'description' => 'AGA and range cooker cleaning made simple: how to care for enamel, hotplates and lids, clean multiple ovens safely and know when to call a professional.',
 		'category'    => 'kitchen-oven',
 		'service'     => 'oven-cleaning',
-		'related'     => [ 'how-to-clean-an-oven', 'how-long-does-oven-cleaning-take', 'kitchen-deep-clean-checklist' ],
+		'related'     => [ 'how-to-clean-an-oven', 'clean-microwave-kettle-toaster', 'kitchen-deep-clean-checklist' ],
 		'image'       => 'range cooker kitchen',
 		'excerpt'     => 'How to clean an AGA or range cooker without damaging the enamel, hotplates or liners, plus what a professional range cooker clean involves.',
 		'content'     => <<<'HTML'
@@ -218,7 +218,7 @@ HTML,
 <p>When in doubt, the manufacturer's care guide is the final word. Using the wrong product can leave permanent dull patches that no amount of cleaning will fix.</p>
 <h2>What a professional AGA or range cooker clean includes</h2>
 <p>A professional clean follows the same careful approach as a standard oven clean, using fume-free, non-caustic products that are safe on enamel. For a range cooker, that means each cavity, the grill compartment, racks, trays, door glass and the hob. For an AGA, it means brushing out and cleaning the ovens, door linings, hotplates and lids, and bringing the enamel back to a shine.</p>
-<p>Because there's more to do, these jobs take longer than a standard single or double oven. Our guide to <a href="{{guide:how-long-does-oven-cleaning-take}}">how long oven cleaning takes</a> gives typical times, and we'll confirm an estimate once we know your model. To keep the cooker in good condition between visits, our advice on <a href="{{guide:how-often-clean-oven}}">how often to clean your oven</a> applies to range cookers too.</p>
+<p>Because there's more to do, these jobs take longer than a standard single or double oven. Our guide to <a href="{{guide:how-to-clean-an-oven}}">how long oven cleaning takes</a> gives typical times, and we'll confirm an estimate once we know your model. To keep the cooker in good condition between visits, our advice on <a href="{{guide:signs-oven-needs-professional-clean}}">how often to clean your oven</a> applies to range cookers too.</p>
 <h2>Range cookers in holiday lets and rental homes</h2>
 <p>Holiday cottages in places like <a href="{{area:driffield}}">Driffield</a>, <a href="{{area:pocklington}}">Pocklington</a> and along the coast often have a range cooker as the centrepiece of the kitchen. Guests use them hard and rarely clean them the way an owner would. A thorough clean between seasons, plus a quick check at every changeover, keeps reviews and inventories on track. Our <a href="{{guide:holiday-let-changeover-checklist}}">holiday let changeover checklist</a> shows where the cooker fits into a turnaround, and we can build a deep clean into regular <a href="{{service:holiday-let-airbnb-cleaning}}">holiday let cleaning</a>.</p>
 <h2>Booking an AGA or range cooker clean</h2>
@@ -233,13 +233,13 @@ HTML,
 		],
 	],
 	[
-		'slug'        => 'how-often-clean-oven',
+		'slug'        => 'signs-oven-needs-professional-clean',
 		'title'       => 'How Often Should You Clean Your Oven? Signs It’s Time',
 		'seo_title'   => 'How Often Should You Clean Your Oven? Signs It’s Time',
 		'description' => 'How often should you clean your oven? A realistic routine for light, regular and heavy use, the signs it’s overdue and how to keep it cleaner for longer.',
 		'category'    => 'kitchen-oven',
 		'service'     => 'oven-cleaning',
-		'related'     => [ 'how-to-clean-an-oven', 'how-long-does-oven-cleaning-take', 'kitchen-deep-clean-checklist' ],
+		'related'     => [ 'how-to-clean-an-oven', 'clean-microwave-kettle-toaster', 'kitchen-deep-clean-checklist' ],
 		'image'       => 'kitchen oven baking',
 		'excerpt'     => 'A practical oven cleaning routine based on how much you cook, plus the warning signs your oven is overdue a proper clean.',
 		'content'     => <<<'HTML'
@@ -259,7 +259,7 @@ HTML,
 <tr><td>Rental property or holiday let</td><td>At each changeover</td><td>At each changeover</td><td>Between tenancies, and regularly through the season for holiday lets</td></tr>
 </tbody>
 </table>
-<p>If the oven has gone well past these intervals, the first clean back will take longer. Our guide on <a href="{{guide:how-long-does-oven-cleaning-take}}">how long professional oven cleaning takes</a> explains why heavy carbon adds time, and a <a href="{{service:oven-cleaning}}">professional oven clean</a> is often the quickest way to reset it.</p>
+<p>If the oven has gone well past these intervals, the first clean back will take longer. Our guide on <a href="{{guide:how-to-clean-an-oven}}">how long professional oven cleaning takes</a> explains why heavy carbon adds time, and a <a href="{{service:oven-cleaning}}">professional oven clean</a> is often the quickest way to reset it.</p>
 <h2>Signs your oven needs cleaning</h2>
 <p>Your oven will usually tell you it's overdue. Look out for:</p>
 <ul>
@@ -296,8 +296,8 @@ HTML,
 <ul>
 <li><strong>Moving out of a rented home.</strong> The oven is one of the first things checked against the inventory, so it's covered on our <a href="{{guide:end-of-tenancy-cleaning-checklist}}">end of tenancy cleaning checklist</a> and included in every <a href="{{service:end-of-tenancy-cleaning}}">end of tenancy clean</a>.</li>
 <li><strong>Selling your home.</strong> Buyers open ovens during viewings. Our guide to <a href="{{guide:cleaning-before-selling-your-house}}">cleaning before selling your house</a> covers the kitchen in detail.</li>
-<li><strong>Before and after Christmas.</strong> A clean oven copes better with a busy cooking season, which is why it's on our <a href="{{guide:christmas-cleaning-checklist}}">pre-Christmas cleaning checklist</a>.</li>
-<li><strong>As part of a seasonal deep clean.</strong> Our guide on <a href="{{guide:how-often-should-you-deep-clean}}">how often to deep clean your home</a> suggests pairing the oven with other twice-yearly jobs.</li>
+<li><strong>Before and after Christmas.</strong> A clean oven copes better with a busy cooking season, which is why it's on our <a href="{{guide:guest-ready-home-quick-clean}}">pre-Christmas cleaning checklist</a>.</li>
+<li><strong>As part of a seasonal deep clean.</strong> Our guide on <a href="{{guide:when-to-book-a-deep-clean}}">how often to deep clean your home</a> suggests pairing the oven with other twice-yearly jobs.</li>
 </ul>
 <p>For busy family homes, from terraces in <a href="{{area:hull}}">Hull</a> to larger kitchens in <a href="{{area:anlaby-willerby-kirk-ella}}">Anlaby, Willerby and Kirk Ella</a>, booking an oven clean twice a year as a routine stops it ever reaching the smoking stage.</p>
 <h2>Keeping your oven in good shape</h2>
@@ -334,7 +334,7 @@ HTML,
 <li><strong>Extraction</strong>, where hot water rinses the carpet and is immediately pulled back out along with the dirt and cleaning solution.</li>
 <li><strong>Grooming and drying</strong>, setting the pile in one direction and getting air moving across the room.</li>
 </ol>
-<p>Because the carpet is rinsed rather than just surface-treated, extraction removes far more of the dust, allergens and oily grime that settle deep in the pile. That makes it a good fit for homes with pets, which we cover in our guide to <a href="{{guide:cleaning-with-pets}}">cleaning a home with pets</a>, and for anyone following our advice on <a href="{{guide:cleaning-for-allergies}}">cleaning for allergies and asthma</a>.</p>
+<p>Because the carpet is rinsed rather than just surface-treated, extraction removes far more of the dust, allergens and oily grime that settle deep in the pile. That makes it a good fit for homes with pets, which we cover in our guide to <a href="{{guide:cleaning-with-pets}}">cleaning a home with pets</a>, and for anyone following our advice on <a href="{{guide:bedroom-dust-mite-reduction}}">cleaning for allergies and asthma</a>.</p>
 <h2>What is dry carpet cleaning?</h2>
 <p>"Dry" carpet cleaning is better described as low-moisture cleaning. Some liquid is usually involved, just much less than with extraction. There are a few common methods.</p>
 <h3>Dry compound cleaning</h3>

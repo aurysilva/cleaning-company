@@ -568,6 +568,11 @@
 			btnSubmit.textContent = label;
 
 			if (res.ok) {
+				if (config.portal && config.portalQuotesUrl && res.ref) {
+					const base = config.portalQuotesUrl.replace(/\/?$/, '/');
+					window.location.href = `${base}${encodeURIComponent(res.ref)}/?ccm=quote_updated`;
+					return;
+				}
 				form.querySelectorAll('[data-step]').forEach((el) => {
 					el.hidden = el.dataset.step !== 'done';
 				});
@@ -608,13 +613,15 @@
 
 		const params = new URLSearchParams(window.location.search);
 		const prefill = async () => {
-			if (params.get('quote') && params.get('token')) {
-				const res = await api(config.rest, `quotes/${encodeURIComponent(params.get('quote'))}/prefill?token=${encodeURIComponent(params.get('token'))}`, { method: 'GET' });
+			const replaceRef = config.replacesRef || params.get('quote');
+			const replaceToken = config.replacesToken || params.get('token');
+			if (replaceRef && replaceToken) {
+				const res = await api(config.rest, `quotes/${encodeURIComponent(replaceRef)}/prefill?token=${encodeURIComponent(replaceToken)}`, { method: 'GET' });
 				if (!res.ok || !res.quote) {
 					return;
 				}
 				const d = res.quote;
-				state.replaces = { ref: params.get('quote'), token: params.get('token') };
+				state.replaces = { ref: replaceRef, token: replaceToken };
 				const radio = q(`[name="service"][value="${CSS.escape(d.service)}"]`);
 				if (radio) {
 					radio.checked = true;

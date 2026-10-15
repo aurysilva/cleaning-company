@@ -44,6 +44,15 @@
 
 	.cc-logo {
 		color: #fff;
+		--cc-logo-accent: var(--cc-color-primary-light, #8fd3df);
+	}
+
+	.cc-tagline {
+		margin: 0;
+		max-width: 22rem;
+		color: rgb(255 255 255 / 0.72);
+		font-size: var(--cc-text-m);
+		line-height: 1.45;
 	}
 
 	&__grid {

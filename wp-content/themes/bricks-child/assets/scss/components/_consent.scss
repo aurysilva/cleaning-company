@@ -1,0 +1,76 @@
+@use "../abstracts/mixins" as *;
+
+// Cookie banner (inc/analytics.php, main.js)
+.cc-consent {
+	position: fixed;
+	left: clamp(0.75rem, 2.5vw, 2rem);
+	bottom: clamp(0.75rem, 2.5vw, 2rem);
+	z-index: 110;
+	display: grid;
+	gap: var(--cc-space-xs);
+	max-width: 26rem;
+	padding: var(--cc-space-s);
+	border: 1px solid var(--cc-color-border);
+	border-radius: var(--cc-radius-m);
+	background: var(--cc-color-surface);
+	color: var(--cc-color-text);
+	box-shadow: var(--cc-shadow-l);
+	font-size: var(--cc-text-s);
+
+	&[hidden] {
+		display: none !important;
+	}
+
+	// Reopened from footer “Cookie settings” — centred above the legal bar
+	&.is-settings {
+		left: 50%;
+		right: auto;
+		transform: translateX(-50%);
+		bottom: max(1rem, env(safe-area-inset-bottom, 0px));
+		max-width: min(36rem, calc(100vw - 1.5rem));
+	}
+
+	&__text {
+		margin: 0;
+
+		a {
+			color: var(--cc-color-primary);
+			font-weight: 600;
+		}
+	}
+
+	&__actions {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: var(--cc-space-2xs);
+
+		.cc-btn {
+			padding: 0.8em 1em;
+		}
+	}
+
+	@include down(md) {
+		right: clamp(0.75rem, 2.5vw, 2rem);
+		max-width: none;
+
+		&:not(.is-settings) {
+			left: clamp(0.75rem, 2.5vw, 2rem);
+		}
+
+		&.is-settings {
+			width: calc(100vw - 1.5rem);
+			max-width: none;
+		}
+	}
+
+	// Sticky phone / quote bar on small screens (main.js)
+	@include down(md) {
+		body:has(.cc-mobile-cta.is-visible) &:not(.is-settings) {
+			bottom: calc(4.75rem + env(safe-area-inset-bottom, 0px));
+		}
+
+		body:has(.cc-mobile-cta.is-visible) &.is-settings {
+			bottom: calc(5.25rem + env(safe-area-inset-bottom, 0px));
+		}
+	}
+}

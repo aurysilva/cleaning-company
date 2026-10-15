@@ -16,10 +16,22 @@ final class Form {
 		'contact' => 'Your details',
 	];
 
-	public static function render(): string {
-		static $html = null;
-		if ( null !== $html ) {
-			return $html;
+	/**
+	 * @param array{portal?:bool,replaces_ref?:string,replaces_token?:string,return_base?:string} $opts
+	 */
+	public static function render( array $opts = [] ): string {
+		$opts = wp_parse_args(
+			$opts,
+			[
+				'portal'         => false,
+				'replaces_ref'   => '',
+				'replaces_token' => '',
+				'return_base'    => '',
+			]
+		);
+		static $cached = null;
+		if ( ! $opts['portal'] && null !== $cached ) {
+			return $cached;
 		}
 
 		wp_enqueue_script( 'cc-bookings-quote', CC_BOOKINGS_URL . 'assets/quote-form.js', [], Frontend::asset_version( 'assets/quote-form.js' ), [ 'in_footer' => true, 'strategy' => 'defer' ] );
@@ -37,6 +49,12 @@ final class Form {
 			'phone'      => $phone,
 			'privacyUrl' => get_privacy_policy_url(),
 		];
+		if ( $opts['portal'] ) {
+			$config['portal']           = true;
+			$config['portalQuotesUrl']  = esc_url_raw( $opts['return_base'] );
+			$config['replacesRef']      = $opts['replaces_ref'];
+			$config['replacesToken']    = $opts['replaces_token'];
+		}
 
 		$progress = '';
 		$i        = 0;
@@ -53,7 +71,10 @@ final class Form {
 			$help ? '<p class="cc-quote__help">' . esc_html( $help ) . '</p>' : ''
 		);
 
-		$html = '<div class="cc-quote" data-cc-quote>'
+		$submit_label = $opts['portal'] ? 'Update my quote' : 'Get my quote';
+		$done_title   = $opts['portal'] ? 'Quote updated' : 'Thanks — check your email';
+
+		$html = '<div class="cc-quote" data-cc-quote' . ( $opts['portal'] ? ' data-cc-quote-portal' : '' ) . '>'
 			. '<script type="application/json" class="cc-quote__config">' . wp_json_encode( $config, JSON_HEX_TAG | JSON_HEX_AMP | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) . '</script>'
 			. '<noscript><p class="cc-quote__noscript">Our instant quote form needs JavaScript switched on. You can also call us' . ( $phone ? ' on ' . esc_html( $phone ) : '' ) . '.</p></noscript>'
 			. '<form class="cc-quote__form" novalidate hidden>'
@@ -104,7 +125,7 @@ final class Form {
 			. '</fieldset>'
 
 			. '<div class="cc-quote__step cc-quote__done" data-step="done" hidden>'
-			. '<p class="cc-quote__title" tabindex="-1">Thanks — check your email</p>'
+			. '<p class="cc-quote__title" tabindex="-1">' . esc_html( $done_title ) . '</p>'
 			. '<p data-done-message></p>'
 			. '</div>'
 
@@ -113,17 +134,24 @@ final class Form {
 			. '<div class="cc-quote__nav">'
 			. '<button type="button" class="cc-btn cc-btn--outline cc-quote__back" data-back hidden>Back</button>'
 			. '<button type="button" class="cc-btn cc-btn--primary cc-quote__next" data-next>Next</button>'
-			. '<button type="submit" class="cc-btn cc-btn--primary cc-quote__submit" data-submit hidden>Get my quote</button>'
+			. '<button type="submit" class="cc-btn cc-btn--primary cc-quote__submit" data-submit hidden>' . esc_html( $submit_label ) . '</button>'
 			. '</div>'
-			. self::account_notice()
+			. self::account_notice( (bool) $opts['portal'] )
 			. '</form>'
 			. '</div>';
+
+		if ( ! $opts['portal'] ) {
+			$cached = $html;
+		}
 
 		return $html;
 	}
 
 	/** The line under the submit button (Client accounts setting "form_notice"). */
-	private static function account_notice(): string {
+	private static function account_notice( bool $portal = false ): string {
+		if ( $portal ) {
+			return '';
+		}
 		$text = class_exists( __NAMESPACE__ . '\\Client_Accounts' ) ? trim( (string) Client_Accounts::opt( 'form_notice' ) ) : '';
 		return '' === $text ? '' : '<p class="cc-quote__small cc-quote__account-note" data-form-notice hidden>' . esc_html( $text ) . '</p>';
 	}

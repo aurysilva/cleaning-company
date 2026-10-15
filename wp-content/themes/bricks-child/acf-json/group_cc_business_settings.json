@@ -20,6 +20,22 @@
             "endpoint": 0
         },
         {
+            "key": "field_cc_business_tagline",
+            "label": "Tagline",
+            "name": "tagline",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "Short line under the logo in the footer and in search/social metadata. Example: Professional cleaners in Hull & East Yorkshire.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "maxlength": 120
+        },
+        {
             "key": "field_cc_business_brand_name",
             "label": "Brand name",
             "name": "brand_name",
@@ -102,7 +118,7 @@
             "name": "logo",
             "aria-label": "",
             "type": "image",
-            "instructions": "",
+            "instructions": "Used in the header (and footer if no white logo). Replaces the built-in theme logo when set.",
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {

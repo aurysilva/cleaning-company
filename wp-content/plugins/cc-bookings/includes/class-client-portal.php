@@ -9,6 +9,7 @@ defined( 'ABSPATH' ) || exit;
  *   /account/bookings/{B-ref}/        booking: status, cleaner, payments, reschedule / cancel / re-clean (Phase 3),
  *                                     the regular-plan panel (Phase 4); ?checkout=success waits for Stripe's webhook
  *   /account/quotes/ and /{Q-ref}/    quotes; the quote summary with "Accept & confirm" (Stripe Checkout)
+ *   /account/quotes/{Q-ref}/edit/    change quote details before payment (stays in the portal)
  *   /account/plans/ and /{P-ref}/     regular plans (shown only to clients with a plan)
  *   /account/profile/                 details, email change (confirmed from the new inbox), password, marketing, delete request
  *   /account/set-password/            the first password (plus name and mobile); every other page waits for it
@@ -38,6 +39,7 @@ final class Client_Portal {
 		add_rewrite_rule( '^account/magic/([A-Za-z0-9_-]{20,})/?$', 'index.php?cc_account=magic&cc_atoken=$matches[1]', 'top' );
 		add_rewrite_rule( '^account/email/([A-Za-z0-9_-]{20,})/?$', 'index.php?cc_account=email&cc_atoken=$matches[1]', 'top' );
 		add_rewrite_rule( '^account/reset/(\d+)/([A-Za-z0-9]{10,})/?$', 'index.php?cc_account=reset&cc_aid=$matches[1]&cc_atoken=$matches[2]', 'top' );
+		add_rewrite_rule( '^account/quotes/(Q-\d+)/edit/?$', 'index.php?cc_account=quote_edit&cc_aref=$matches[1]', 'top' );
 		add_rewrite_rule( '^account/(bookings|quotes|plans)/([BQP]-\d+)/?$', 'index.php?cc_account=$matches[1]&cc_aref=$matches[2]', 'top' );
 		add_rewrite_rule( '^account/(bookings|quotes|plans|profile|forgot|logout|set-password)/?$', 'index.php?cc_account=$matches[1]', 'top' );
 		add_rewrite_rule( '^account/?$', 'index.php?cc_account=home', 'top' );
@@ -53,6 +55,7 @@ final class Client_Portal {
 		$minutes = max( 1, (int) Client_Accounts::opt( 'magic_minutes' ) );
 		return [
 			'saved'            => [ 'success', 'Saved.' ],
+			'quote_updated'    => [ 'success', 'Your quote has been updated with your new details.' ],
 			'logged_out'       => [ 'success', 'You\'ve logged out.' ],
 			'sent'             => [ 'success', 'Check your email', 'If that address belongs to a client account, we\'ve sent it a link to choose a new password.' ],
 			'link_sent'        => [ 'success', 'Check your email', sprintf( 'If that address belongs to a client account, we\'ve sent it a login link. It works once, for %d minutes. Look in your spam folder if it isn\'t there in a minute or two.', $minutes ) ],
@@ -137,7 +140,7 @@ final class Client_Portal {
 	}
 
 	private static function safe_next( string $next ): string {
-		return preg_match( '#^/account/((bookings|quotes|plans)/([BQP]-\d+/)?|profile/)$#', $next ) ? $next : '';
+		return preg_match( '#^/account/((bookings|quotes|plans)/([BQP]-\d+/)?|quotes/(Q-\d+)/edit/|profile/)$#', $next ) ? $next : '';
 	}
 
 	private static function next_url(): string {
@@ -196,6 +199,10 @@ final class Client_Portal {
 		}
 		if ( 'set-password' === $view ) {
 			self::redirect( self::next_url() );
+		}
+
+		if ( 'quote_edit' === $view ) {
+			self::quote_edit( $client, $ref );
 		}
 
 		if ( $ref ) {
@@ -428,6 +435,9 @@ final class Client_Portal {
 		if ( 'cancelled' === ( $_GET['checkout'] ?? '' ) && $quote['hold_expires_at'] && ! $quote['booking_id'] ) { // phpcs:ignore WordPress.Security.NonceVerification
 			Checkout::expire_hold( $quote['id'], $quote['stripe_session_id'], true );
 		}
+		if ( 'success' === ( $_GET['checkout'] ?? '' ) && ! $quote['booking_id'] ) { // phpcs:ignore WordPress.Security.NonceVerification
+			Checkout::sync_paid_session( $quote );
+		}
 		if ( ! Quotes::is_expired( $quote ) ) {
 			Quotes::mark_viewed( $quote );
 		} elseif ( 'expired' !== $quote['status'] ) {
@@ -437,6 +447,37 @@ final class Client_Portal {
 		$notice = self::notice();
 		$flash  = self::flash_message() ?: ( $notice ? [ 'type' => $notice[0], 'message' => $notice[1] ] : null );
 		Frontend::render( 'client-quote', [ 'quote' => $quote, 'client' => $client, 'flash' => $flash ], 'Quote ' . $quote['ref'] );
+	}
+
+	public static function quote_edit_url( string $ref ): string {
+		return self::url( 'quotes/' . strtoupper( sanitize_text_field( $ref ) ) . '/edit' );
+	}
+
+	private static function quote_edit( array $client, string $ref ): void {
+		$quote = $ref ? Quotes::by_ref( $ref ) : null;
+		if ( ! $quote || ! Client_Accounts::owns( $client, $quote ) ) {
+			self::message( 'Quote not found', 'This quote isn\'t in your account.', 404 );
+		}
+		if ( $quote['booking_id'] || in_array( $quote['status'], [ 'accepted', 'cancelled', 'superseded' ], true ) ) {
+			self::flash( self::url( 'quotes/' . $quote['ref'] ), 'error', 'This quote can\'t be changed any more.' );
+		}
+		$token = Tokens::issue( 'quotes', (int) $quote['id'] );
+		Frontend::render(
+			'client-quote-edit',
+			[
+				'quote'  => $quote,
+				'client' => $client,
+				'form'   => Form::render(
+					[
+						'portal'         => true,
+						'replaces_ref'   => $quote['ref'],
+						'replaces_token' => $token,
+						'return_base'    => self::url( 'quotes/' ),
+					]
+				),
+			],
+			'Change quote ' . $quote['ref']
+		);
 	}
 
 	private static function quote_action( array $client, array $quote, string $url, string $do ): void {
@@ -468,9 +509,7 @@ final class Client_Portal {
 				if ( $quote['booking_id'] || in_array( $quote['status'], [ 'accepted', 'cancelled', 'superseded' ], true ) ) {
 					self::flash( $url, 'error', 'This quote can\'t be changed any more.' );
 				}
-				$form = function_exists( 'cc_quote_url' ) ? cc_quote_url() : '/contact/';
-				$form = str_starts_with( $form, '/' ) ? home_url( $form ) : $form;
-				self::redirect( add_query_arg( [ 'quote' => $quote['ref'], 'token' => Tokens::issue( 'quotes', (int) $quote['id'] ) ], $form ) . '#quote' );
+				self::redirect( self::quote_edit_url( $quote['ref'] ) );
 				break;
 
 			case 'question':
@@ -490,9 +529,15 @@ final class Client_Portal {
 	}
 
 	private static function booking( array $client, string $ref ): void {
+		if ( 'success' === ( $_GET['checkout'] ?? '' ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+			$quote = Quotes::by_ref( 'Q-' . substr( $ref, 2 ) );
+			if ( $quote && Client_Accounts::owns( $client, $quote ) ) {
+				Checkout::sync_paid_session( $quote );
+			}
+		}
 		$booking = Bookings::by_ref( $ref );
 		if ( ! Client_Accounts::owns( $client, $booking ) ) {
-			// Back from Stripe before the webhook has created the booking.
+			// Back from Stripe before the booking exists (webhook delayed and sync could not confirm yet).
 			$quote = 'success' === ( $_GET['checkout'] ?? '' ) ? Quotes::by_ref( 'Q-' . substr( $ref, 2 ) ) : null; // phpcs:ignore WordPress.Security.NonceVerification
 			if ( Client_Accounts::owns( $client, $quote ) && ! $booking ) {
 				self::message( 'Payment received — confirming your booking…', 'This usually takes a few seconds. This page refreshes by itself, and we\'ll email your confirmation.', 200, false, [ 'refresh' => 5, 'back' => self::url( 'quotes/' . $quote['ref'] ) ] );

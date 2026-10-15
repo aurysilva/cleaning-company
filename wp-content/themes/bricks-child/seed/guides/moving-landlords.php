@@ -168,7 +168,7 @@ HTML,
 		],
 	],
 	[
-		'slug'        => 'deposit-dispute-cleaning-evidence',
+		'slug'        => 'check-out-cleaning-photos-guide',
 		'title'       => 'Deposit Disputes Over Cleaning: How Evidence Wins',
 		'seo_title'   => 'Deposit Disputes Over Cleaning: Evidence That Wins',
 		'description' => 'Deposit disputes over cleaning are won on evidence. Learn what adjudicators look at, which photos and documents count, and the mistakes that lose cases.',
@@ -525,7 +525,7 @@ HTML,
 		'description' => 'How landlords should record cleanliness at check-in: inventory terms, what to note room by room and photo tips that protect you in a deposit dispute.',
 		'category'    => 'landlords',
 		'service'     => 'end-of-tenancy-cleaning',
-		'related'     => [ 'deposit-dispute-cleaning-evidence', 'void-property-cleaning', 'professionally-cleaned-tenancy-clause' ],
+		'related'     => [ 'check-out-cleaning-photos-guide', 'void-property-cleaning', 'professionally-cleaned-tenancy-clause' ],
 		'image'       => 'inventory clipboard checklist',
 		'excerpt'     => 'How to record cleanliness in a check-in inventory so it stands up at check-out: clear terms, room-by-room detail, good photos and tenant sign-off.',
 		'content'     => <<<'HTML'
@@ -535,7 +535,7 @@ HTML,
 <div class="cc-takeaways"><p class="cc-takeaways__title">Key takeaways</p><ul><li>The check-in inventory is the standard for check-out, so record cleanliness item by item, not just room by room.</li><li>Use a consistent, defined scale, such as professionally cleaned, clean, generally clean and needs cleaning.</li><li>Photos and video should be date-stamped, well lit and show detail inside ovens, fridges and cupboards.</li><li>Give the tenant time to comment, and keep their written acknowledgement with the report.</li></ul></div>
 <h2>Why recording cleanliness at check-in matters</h2>
 <p>In England, deposits for assured shorthold tenancies must be protected in a government-approved scheme within 30 days, and each scheme offers free dispute resolution if you can't agree deductions. The government page on <a href="https://www.gov.uk/tenancy-deposit-protection" rel="noopener">tenancy deposit protection</a> sets out the rules.</p>
-<p>If cleaning becomes a dispute, the adjudicator compares the check-in and check-out records. Any deduction has to be reasonable and backed by evidence, and the landlord has to show the property was returned in a worse condition than it was let in. Our guide to <a href="{{guide:deposit-dispute-cleaning-evidence}}">how evidence wins deposit disputes over cleaning</a> explains the process in detail.</p>
+<p>If cleaning becomes a dispute, the adjudicator compares the check-in and check-out records. Any deduction has to be reasonable and backed by evidence, and the landlord has to show the property was returned in a worse condition than it was let in. Our guide to <a href="{{guide:how-to-get-your-deposit-back}}">how evidence wins deposit disputes over cleaning</a> explains the process in detail.</p>
 <p>The best starting point is a property cleaned to a known standard just before the inventory is taken. Many landlords book an <a href="{{service:end-of-tenancy-cleaning}}">end of tenancy clean</a> between tenants for exactly this reason, and keep the invoice with the inventory.</p>
 <h2>Cleanliness terms to use in your inventory</h2>
 <p>Pick a scale, define it at the front of the report, and use it consistently. Vague or mixed wording is one of the main reasons inventories carry little weight. A simple scale might look like this:</p>

@@ -13,6 +13,8 @@ use WP_CLI;
  *     wp cc seed [--force]   # business settings, services, areas, local services
  *     wp cc images [--force] # import placeholder photos from seed/images.php
  *     wp cc guides           # import guides, categories and guide photos from seed/guides/
+ *     wp cc guides_republish # rewrite 13 draft guides with new topics from seed/guides/republished.php
+ *     wp cc rank_math        # re-sync Rank Math focus keywords and on-page SEO for all guides
  *     wp cc local            # (re)build service × area pages from seed/local-services/
  *     wp cc pages            # (re)build Bricks pages
  *     wp cc menus            # (re)build the primary menu
@@ -330,13 +332,24 @@ final class Site_Command {
 		$photos     = file_exists( CC_THEME_DIR . '/seed/guide-images.php' ) ? $this->load_seed( 'guide-images' ) : [];
 		$only       = ! empty( $assoc['only'] ) ? array_map( 'trim', explode( ',', $assoc['only'] ) ) : [];
 
-		$files = glob( CC_THEME_DIR . '/seed/guides/*.php' );
+		$files = array_filter(
+			glob( CC_THEME_DIR . '/seed/guides/*.php' ) ?: [],
+			static fn( $f ) => ! in_array( basename( $f ), [ 'republished.php', 'republished-meta.php' ], true )
+		);
 		$order = array_flip( [ 'tenancy', 'moving-landlords', 'home-cleaning-1', 'home-cleaning-2', 'ovens-carpets', 'upholstery-builders', 'holiday-lets', 'business', 'hiring' ] );
 		usort( $files, fn( $a, $b ) => ( $order[ basename( $a, '.php' ) ] ?? 99 ) <=> ( $order[ basename( $b, '.php' ) ] ?? 99 ) );
+
+		$republish_map = is_readable( CC_THEME_DIR . '/seed/guides/republished-meta.php' )
+			? (array) require CC_THEME_DIR . '/seed/guides/republished-meta.php'
+			: [];
+		$skip_slugs = array_values( array_unique( array_merge( array_keys( $republish_map ), array_values( $republish_map ) ) ) );
 
 		$guides = [];
 		foreach ( $files as $file ) {
 			foreach ( (array) require $file as $guide ) {
+				if ( empty( $guide['slug'] ) || in_array( $guide['slug'], $skip_slugs, true ) ) {
+					continue;
+				}
 				$guides[ $guide['slug'] ] = $guide;
 			}
 		}
@@ -398,6 +411,10 @@ final class Site_Command {
 
 			update_field( 'field_cc_guide_seo_title', $guide['seo_title'] ?? '', $id );
 			update_field( 'field_cc_guide_meta_description', $guide['description'] ?? '', $id );
+			if ( function_exists( 'cc_rank_math_sync_guide' ) ) {
+				cc_rank_math_sync_guide( $id, true );
+				update_post_meta( $id, 'rank_math_seo_score', cc_rank_math_compute_score( $id ) );
+			}
 			update_field( 'field_cc_guide_pillar_service', $service ? $service->ID : null, $id );
 			update_field( 'field_cc_guide_related_guides', array_values( array_filter( array_map( fn( $s ) => $ids[ $s ] ?? 0, $guide['related'] ?? [] ) ) ), $id );
 			update_field( 'field_cc_guide_faqs', array_map( fn( $faq ) => [ 'question' => $faq[0], 'answer' => $faq[1] ], $guide['faqs'] ?? [] ), $id );
@@ -416,6 +433,154 @@ final class Site_Command {
 		}
 
 		WP_CLI::success( sprintf( '%d guides ready.', count( $ids ) ) );
+	}
+
+	/**
+	 * Repurpose merge/hold-back draft guides: same post IDs, new slugs and content.
+	 *
+	 * [--dry-run]
+	 * : List changes without writing to the database.
+	 *
+	 * [--only=<slugs>]
+	 * : Comma-separated new guide slugs to process (default: all in republished.php).
+	 */
+	public function guides_republish( $args = [], $assoc = [] ) {
+		$this->as_admin();
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+		require_once ABSPATH . 'wp-admin/includes/media.php';
+		require_once ABSPATH . 'wp-admin/includes/image.php';
+
+		$map_file = CC_THEME_DIR . '/seed/guides/republished-meta.php';
+		$guides_file = CC_THEME_DIR . '/seed/guides/republished.php';
+		if ( ! is_readable( $map_file ) || ! is_readable( $guides_file ) ) {
+			WP_CLI::error( 'Missing seed/guides/republished-meta.php or republished.php.' );
+		}
+
+		/** @var array<string,string> $replace_to_slug */
+		$replace_to_slug = require $map_file;
+		/** @var list<array> $guides */
+		$guides = require $guides_file;
+		$by_slug = [];
+		foreach ( $guides as $guide ) {
+			if ( empty( $guide['slug'] ) ) {
+				continue;
+			}
+			$by_slug[ $guide['slug'] ] = $guide;
+		}
+
+		$only = ! empty( $assoc['only'] ) ? array_map( 'trim', explode( ',', $assoc['only'] ) ) : [];
+		$dry  = ! empty( $assoc['dry-run'] );
+		$categories = $this->seed_guide_categories();
+		$photos     = file_exists( CC_THEME_DIR . '/seed/guide-images.php' ) ? $this->load_seed( 'guide-images' ) : [];
+		$slug_to_id = [];
+		foreach ( get_posts( [ 'post_type' => 'post', 'post_status' => 'any', 'posts_per_page' => -1, 'fields' => 'ids' ] ) as $pid ) {
+			$post = get_post( $pid );
+			if ( $post && $post->post_name ) {
+				$slug_to_id[ $post->post_name ] = (int) $pid;
+			}
+		}
+
+		$done = 0;
+		foreach ( $replace_to_slug as $old_slug => $new_slug ) {
+			if ( $only && ! in_array( $new_slug, $only, true ) ) {
+				continue;
+			}
+			if ( empty( $by_slug[ $new_slug ] ) ) {
+				WP_CLI::warning( "No seed content for new slug \"{$new_slug}\"." );
+				continue;
+			}
+			$guide = $by_slug[ $new_slug ];
+			$existing = get_page_by_path( $old_slug, OBJECT, 'post' );
+			if ( ! $existing ) {
+				$existing = get_page_by_path( $new_slug, OBJECT, 'post' );
+			}
+			if ( ! $existing ) {
+				WP_CLI::warning( "No post found for \"{$old_slug}\" or \"{$new_slug}\" — skipped." );
+				continue;
+			}
+
+			if ( $dry ) {
+				WP_CLI::log( sprintf( 'Would republish #%d: %s → %s', $existing->ID, $old_slug, $new_slug ) );
+				++$done;
+				continue;
+			}
+
+			$service = get_page_by_path( $guide['service'], OBJECT, 'cc_service' );
+			$post_id = (int) $existing->ID;
+			wp_update_post( wp_slash( [
+				'ID'            => $post_id,
+				'post_status'   => 'publish',
+				'post_title'    => $guide['title'],
+				'post_name'     => $new_slug,
+				'post_excerpt'  => $guide['excerpt'],
+				'post_content'  => $this->resolve_links( $guide['content'], $new_slug ),
+				'post_category' => array_filter( [ $categories[ $guide['category'] ] ?? 0 ] ),
+			] ) );
+
+			update_field( 'field_cc_guide_seo_title', $guide['seo_title'] ?? '', $post_id );
+			update_field( 'field_cc_guide_meta_description', $guide['description'] ?? '', $post_id );
+			update_field( 'field_cc_guide_pillar_service', $service ? $service->ID : null, $post_id );
+			$related_ids = array_values( array_filter( array_map(
+				function ( $s ) use ( $slug_to_id ) {
+					if ( isset( $slug_to_id[ $s ] ) ) {
+						return $slug_to_id[ $s ];
+					}
+					$related = get_page_by_path( $s, OBJECT, 'post' );
+					return $related ? (int) $related->ID : 0;
+				},
+				$guide['related'] ?? []
+			) ) );
+			update_field( 'field_cc_guide_related_guides', $related_ids, $post_id );
+			update_field( 'field_cc_guide_faqs', array_map( fn( $faq ) => [ 'question' => $faq[0], 'answer' => $faq[1] ], $guide['faqs'] ?? [] ), $post_id );
+
+			if ( function_exists( 'cc_rank_math_sync_guide' ) ) {
+				cc_rank_math_sync_guide( $post_id, true );
+				update_post_meta( $post_id, 'rank_math_seo_score', cc_rank_math_compute_score( $post_id ) );
+			}
+
+			$photo_key = $photos[ $new_slug ] ?? $photos[ $old_slug ] ?? null;
+			if ( $photo_key ) {
+				$attachment = $this->unsplash_attachment( $photo_key );
+				if ( $attachment ) {
+					set_post_thumbnail( $post_id, $attachment );
+				}
+			}
+
+			$slug_to_id[ $new_slug ] = $post_id;
+			unset( $slug_to_id[ $old_slug ] );
+			WP_CLI::log( sprintf( 'Republished #%d as %s', $post_id, $new_slug ) );
+			++$done;
+		}
+
+		if ( ! $dry ) {
+			flush_rewrite_rules( false );
+		}
+		WP_CLI::success( $dry ? "{$done} guides would be republished." : "{$done} guides republished." );
+	}
+
+	/**
+	 * Re-sync Rank Math fields and on-page fixes for every published guide.
+	 */
+	public function rank_math() {
+		$this->as_admin();
+		if ( ! function_exists( 'cc_rank_math_sync_all_guides' ) ) {
+			WP_CLI::error( 'Rank Math guide helpers are not loaded.' );
+		}
+		$result = cc_rank_math_sync_all_guides( true );
+		$low    = [];
+		foreach ( get_posts( [ 'post_type' => 'post', 'post_status' => 'publish', 'posts_per_page' => -1, 'fields' => 'ids' ] ) as $id ) {
+			$score = (int) get_post_meta( (int) $id, 'rank_math_seo_score', true );
+			if ( $score < 90 ) {
+				$low[] = sprintf( '%d  %s', $score, get_post_field( 'post_name', $id ) );
+			}
+		}
+		if ( $low ) {
+			WP_CLI::log( 'Still below 90:' );
+			foreach ( $low as $line ) {
+				WP_CLI::log( '  ' . $line );
+			}
+		}
+		WP_CLI::success( sprintf( 'Updated %d guides. Average score: %.1f.', $result['updated'], $result['avg_score'] ) );
 	}
 
 	/**
@@ -709,30 +874,13 @@ final class Site_Command {
 	}
 
 	private function legal_text( string $which ): string {
-		$note = '<p class="cc-note"><strong>Draft template — have this reviewed before launch.</strong></p>';
-
 		switch ( $which ) {
 			case 'privacy':
-				return $note
-					. '<h2>Who we are</h2><p>This website is operated by {cc_option:legal_name}. You can contact us at {cc_email_link} or {cc_phone_link}.</p>'
-					. '<h2>What we collect</h2><p>When you request a quote or book a clean we collect your name, contact details, property address and details about the clean. We also collect basic, anonymous usage data through cookies if you consent.</p>'
-					. '<h2>How we use it</h2><p>We use your information to provide quotes, deliver and manage your cleans, take payment and, where you agree, send occasional updates. Our lawful bases are contract, legitimate interests and consent.</p>'
-					. '<h2>Who we share it with</h2><p>We only share data with service providers who help us run the business (for example booking, payment and email providers), under appropriate agreements. We never sell your data.</p>'
-					. '<h2>How long we keep it</h2><p>We keep customer records for as long as you\'re a customer and for up to 6 years afterwards for accounting purposes. Quote requests that don\'t lead to a booking are deleted after 12 months.</p>'
-					. '<h2>Your rights</h2><p>You can ask to access, correct or delete your data, or object to how we use it, by contacting us. You can also complain to the Information Commissioner\'s Office (ico.org.uk).</p>';
+				return cc_legal_privacy_html();
 			case 'terms':
-				return $note
-					. '<h2>Bookings & quotes</h2><p>Quotes are based on the information you provide. If the property is significantly larger or dirtier than described, we\'ll agree any changes with you before continuing.</p>'
-					. '<h2>Cancellations</h2><p>Please give at least 48 hours\' notice to cancel or rearrange a clean. Late cancellations may be charged up to 50% of the booking.</p>'
-					. '<h2>Access</h2><p>You agree to provide access to the property, along with working electricity and hot water, at the booked time.</p>'
-					. '<h2>Our guarantee</h2><p>If you\'re not happy with any part of the clean, tell us within 72 hours and we\'ll re-clean the affected areas free of charge.</p>'
-					. '<h2>Breakages & damage</h2><p>We take great care, and we\'re fully insured. Please report any damage within 48 hours.</p>'
-					. '<h2>Payment</h2><p>Payment is due on completion unless agreed otherwise. Business accounts are invoiced monthly with 14-day terms.</p>';
+				return cc_legal_terms_html();
 			case 'cookies':
-				return $note
-					. '<h2>What are cookies?</h2><p>Cookies are small text files stored on your device that help websites work and collect information about how they\'re used.</p>'
-					. '<h2>Cookies we use</h2><p><strong>Essential cookies</strong> keep the site secure and working. <strong>Analytics cookies</strong> (only with your consent) help us understand how visitors use the site so we can improve it.</p>'
-					. '<h2>Managing cookies</h2><p>You can change your cookie preferences at any time using the cookie banner, or block cookies in your browser settings.</p>';
+				return cc_legal_cookies_html();
 		}
 		return '';
 	}

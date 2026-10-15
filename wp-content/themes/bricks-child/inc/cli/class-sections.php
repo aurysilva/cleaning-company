@@ -161,7 +161,8 @@ final class Sections {
 				T::container( '', [
 					T::div( 'cc-footer__grid', [
 						T::div( 'cc-footer__brand', [
-							T::block( '{cc_logo}', 'Logo' ),
+							T::block( '{cc_logo_footer}', 'Logo' ),
+							T::block( '{cc_tagline}', 'Tagline' ),
 							T::text( 'Professional, insured and DBS-checked cleaners for homes, landlords and businesses across Hull & East Yorkshire.', 'cc-footer__about' ),
 							T::block( '{cc_trust_list}', 'Trust list' ),
 							T::block( '{cc_social}', 'Social links' ),

@@ -152,7 +152,7 @@ HTML,
 <li><strong>Hire machines without an upholstery tool.</strong> Carpet machines can easily over-wet a sofa.</li>
 <li><strong>Treating leather like fabric.</strong> Leather needs its own cleaner and conditioner; washing-up liquid and baby wipes can dry it out over time.</li>
 </ul>
-<p>If you'd rather avoid harsh chemicals, our guide to <a href="{{guide:eco-friendly-cleaning-products}}">eco-friendly cleaning products that actually work</a> covers gentler options. Always check them against your fabric code first.</p>
+<p>If you'd rather avoid harsh chemicals, our guide to <a href="{{guide:gentle-cleaning-hard-water-homes}}">eco-friendly cleaning products that actually work</a> covers gentler options. Always check them against your fabric code first.</p>
 <h2>When to call a professional upholstery cleaner</h2>
 <p>Some jobs are worth handing over:</p>
 <ul>
@@ -161,7 +161,7 @@ HTML,
 <li>Large, old or set-in stains, and marks you've already tried to treat.</li>
 <li>Lingering odours from pets, smoke or damp.</li>
 <li>General dullness and greying on arms and headrests, where body oils build up.</li>
-<li>Allergy concerns. Dust mites live in upholstery as well as beds and carpets, and our guide to <a href="{{guide:cleaning-for-allergies}}">cleaning for allergies and asthma</a> explains why soft furnishings matter.</li>
+<li>Allergy concerns. Dust mites live in upholstery as well as beds and carpets, and our guide to <a href="{{guide:bedroom-dust-mite-reduction}}">cleaning for allergies and asthma</a> explains why soft furnishings matter.</li>
 </ul>
 <p>A professional upholstery clean uses controlled moisture and extraction to rinse soil out of the fabric rather than just moving it around. The fabric is pre-tested, the method is matched to the code and as much moisture as possible is extracted so the sofa dries quickly. Drying works much the same way as with carpets; see <a href="{{guide:how-long-carpets-take-to-dry}}">how long carpets take to dry</a> for what speeds it up.</p>
 <h2>Sofas in rentals, holiday lets and busy family homes</h2>
@@ -179,7 +179,7 @@ HTML,
 		],
 	],
 	[
-		'slug'        => 'what-is-an-after-builders-clean',
+		'slug'        => 'cleaning-after-home-improvements',
 		'title'       => 'What’s Included in an After Builders Clean?',
 		'seo_title'   => 'After Builders Clean: What’s Included? | Hull',
 		'description' => 'An after builders clean removes fine dust, paint splashes and debris after building work. See exactly what’s included room by room and how to prepare.',
@@ -276,7 +276,7 @@ HTML,
 		'description' => 'Builders clean vs sparkle clean explained: what each stage covers, when to book them and which one you need after renovation work in Hull or East Yorkshire.',
 		'category'    => 'after-builders',
 		'service'     => 'after-builders-cleaning',
-		'related'     => [ 'what-is-an-after-builders-clean', 'removing-paint-and-plaster-dust', 'protect-home-during-renovation' ],
+		'related'     => [ 'cleaning-after-home-improvements', 'removing-paint-and-plaster-dust', 'protect-home-during-renovation' ],
 		'image'       => 'new build interior',
 		'excerpt'     => 'A builders clean gets a site tidy and safe; a sparkle clean makes it ready to live in. Here’s what each covers and which your project needs.',
 		'content'     => <<<'HTML'
@@ -305,7 +305,7 @@ HTML,
 <li>Remaining paint, plaster and sealant marks carefully removed</li>
 <li>Hard floors vacuumed and mopped, often more than once, and carpets thoroughly vacuumed</li>
 </ul>
-<p>For most homeowners, what they picture when they book an <a href="{{service:after-builders-cleaning}}">after builders clean</a> is really a sparkle clean. Our guide to <a href="{{guide:what-is-an-after-builders-clean}}">what's included in an after builders clean</a> goes through it room by room.</p>
+<p>For most homeowners, what they picture when they book an <a href="{{service:after-builders-cleaning}}">after builders clean</a> is really a sparkle clean. Our guide to <a href="{{guide:cleaning-after-home-improvements}}">what's included in an after builders clean</a> goes through it room by room.</p>
 <h2>Builders clean vs sparkle clean: side-by-side comparison</h2>
 <table>
 <thead><tr><th></th><th>Builders clean</th><th>Sparkle clean</th></tr></thead>
@@ -359,7 +359,7 @@ HTML,
 		'description' => 'How to protect your home from dust during renovation: sealing rooms, covering floors and furniture, managing air and daily habits that cut the clean-up.',
 		'category'    => 'after-builders',
 		'service'     => 'after-builders-cleaning',
-		'related'     => [ 'what-is-an-after-builders-clean', 'removing-paint-and-plaster-dust', 'builders-clean-vs-sparkle-clean' ],
+		'related'     => [ 'cleaning-after-home-improvements', 'removing-paint-and-plaster-dust', 'builders-clean-vs-sparkle-clean' ],
 		'image'       => 'dust sheets renovation',
 		'excerpt'     => 'Practical ways to contain building dust: what to agree with your builder, how to seal rooms, protect floors and furniture, and plan the final clean.',
 		'content'     => <<<'HTML'
@@ -409,7 +409,7 @@ HTML,
 <li>Open a window in the work area so air, and dust, flows out of the house rather than into it.</li>
 <li>Keep other rooms' windows closed so you're not drawing a draught through the house from the work area.</li>
 <li>Turn off extractor fans in rooms next to the work area, as they can pull dust through gaps under doors.</li>
-<li>An air purifier with a HEPA filter in the main living space helps if someone in the house has asthma or allergies. Our guide to <a href="{{guide:cleaning-for-allergies}}">cleaning for allergies and asthma</a> has more on protecting sensitive households.</li>
+<li>An air purifier with a HEPA filter in the main living space helps if someone in the house has asthma or allergies. Our guide to <a href="{{guide:bedroom-dust-mite-reduction}}">cleaning for allergies and asthma</a> has more on protecting sensitive households.</li>
 </ul>
 <h2>Daily habits that keep dust under control</h2>
 <ul>
@@ -431,7 +431,7 @@ HTML,
 <li>Carpets and upholstery are cleaned if needed.</li>
 <li>Furniture and soft furnishings go back in.</li>
 </ol>
-<p>Our guide to <a href="{{guide:what-is-an-after-builders-clean}}">what's included in an after builders clean</a> explains what to expect, and <a href="{{guide:removing-paint-and-plaster-dust}}">removing plaster dust and paint splashes</a> covers DIY tidying after smaller jobs. If dust has spread through the rest of the house, a <a href="{{service:deep-cleaning}}">deep clean</a> of the untouched rooms brings everything back to normal.</p>
+<p>Our guide to <a href="{{guide:cleaning-after-home-improvements}}">what's included in an after builders clean</a> explains what to expect, and <a href="{{guide:removing-paint-and-plaster-dust}}">removing plaster dust and paint splashes</a> covers DIY tidying after smaller jobs. If dust has spread through the rest of the house, a <a href="{{service:deep-cleaning}}">deep clean</a> of the untouched rooms brings everything back to normal.</p>
 <p>Our team is insured, brings all its own equipment and agrees a fixed quote before starting. Read more about our <a href="{{service:after-builders-cleaning}}">after builders cleaning service</a>, or <a href="{{page:contact}}">get in touch</a> with your expected finish date and we'll pencil in a clean.</p>
 HTML,
 		'faqs'        => [
@@ -448,7 +448,7 @@ HTML,
 		'description' => 'Removing plaster dust and paint splashes after decorating: safe methods for floors, carpets, glass, uPVC and tiles, plus the mistakes that cause damage.',
 		'category'    => 'after-builders',
 		'service'     => 'after-builders-cleaning',
-		'related'     => [ 'what-is-an-after-builders-clean', 'protect-home-during-renovation', 'how-to-remove-carpet-stains' ],
+		'related'     => [ 'cleaning-after-home-improvements', 'protect-home-during-renovation', 'how-to-remove-carpet-stains' ],
 		'image'       => 'paint roller wall',
 		'excerpt'     => 'Step-by-step methods for clearing plaster dust and removing paint splashes from floors, carpets, glass, uPVC and tiles without damaging new finishes.',
 		'content'     => <<<'HTML'
@@ -507,7 +507,7 @@ HTML,
 <li>You don't have the time or equipment for several rounds of dusting and wiping.</li>
 <li>You've redecorated a rented home before moving out. Splashes on carpets, sockets and sills can end up on the check-out report, and our <a href="{{service:end-of-tenancy-cleaning}}">end of tenancy cleaning</a> covers that kind of detail.</li>
 </ul>
-<p>If the work is still under way, our guide to <a href="{{guide:protect-home-during-renovation}}">protecting your home from dust during renovation</a> will cut down the clean-up. For the full picture of what a professional clean covers, read <a href="{{guide:what-is-an-after-builders-clean}}">what's included in an after builders clean</a>.</p>
+<p>If the work is still under way, our guide to <a href="{{guide:protect-home-during-renovation}}">protecting your home from dust during renovation</a> will cut down the clean-up. For the full picture of what a professional clean covers, read <a href="{{guide:cleaning-after-home-improvements}}">what's included in an after builders clean</a>.</p>
 <h2>Cleaning up after decorators in Hull and East Yorkshire</h2>
 <p>Our team cleans up after plasterers, decorators and builders in homes and rentals across <a href="{{area:hull}}">Hull</a>, <a href="{{area:pocklington}}">Pocklington</a>, <a href="{{area:driffield}}">Driffield</a> and the rest of East Yorkshire. Our cleaners are insured and vetted, bring their own vacuums, scrapers and products, and work to a fixed quote agreed before they start.</p>
 <p>See what's included in our <a href="{{service:after-builders-cleaning}}">after builders cleaning service</a>, or <a href="{{page:contact}}">get in touch</a> with a few photos of the rooms and we'll let you know what's involved.</p>

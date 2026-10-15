@@ -46,15 +46,50 @@ function cc_esc_text( string $text ): string {
  * Brand & contact
  * ---------------------------------------------------------------------- */
 
-function cc_logo_html(): string {
-	$logo = cc_option( 'logo' );
+function cc_logo_html( string $context = 'header' ): string {
 	$name = cc_brand_name();
+	$logo = cc_business_logo( $context );
 
-	$inner = is_array( $logo ) && ! empty( $logo['url'] )
-		? sprintf( '<img src="%s" alt="%s" width="%d" height="%d">', esc_url( $logo['url'] ), esc_attr( $name ), (int) ( $logo['width'] ?? 180 ), (int) ( $logo['height'] ?? 48 ) )
-		: sprintf( '<span class="cc-logo__mark" aria-hidden="true">✦</span><span class="cc-logo__name">%s</span>', esc_html( $name ) );
+	if ( $logo ) {
+		$inner = sprintf(
+			'<img class="cc-logo__img" src="%s" alt="" width="%d" height="%d" decoding="async"%s>',
+			esc_url( $logo['url'] ),
+			(int) ( $logo['width'] ?? 180 ),
+			(int) ( $logo['height'] ?? 48 ),
+			'header' === $context ? ' fetchpriority="high"' : ''
+		);
+	} elseif ( 'header' === $context && cc_brand_has_logo() ) {
+		$v     = cc_brand_asset_version( 'logo.svg' );
+		$inner = sprintf(
+			'<img class="cc-logo__img" src="%s" alt="" width="519" height="132" decoding="async" fetchpriority="high">',
+			esc_url( cc_brand_logo_svg_uri() . '?v=' . $v )
+		);
+	} else {
+		$inner = sprintf( '<span class="cc-logo__mark" aria-hidden="true">✦</span><span class="cc-logo__name">%s</span>', esc_html( $name ) );
+	}
 
-	return sprintf( '<a class="cc-logo" href="%s" aria-label="%s — home">%s</a>', esc_url( home_url( '/' ) ), esc_attr( $name ), $inner );
+	$class = 'cc-logo' . ( 'footer' === $context ? ' cc-logo--footer' : '' );
+
+	return sprintf( '<a class="%s" href="%s" aria-label="%s — home">%s</a>', esc_attr( $class ), esc_url( home_url( '/' ) ), esc_attr( $name ), $inner );
+}
+
+function cc_tagline_html(): string {
+	$tagline = cc_tagline();
+	return $tagline ? sprintf( '<p class="cc-tagline">%s</p>', esc_html( $tagline ) ) : '';
+}
+
+/** Horizontal logo for HTML emails (white on transparent). */
+function cc_brand_email_logo_url(): string {
+	$white = cc_option( 'logo_white' );
+	if ( is_array( $white ) && ! empty( $white['url'] ) ) {
+		return (string) $white['url'];
+	}
+	$logo = cc_business_logo( 'header' );
+	if ( $logo ) {
+		return (string) $logo['url'];
+	}
+	$path = cc_brand_assets_dir() . '/email-logo.png';
+	return is_readable( $path ) ? cc_brand_assets_uri( 'email-logo.png' ) . '?v=' . cc_brand_asset_version( 'email-logo.png' ) : '';
 }
 
 function cc_email_link(): string {
@@ -530,21 +565,31 @@ function cc_service_card( WP_Post $service, string $url = '' ): string {
 /**
  * @param string|string[] $groups Service group slug(s); services in more than one group are listed once.
  */
-function cc_service_cards_html( $groups = '', int $limit = -1, string $class = '' ): string {
+function cc_services_in_groups( $groups = '', int $limit = -1 ): array {
 	$args   = [ 'posts_per_page' => $limit ];
 	$groups = array_filter( (array) $groups );
 	if ( $groups ) {
 		$args['tax_query'] = [ [ 'taxonomy' => 'cc_service_group', 'field' => 'slug', 'terms' => $groups ] ];
 	}
-	$services = cc_services( $args );
+	return cc_services( $args );
+}
+
+/**
+ * @param string|string[] $groups Service group slug(s); services in more than one group are listed once.
+ */
+function cc_service_cards_html( $groups = '', int $limit = -1, string $class = '' ): string {
+	$services = cc_services_in_groups( $groups, $limit );
 	if ( ! $services ) {
 		return '';
 	}
 	return '<div class="cc-grid cc-grid--cards' . ( $class ? ' ' . esc_attr( $class ) : '' ) . '">' . implode( '', array_map( 'cc_service_card', $services ) ) . '</div>';
 }
 
-function cc_service_carousel_html(): string {
-	$services = cc_services();
+/**
+ * @param string|string[] $groups Service group slug(s); all services when empty.
+ */
+function cc_service_carousel_html( $groups = '' ): string {
+	$services = cc_services_in_groups( $groups );
 	return $services ? cc_carousel_html( array_map( 'cc_service_card', $services ), 'Cleaning services' ) : '';
 }
 
@@ -577,11 +622,11 @@ function cc_carousel_html( array $cards, string $label, array $args = [] ): stri
 function cc_service_groups_html(): string {
 	$terms = get_terms( [ 'taxonomy' => 'cc_service_group', 'hide_empty' => true, 'orderby' => 'term_id' ] );
 	if ( is_wp_error( $terms ) || ! $terms ) {
-		return cc_service_cards_html();
+		return cc_service_cards_html( '', -1, 'cc-grid--3' );
 	}
 	$out = '';
 	foreach ( $terms as $term ) {
-		$cards = cc_service_cards_html( $term->slug );
+		$cards = cc_service_cards_html( $term->slug, -1, 'cc-grid--3' );
 		if ( ! $cards ) {
 			continue;
 		}

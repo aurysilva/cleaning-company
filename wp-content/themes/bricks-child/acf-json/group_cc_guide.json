@@ -36,6 +36,22 @@
             "maxlength": 70
         },
         {
+            "key": "field_cc_guide_focus_keyword",
+            "label": "Focus keyword (Rank Math)",
+            "name": "focus_keyword",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "Primary phrase Rank Math scores against. Leave empty to derive from the SEO title.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "maxlength": 80
+        },
+        {
             "key": "field_cc_guide_meta_description",
             "label": "Meta description",
             "name": "meta_description",

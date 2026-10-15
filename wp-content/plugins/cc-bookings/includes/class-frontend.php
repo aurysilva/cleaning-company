@@ -72,6 +72,9 @@ final class Frontend {
 			if ( 'cancelled' === ( $_GET['checkout'] ?? '' ) && $quote['hold_expires_at'] && ! $quote['booking_id'] ) {
 				Checkout::expire_hold( $quote['id'], $quote['stripe_session_id'], true );
 			}
+			if ( 'success' === ( $_GET['checkout'] ?? '' ) && ! $quote['booking_id'] ) {
+				Checkout::sync_paid_session( $quote );
+			}
 			if ( ! Quotes::is_expired( $quote ) ) {
 				Quotes::mark_viewed( $quote );
 			} elseif ( 'expired' !== $quote['status'] ) {

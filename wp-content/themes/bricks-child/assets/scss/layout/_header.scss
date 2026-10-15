@@ -107,10 +107,16 @@
 		margin-left: auto;
 	}
 
+	&__quote {
+		padding: 0.75em 1.25em;
+		font-size: 0.875rem; // ~14px — compact CTA in the main header
+	}
+
 	// Round phone icon; the number itself is in the top bar
 	&__call {
 		display: grid;
 		place-items: center;
+		align-content: center;
 		width: 3rem;
 		height: 3rem;
 		padding: 0;
@@ -138,6 +144,7 @@
 
 		.cc-nav {
 			order: 3;
+			margin-inline: 0;
 		}
 	}
 
@@ -147,12 +154,16 @@
 		}
 
 		&__quote {
-			padding: 0.7em 1.1em;
-			font-size: var(--cc-text-s);
+			padding: 0.65em 1em;
 		}
 
 		.cc-logo {
 			font-size: 1rem;
+
+			&__img {
+				max-width: min(11.5rem, 48vw);
+				max-height: 2.15rem;
+			}
 
 			&__mark {
 				width: 2rem;
@@ -163,7 +174,7 @@
 
 	@include down(sm) {
 		&__quote {
-			padding: 0.6em 0.9em;
+			padding: 0.55em 0.85em;
 		}
 	}
 }
@@ -172,6 +183,7 @@
 	display: inline-flex;
 	align-items: center;
 	gap: 0.5rem;
+	--cc-logo-accent: var(--cc-color-primary);
 	color: var(--cc-color-text);
 	font-weight: 800;
 	font-size: 1.2rem;
@@ -181,6 +193,14 @@
 
 	&:hover {
 		color: var(--cc-color-primary);
+	}
+
+	&__img {
+		display: block;
+		width: auto;
+		max-width: min(14.5rem, 42vw);
+		max-height: 2.65rem;
+		height: auto;
 	}
 
 	&__mark {
@@ -220,7 +240,7 @@
 
 		@media (max-width: 1180px) {
 			gap: var(--cc-space-2xs);
-			font-size: var(--cc-text-s);
+			font-size: 0.8125rem;
 		}
 
 		> li > a,
@@ -260,12 +280,18 @@
 		}
 
 		.current-menu-item > a,
+		.current-menu-item > .brx-submenu-toggle > a,
 		.current-menu-ancestor > .brx-submenu-toggle > a {
 			color: var(--cc-color-primary);
 
 			&::after {
 				transform: scaleX(1);
 			}
+		}
+
+		.current-menu-item > .brx-submenu-toggle button,
+		.current-menu-ancestor > .brx-submenu-toggle button {
+			color: var(--cc-color-primary);
 		}
 
 		.sub-menu {
@@ -302,24 +328,97 @@
 					color: var(--cc-color-primary-dark);
 				}
 			}
+
+			.current-menu-item > a {
+				background: var(--cc-color-primary-light);
+				color: var(--cc-color-primary);
+				font-weight: 700;
+			}
 		}
 	}
 
+	// Dropdown arrows flip while their submenu is open (desktop and mobile)
+	.brx-submenu-toggle svg {
+		transition: transform 0.35s var(--cc-ease);
+	}
+
+	.open > .brx-submenu-toggle svg,
+	.brx-submenu-toggle button[aria-expanded="true"] svg {
+		transform: rotate(180deg);
+	}
+
+	// Stepped hamburger lines (30 / 25 / 20px), right-aligned with the page edge
 	.bricks-mobile-menu-toggle {
+		width: 30px;
 		color: var(--cc-color-text);
+
+		.bar-top,
+		.bar-center,
+		.bar-bottom {
+			left: auto;
+			right: 0;
+		}
+
+		.bar-top {
+			width: 30px;
+		}
+
+		.bar-center {
+			width: 25px;
+		}
+	}
+
+	// Both arms of the close (X) icon need the same length and position
+	&.show-mobile-menu .bricks-mobile-menu-toggle {
+		.bar-top,
+		.bar-bottom {
+			right: 3px;
+			width: 24px;
+		}
 	}
 
 	.bricks-mobile-menu-wrapper {
 		background: var(--cc-color-surface);
+		color: var(--cc-color-text);
 
+		// Bricks paints its default dark panel colour on this layer
+		&::before {
+			background: var(--cc-color-surface);
+		}
+
+		// The close button stays where the toggle sits in the header, so start the links below it
+		.bricks-mobile-menu {
+			padding-top: 6rem;
+		}
+
+		.brx-submenu-toggle button {
+			color: inherit;
+		}
+
+		// Bricks uses a 60px line-height, which spaces wrapped names like separate items
 		a {
+			padding-block: 1.1rem;
 			color: var(--cc-color-text);
 			font-weight: 600;
+			line-height: 1.35;
 			text-decoration: none;
 		}
 
 		.sub-menu a {
+			padding-block: 0.7rem;
 			font-weight: 400;
+		}
+
+		.current-menu-item > a,
+		.current-menu-item > .brx-submenu-toggle > a,
+		.current-menu-ancestor > .brx-submenu-toggle > a,
+		.current-menu-item > .brx-submenu-toggle button,
+		.current-menu-ancestor > .brx-submenu-toggle button {
+			color: var(--cc-color-primary);
+		}
+
+		.sub-menu .current-menu-item > a {
+			font-weight: 700;
 		}
 	}
 

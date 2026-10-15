@@ -112,12 +112,11 @@ get_header();
 					<?php if ( $priced ) : ?>
 						<section class="cc-panel cc-private__card">
 							<h2 class="cc-private__heading">Your price</h2>
-							<table class="cc-private__items">
+							<table class="cc-private__items cc-private__items--no-line-prices">
 								<tbody>
 									<?php foreach ( (array) $quote['items'] as $item ) : ?>
 										<tr class="cc-private__item cc-private__item--<?php echo esc_attr( $item['type'] ?? 'base' ); ?>">
-											<td><?php echo esc_html( $item['label'] . ( ( $item['qty'] ?? 1 ) > 1 ? ' × ' . rtrim( rtrim( number_format( (float) $item['qty'], 2 ), '0' ), '.' ) : '' ) ); ?></td>
-											<td class="cc-private__amount"><?php echo esc_html( Money::format( (int) $item['amount'] ) ); ?></td>
+											<td colspan="2"><?php echo esc_html( $item['label'] . ( ( $item['qty'] ?? 1 ) > 1 ? ' × ' . rtrim( rtrim( number_format( (float) $item['qty'], 2 ), '0' ), '.' ) : '' ) ); ?></td>
 										</tr>
 									<?php endforeach; ?>
 								</tbody>

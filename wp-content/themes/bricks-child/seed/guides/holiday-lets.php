@@ -283,7 +283,7 @@ HTML,
 <li>Keep vents clear all year and use a dehumidifier when the caravan has power and someone is there to empty it.</li>
 <li>Look for the cause, as persistent mould in one spot can point to a leak that needs repairing.</li>
 </ul>
-<p>Many of the same principles apply in houses, and our guide to <a href="{{guide:damp-and-mould-in-older-homes}}">condensation, damp and black mould</a> goes into more detail. If you or your guests have asthma or allergies, see our advice on <a href="{{guide:cleaning-for-allergies}}">cleaning for allergies</a>, as mould spores and dust mites thrive in damp soft furnishings.</p>
+<p>Many of the same principles apply in houses, and our guide to <a href="{{guide:damp-and-mould-in-older-homes}}">condensation, damp and black mould</a> goes into more detail. If you or your guests have asthma or allergies, see our advice on <a href="{{guide:bedroom-dust-mite-reduction}}">cleaning for allergies</a>, as mould spores and dust mites thrive in damp soft furnishings.</p>
 <h2>Signs of mice and how to clean up safely</h2>
 <p>Closed caravans attract mice, especially if food was left behind. Look for small dark droppings, gnawed packaging or cables and shredded paper.</p>
 <ul>
@@ -307,7 +307,7 @@ HTML,
 </table>
 <h2>Keeping your caravan clean through the season</h2>
 <p>Once the caravan is open, regular changeovers keep it in good shape. If you let it out, the same principles apply as for any holiday let, and our <a href="{{guide:holiday-let-changeover-checklist}}">holiday let changeover checklist</a> works well in a caravan with a few tweaks for the smaller space. Our tips on <a href="{{guide:holiday-let-linen-laundry}}">holiday let linen and laundry</a> help if there is no washing machine on site.</p>
-<p>Chemical fumes build up quickly in a small space, so gentler, <a href="{{guide:eco-friendly-cleaning-products}}">eco-friendly cleaning products</a> are a sensible choice for everyday changeovers.</p>
+<p>Chemical fumes build up quickly in a small space, so gentler, <a href="{{guide:gentle-cleaning-hard-water-homes}}">eco-friendly cleaning products</a> are a sensible choice for everyday changeovers.</p>
 <h2>Static caravan cleaning on the East Yorkshire coast</h2>
 <p>Our team can handle season opening and closing cleans for you, along with changeovers through the season, as part of our <a href="{{service:holiday-let-airbnb-cleaning}}">holiday let and caravan cleaning</a>. We can also arrange a <a href="{{service:deep-cleaning}}">deep clean</a> at the start of the season, or <a href="{{service:carpet-upholstery-cleaning}}">carpet and upholstery cleaning</a> using hot water extraction if soft furnishings need more than a hoover. Key holding is available if you can't be there to let us in.</p>
 <p>Let us know where your caravan is and what you need through our <a href="{{page:contact}}">contact page</a>, and we will give you a fixed quote.</p>
@@ -365,7 +365,7 @@ HTML,
 <tr><td>Throws and cushion covers</td><td>Per care label, regularly</td><td>Easy to forget, but guests notice marks</td></tr>
 </tbody>
 </table>
-<p>Don't overload the machine, as linen needs room to move to come out clean. Measure detergent rather than guessing, because too much leaves a residue that can irritate skin. If you prefer gentler products, our guide to <a href="{{guide:eco-friendly-cleaning-products}}">eco-friendly cleaning</a> explains what actually works. Regular hot washing also helps guests with allergies, which we cover in <a href="{{guide:cleaning-for-allergies}}">cleaning for dust mites and allergies</a>.</p>
+<p>Don't overload the machine, as linen needs room to move to come out clean. Measure detergent rather than guessing, because too much leaves a residue that can irritate skin. If you prefer gentler products, our guide to <a href="{{guide:gentle-cleaning-hard-water-homes}}">eco-friendly cleaning</a> explains what actually works. Regular hot washing also helps guests with allergies, which we cover in <a href="{{guide:bedroom-dust-mite-reduction}}">cleaning for dust mites and allergies</a>.</p>
 <h2>Drying and ironing on tight turnarounds</h2>
 <p>Drying is usually the bottleneck. A washing line can't be relied on at the coast or in winter, and linen that comes in slightly damp will smell musty by the next changeover.</p>
 <ul>
@@ -481,7 +481,7 @@ HTML,
 <li><strong>Give furniture space.</strong> Leave a gap between wardrobes, sofas and beds and outside walls so air can circulate.</li>
 <li><strong>Dry towels and swimwear properly,</strong> ideally outside or in a tumble dryer rather than on bedroom radiators.</li>
 </ul>
-<p>For treating mould once it appears, and spotting when it is a building problem rather than a cleaning one, read our guide to <a href="{{guide:damp-and-mould-in-older-homes}}">condensation, damp and black mould</a>. Mould spores can also aggravate asthma, so see <a href="{{guide:cleaning-for-allergies}}">cleaning for allergies</a> for more.</p>
+<p>For treating mould once it appears, and spotting when it is a building problem rather than a cleaning one, read our guide to <a href="{{guide:damp-and-mould-in-older-homes}}">condensation, damp and black mould</a>. Mould spores can also aggravate asthma, so see <a href="{{guide:bedroom-dust-mite-reduction}}">cleaning for allergies</a> for more.</p>
 <div class="cc-callout"><p><strong>Tip:</strong> Keep a simple hygrometer in your let. It shows the humidity at a glance and tells you whether your ventilation and dehumidifier routine is working.</p></div>
 <h2>A cleaning routine for coastal holiday lets</h2>
 <p>Build the seaside extras into your normal routine so they don't get forgotten.</p>

@@ -11,7 +11,7 @@ return [
 		'description' => 'Office cleaning checklist with daily, weekly and monthly tasks for desks, kitchens, washrooms and floors, plus how to build a schedule that sticks.',
 		'category'    => 'business',
 		'service'     => 'office-cleaning',
-		'related'     => [ 'workplace-hygiene-sick-days', 'office-cleaning-cost-factors', 'choosing-a-commercial-cleaning-company' ],
+		'related'     => [ 'office-kitchen-fridge-hygiene', 'office-cleaning-cost-factors', 'choosing-a-commercial-cleaning-company' ],
 		'image'       => 'clean modern office',
 		'excerpt'     => 'A practical office cleaning checklist split into daily, weekly and monthly tasks, with an at-a-glance schedule and tips for tailoring it to your building.',
 		'content'     => <<<'HTML'
@@ -107,7 +107,7 @@ return [
 <li>Add a sign-off sheet so each visit is recorded.</li>
 <li>Review the checklist every few months, and after any change such as new starters, hot-desking or a refit.</li>
 </ol>
-<p>If your team hot-desks, or you've had a run of colds and stomach bugs, increase the frequency of touch-point cleaning. Our guide to <a href="{{guide:workplace-hygiene-sick-days}}">reducing the spread of germs at work</a> covers this in more detail.</p>
+<p>If your team hot-desks, or you've had a run of colds and stomach bugs, increase the frequency of touch-point cleaning. Our guide to <a href="{{guide:office-kitchen-fridge-hygiene}}">reducing the spread of germs at work</a> covers this in more detail.</p>
 <h2>Common office cleaning mistakes to avoid</h2>
 <ul>
 <li><strong>Using the same cloths everywhere.</strong> Colour-code cloths and mops so anything used in the toilets never goes near the kitchen.</li>
@@ -135,7 +135,7 @@ HTML,
 		'description' => 'Choosing a commercial cleaning company? What to check on insurance, vetting, COSHH, contracts and quality control before you sign, plus questions to ask.',
 		'category'    => 'business',
 		'service'     => 'commercial-cleaning',
-		'related'     => [ 'office-cleaning-checklist', 'questions-to-ask-a-cleaning-company', 'cleaning-regulations-for-businesses' ],
+		'related'     => [ 'office-cleaning-checklist', 'how-to-choose-a-cleaner', 'cleaning-regulations-for-businesses' ],
 		'image'       => 'commercial cleaning trolley',
 		'excerpt'     => 'What to check before hiring a commercial cleaning contractor: insurance, vetting, COSHH paperwork, cleaning specifications, quality control and contract terms.',
 		'content'     => <<<'HTML'
@@ -201,7 +201,7 @@ HTML,
 <li>Who covers when a cleaner is off sick or on holiday?</li>
 <li>Can you provide references from similar premises?</li>
 </ol>
-<p>Warning signs include no written specification, reluctance to show insurance, vague answers about who will be cleaning, and quotes that look far too low for the work involved. For a broader list, see our <a href="{{guide:questions-to-ask-a-cleaning-company}}">questions to ask before hiring a cleaning company</a>. Small businesses weighing up a sole trader against a firm may also find our comparison of <a href="{{guide:cleaning-company-vs-independent-cleaner}}">cleaning companies and self-employed cleaners</a> useful.</p>
+<p>Warning signs include no written specification, reluctance to show insurance, vague answers about who will be cleaning, and quotes that look far too low for the work involved. For a broader list, see our <a href="{{guide:how-to-choose-a-cleaner}}">questions to ask before hiring a cleaning company</a>. Small businesses weighing up a sole trader against a firm may also find our comparison of <a href="{{guide:cleaning-company-vs-independent-cleaner}}">cleaning companies and self-employed cleaners</a> useful.</p>
 <h2>Finding a commercial cleaning contractor in Hull and East Yorkshire</h2>
 <p>We provide commercial cleaning across <a href="{{area:hull}}">Hull</a> and East Yorkshire, from city centre offices to premises in <a href="{{area:goole}}">Goole</a> and <a href="{{area:driffield}}">Driffield</a>. Our cleaners are insured, vetted and DBS-checked, bring their own equipment and products, and work out of hours to suit your business.</p>
 <p>Every contract starts with a fixed quote agreed before work begins. To talk through your premises, see our <a href="{{service:commercial-cleaning}}">commercial cleaning service</a> or <a href="{{page:contact}}">contact our team</a>.</p>
@@ -214,7 +214,7 @@ HTML,
 		],
 	],
 	[
-		'slug'        => 'workplace-hygiene-sick-days',
+		'slug'        => 'office-kitchen-fridge-hygiene',
 		'title'       => 'Workplace Hygiene: Reducing the Spread of Germs at Work',
 		'seo_title'   => 'Workplace Hygiene: How to Reduce the Spread of Germs',
 		'description' => 'Workplace hygiene tips to reduce the spread of colds, flu and stomach bugs at work: high-touch cleaning, kitchens, washrooms and hot-desking.',
@@ -253,7 +253,7 @@ HTML,
 <li>Never mix products, especially bleach with other cleaners.</li>
 <li>Store chemicals safely and keep safety data sheets, as required under <a href="https://www.hse.gov.uk/coshh/" rel="noopener">COSHH</a>.</li>
 </ul>
-<p>Everyday cleaning of desks, floors and most surfaces doesn't need harsh chemicals. Our guide to <a href="{{guide:eco-friendly-cleaning-products}}">eco-friendly cleaning that actually works</a> explains where gentler products do the job well and where a disinfectant is the better choice.</p>
+<p>Everyday cleaning of desks, floors and most surfaces doesn't need harsh chemicals. Our guide to <a href="{{guide:gentle-cleaning-hard-water-homes}}">eco-friendly cleaning that actually works</a> explains where gentler products do the job well and where a disinfectant is the better choice.</p>
 <h2>Office kitchens and washrooms: the germ hotspots</h2>
 <h3>Kitchens</h3>
 <p>Office kitchens are shared by everyone and owned by no one. Sponges and dishcloths left damp in the sink can harbour bacteria, so replace them often or switch to cloths that go through a hot wash. Wipe and disinfect worktops, handles and the sink daily, and clear the fridge regularly so out-of-date food doesn't pile up.</p>
@@ -269,7 +269,7 @@ HTML,
 <li>Where the role allows, make it acceptable to work from home with a heavy cold.</li>
 </ul>
 <h3>Ventilation, dust and air quality</h3>
-<p>Fresh air helps dilute airborne germs, so open windows where you can and keep ventilation systems maintained. Dust and mould also affect people with allergies and asthma, and they're a common problem in older buildings such as the converted offices in Hull's Old Town. Our guide to <a href="{{guide:cleaning-for-allergies}}">cleaning for allergies and asthma</a> covers dust, pollen and mould in more detail.</p>
+<p>Fresh air helps dilute airborne germs, so open windows where you can and keep ventilation systems maintained. Dust and mould also affect people with allergies and asthma, and they're a common problem in older buildings such as the converted offices in Hull's Old Town. Our guide to <a href="{{guide:bedroom-dust-mite-reduction}}">cleaning for allergies and asthma</a> covers dust, pollen and mould in more detail.</p>
 <h2>What to do after an outbreak of illness at work</h2>
 <p>When a stomach bug or flu has been going round the office, a thorough one-off clean helps stop it bouncing back. That means cleaning and disinfecting washrooms, kitchens, desks, chairs, phones and every touch point, not just the usual daily tasks.</p>
 <ol>
@@ -334,7 +334,7 @@ HTML,
 <p>A crowded office, a showroom with customers walking in from the street, or a team that eats lunch at their desks will all need more cleaning than a quiet office of the same size.</p>
 <h2>How cleaning frequency affects the price</h2>
 <p>Frequency is the factor you have most control over. Daily cleaning costs more in total, but each visit is shorter because there's less build-up. Weekly cleaning costs less overall, but each visit has more to do, and kitchens and toilets can become unpleasant in between.</p>
-<p>Many offices settle on a middle ground: daily or every-other-day visits for kitchens, toilets and bins, with full hoovering and dusting on a weekly rotation. Our <a href="{{guide:office-cleaning-checklist}}">office cleaning checklist</a> shows how tasks can be split by frequency so you only pay for what's needed. Hygiene matters too, and our guide to <a href="{{guide:workplace-hygiene-sick-days}}">reducing the spread of germs at work</a> explains why touch points shouldn't wait for a weekly clean.</p>
+<p>Many offices settle on a middle ground: daily or every-other-day visits for kitchens, toilets and bins, with full hoovering and dusting on a weekly rotation. Our <a href="{{guide:office-cleaning-checklist}}">office cleaning checklist</a> shows how tasks can be split by frequency so you only pay for what's needed. Hygiene matters too, and our guide to <a href="{{guide:office-kitchen-fridge-hygiene}}">reducing the spread of germs at work</a> explains why touch points shouldn't wait for a weekly clean.</p>
 <h2>Periodic and specialist office cleaning</h2>
 <p>Some tasks don't need doing every visit but should be in the budget for the year:</p>
 <ul>
@@ -364,7 +364,7 @@ HTML,
 <li><strong>Confirm who supplies consumables</strong> such as soap, toilet roll and bin liners.</li>
 <li><strong>Ask for a written specification and fixed quote</strong> so you can compare providers like for like.</li>
 </ol>
-<p>It also helps to sort out access early. If cleaners will let themselves in, our guide to <a href="{{guide:giving-your-cleaner-a-key}}">key holding and security</a> explains what to agree. For more on vetting providers, see our list of <a href="{{guide:questions-to-ask-a-cleaning-company}}">questions to ask a cleaning company</a>.</p>
+<p>It also helps to sort out access early. If cleaners will let themselves in, our guide to <a href="{{guide:giving-your-cleaner-a-key}}">key holding and security</a> explains what to agree. For more on vetting providers, see our list of <a href="{{guide:how-to-choose-a-cleaner}}">questions to ask a cleaning company</a>.</p>
 <div class="cc-callout"><p><strong>Tip:</strong> Give every contractor the same written brief. If one quote is much lower than the others, ask how many hours it allows per visit before assuming it's better value.</p></div>
 <h2>How to keep office cleaning costs down without cutting corners</h2>
 <ul>
@@ -392,7 +392,7 @@ HTML,
 		'description' => 'Workplace cleaning regulations explained: what the Workplace Regulations 1992 and COSHH require of UK employers, who is responsible and how to comply.',
 		'category'    => 'business',
 		'service'     => 'commercial-cleaning',
-		'related'     => [ 'office-cleaning-checklist', 'workplace-hygiene-sick-days', 'hmo-cleaning-responsibilities' ],
+		'related'     => [ 'office-cleaning-checklist', 'office-kitchen-fridge-hygiene', 'hmo-cleaning-responsibilities' ],
 		'image'       => 'cleaning supplies shelf',
 		'excerpt'     => 'What UK businesses must do to keep workplaces clean under the Workplace Regulations 1992 and COSHH, who is responsible and how to show compliance.',
 		'content'     => <<<'HTML'
@@ -427,7 +427,7 @@ HTML,
 <li>Train staff to use products correctly and never to mix them.</li>
 <li>Store chemicals in their original, labelled containers, away from food.</li>
 </ul>
-<p>The <a href="https://www.hse.gov.uk/coshh/" rel="noopener">HSE's COSHH pages</a> explain each step in detail. Switching to gentler products can reduce risk, and our guide to <a href="{{guide:eco-friendly-cleaning-products}}">eco-friendly cleaning products</a> covers which ones work well.</p>
+<p>The <a href="https://www.hse.gov.uk/coshh/" rel="noopener">HSE's COSHH pages</a> explain each step in detail. Switching to gentler products can reduce risk, and our guide to <a href="{{guide:gentle-cleaning-hard-water-homes}}">eco-friendly cleaning products</a> covers which ones work well.</p>
 <h2>Risk assessments for cleaning</h2>
 <p>Under the Management of Health and Safety at Work Regulations 1999, employers must assess the risks to employees and others, including risks from cleaning. Businesses with five or more employees must record the significant findings.</p>
 <p>For cleaning, a risk assessment typically covers:</p>
@@ -438,7 +438,7 @@ HTML,
 <li>Working at height when dusting or cleaning high surfaces</li>
 <li>Lone working for cleaners in the building out of hours</li>
 </ul>
-<p>Hygiene risks belong in the picture too. Our guide to <a href="{{guide:workplace-hygiene-sick-days}}">workplace hygiene and the spread of germs</a> explains how cleaning helps reduce illness at work.</p>
+<p>Hygiene risks belong in the picture too. Our guide to <a href="{{guide:office-kitchen-fridge-hygiene}}">workplace hygiene and the spread of germs</a> explains how cleaning helps reduce illness at work.</p>
 <h2>Who is responsible when you use a cleaning contractor?</h2>
 <p>Bringing in a contractor shares the work, but it doesn't hand over all of your legal duties. The business or person in control of the premises is still responsible for making sure the workplace is kept clean and safe. The contractor is responsible for its own staff, its methods and the products it brings on site.</p>
 <p>Both sides should share information. You tell the contractor about site risks, such as alarm systems, restricted areas or known hazards; they give you their risk assessments, COSHH assessments and method statements. Check their insurance and staff vetting before signing, and see our guide to <a href="{{guide:choosing-a-commercial-cleaning-company}}">choosing a commercial cleaning contractor</a> for what to ask.</p>

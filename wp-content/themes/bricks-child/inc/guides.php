@@ -150,12 +150,28 @@ function cc_guide_service_html( int $post_id ): string {
  * Guide lists
  * ---------------------------------------------------------------------- */
 
+/**
+ * Lowercase text used for client-side search on the guides hub.
+ */
+function cc_guide_search_text( WP_Post $post, ?WP_Term $term = null ): string {
+	$term  = $term ?? cc_guide_category( $post->ID );
+	$parts = [
+		get_the_title( $post ),
+		get_the_excerpt( $post ),
+		$term ? $term->name : '',
+		$term ? $term->description : '',
+	];
+	$text = wp_strip_all_tags( implode( ' ', array_filter( $parts ) ) );
+	return function_exists( 'mb_strtolower' ) ? mb_strtolower( $text, 'UTF-8' ) : strtolower( $text );
+}
+
 function cc_guide_card( WP_Post $post ): string {
 	$image = cc_card_image_html( (int) get_post_thumbnail_id( $post ) );
 	$term  = cc_guide_category( $post->ID );
 	return sprintf(
-		'<article class="cc-card cc-card--guide%s">%s<div class="cc-card__body">%s<h3 class="cc-card__title"><a href="%s">%s</a></h3><p class="cc-card__text">%s</p><span class="cc-card__link" aria-hidden="true">Read guide · %d min</span></div></article>',
+		'<article class="cc-card cc-card--guide%s" data-cc-guide-search="%s">%s<div class="cc-card__body">%s<h3 class="cc-card__title"><a href="%s">%s</a></h3><p class="cc-card__text">%s</p><span class="cc-card__link" aria-hidden="true">Read guide · %d min</span></div></article>',
 		$image ? ' cc-card--media' : '',
+		esc_attr( cc_guide_search_text( $post, $term ) ),
 		$image ? '<div class="cc-card__media">' . $image . '</div>' : '',
 		$term ? '<p class="cc-card__tag">' . esc_html( $term->name ) . '</p>' : '',
 		esc_url( get_permalink( $post ) ),
@@ -215,13 +231,28 @@ function cc_service_guides_html( int $post_id, int $limit = 3 ): string {
 /**
  * The guides hub: a chip nav, then one section per topic cluster.
  */
+function cc_guide_hub_search_html(): string {
+	return '<div class="cc-guide-search">'
+		. '<label class="cc-guide-search__label" for="cc-guide-search-input">Search guides</label>'
+		. '<div class="cc-guide-search__field">'
+		. '<input type="search" id="cc-guide-search-input" class="cc-guide-search__input" placeholder="Search by topic, e.g. oven, deposit, office…" autocomplete="off" enterkeyhint="search" />'
+		. '<button type="button" class="cc-guide-search__clear" hidden aria-label="Clear search">&times;</button>'
+		. '</div>'
+		. '<p class="cc-guide-search__status" aria-live="polite" hidden></p>'
+		. '</div>';
+}
+
 function cc_guide_hub_html(): string {
 	$terms = cc_guide_categories();
 	if ( ! $terms ) {
 		return '';
 	}
 
-	$out = '<nav class="cc-guide-nav" aria-label="Guide topics"><ul>';
+	$total = array_sum( array_map( fn( $t ) => (int) $t->count, $terms ) );
+
+	$out = '<div class="cc-guide-hub" data-cc-guide-count="' . (int) $total . '">';
+	$out .= cc_guide_hub_search_html();
+	$out .= '<nav class="cc-guide-nav" aria-label="Guide topics"><ul>';
 	foreach ( $terms as $term ) {
 		$out .= sprintf( '<li><a href="#%s">%s <span>%d</span></a></li>', esc_attr( $term->slug ), esc_html( $term->name ), (int) $term->count );
 	}
@@ -239,6 +270,8 @@ function cc_guide_hub_html(): string {
 			cc_guide_cards_html( $posts )
 		);
 	}
+	$out .= '<p class="cc-guide-search__empty" hidden>No guides match your search. Try a shorter keyword or browse the topics above.</p>';
+	$out .= '</div>';
 	return $out;
 }
 

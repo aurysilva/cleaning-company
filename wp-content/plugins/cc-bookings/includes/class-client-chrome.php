@@ -10,7 +10,7 @@ defined( 'ABSPATH' ) || exit;
  * classes (cc-cl-*); client.css adds the client-only bits.
  */
 final class Client_Chrome {
-	const TEMPLATES = [ 'client-login', 'client-setup', 'client-portal', 'client-quote', 'client-booking', 'client-message' ];
+	const TEMPLATES = [ 'client-login', 'client-setup', 'client-portal', 'client-quote', 'client-quote-edit', 'client-booking', 'client-message' ];
 
 	const ICONS = [
 		'bookings' => '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4M8 15l2.5 2.5L16 13"/>',
@@ -44,7 +44,7 @@ final class Client_Chrome {
 		$tab = '';
 		if ( 'client-portal' === $template ) {
 			$tab = 'plan' === ( $vars['view'] ?? '' ) ? 'plans' : (string) ( $vars['view'] ?? 'bookings' );
-		} elseif ( 'client-quote' === $template ) {
+		} elseif ( in_array( $template, [ 'client-quote', 'client-quote-edit' ], true ) ) {
 			$tab = 'quotes';
 		} elseif ( 'client-booking' === $template ) {
 			$tab = 'bookings';

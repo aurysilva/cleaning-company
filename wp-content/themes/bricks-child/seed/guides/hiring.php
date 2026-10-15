@@ -11,7 +11,7 @@ return [
 		'description' => 'How to choose a cleaner you can trust: what insurance, DBS checks and reviews really tell you, the red flags to avoid and how to compare cleaners in Hull.',
 		'category'    => 'hiring-a-cleaner',
 		'service'     => 'regular-house-cleaning',
-		'related'     => [ 'questions-to-ask-a-cleaning-company', 'cleaning-company-vs-independent-cleaner', 'giving-your-cleaner-a-key' ],
+		'related'     => [ 'what-one-off-cleaning-includes', 'cleaning-company-vs-independent-cleaner', 'giving-your-cleaner-a-key' ],
 		'image'       => 'tidy bright living room',
 		'excerpt'     => 'What to check before you let a cleaner into your home: insurance, DBS checks, genuine reviews, a fixed quote and a fair first clean.',
 		'content'     => <<<'HTML'
@@ -27,7 +27,7 @@ return [
 <li><strong>Transparent</strong> – the price and what's included are agreed in writing before work starts.</li>
 <li><strong>Consistent</strong> – you see the same face where possible and are told in advance if that changes.</li>
 </ul>
-<p>Those five points are the backbone of our <a href="{{service:regular-house-cleaning}}">regular house cleaning service</a>, and they're a useful yardstick for anyone you're considering. It also helps to know what a normal visit covers before you compare cleaners, so read our guide to <a href="{{guide:what-does-a-regular-cleaner-do}}">what a regular cleaner does and doesn't do</a>.</p>
+<p>Those five points are the backbone of our <a href="{{service:regular-house-cleaning}}">regular house cleaning service</a>, and they're a useful yardstick for anyone you're considering. It also helps to know what a normal visit covers before you compare cleaners, so read our guide to <a href="{{guide:what-one-off-cleaning-includes}}">what a regular cleaner does and doesn't do</a>.</p>
 <p>Both companies and independent cleaners can be trustworthy. A company usually handles vetting and insurance for every cleaner and can send cover when your usual cleaner is ill, while a sole trader offers a more personal arrangement but leaves the checks to you. We set out the trade-offs in our guide to <a href="{{guide:cleaning-company-vs-independent-cleaner}}">choosing between a cleaning company and a self-employed cleaner</a>.</p>
 <h2>Check the cleaner's insurance properly</h2>
 <p>Public liability insurance covers accidental damage to your property, or injury to someone else, caused by the cleaner while they work. Without it, a cracked hob or a bleached carpet becomes a personal dispute between you and them.</p>
@@ -70,7 +70,7 @@ return [
 <li>Requests for your alarm code or a key before you've even met.</li>
 <li>A different person turning up each week with no warning.</li>
 </ul>
-<p>For a fuller list to work through on the phone, use our <a href="{{guide:questions-to-ask-a-cleaning-company}}">questions to ask a cleaning company before hiring</a>.</p>
+<p>For a fuller list to work through on the phone, use our <a href="{{guide:how-to-choose-a-cleaner}}">questions to ask a cleaning company before hiring</a>.</p>
 <h2>Start with a first clean and give honest feedback</h2>
 <p>The first visit is a trial for both sides. Walk round with the cleaner if you can, point out your priorities and anything that's off-limits, and mention surfaces that need special care, such as natural stone or oiled wood.</p>
 <p>A little preparation helps the first clean go well. Our guide to <a href="{{guide:preparing-for-your-first-clean}}">preparing for your first professional clean</a> covers what to tidy, what to leave and what to tell your cleaner.</p>
@@ -85,73 +85,6 @@ HTML,
 			[ 'Does my cleaner need insurance?', 'There’s no law requiring a self-employed cleaner to hold public liability insurance, but you should insist on it. It covers accidental damage to your home or belongings, so you aren’t left to sort out the cost yourself.' ],
 			[ 'Is it better to use a cleaning company or a private cleaner?', 'Both can work well. A company usually offers cover when a cleaner is ill, insurance for all staff and a complaints process, while a private cleaner can offer a more personal arrangement.' ],
 		],
-	],
-	[
-		'slug'        => 'questions-to-ask-a-cleaning-company',
-		'title'       => '12 Questions to Ask Before Hiring a Cleaning Company',
-		'seo_title'   => 'Questions to Ask a Cleaning Company Before Hiring',
-		'description' => 'Questions to ask a cleaning company before you hire: insurance, DBS checks, what’s included, who cleans, keys, quotes and what good answers sound like.',
-		'category'    => 'hiring-a-cleaner',
-		'service'     => 'regular-house-cleaning',
-		'related'     => [ 'how-to-choose-a-cleaner', 'cleaning-company-vs-independent-cleaner', 'preparing-for-your-first-clean' ],
-		'image'       => 'notebook checklist pen',
-		'excerpt'     => 'Twelve questions that tell you in one phone call whether a cleaning company is worth trying, from insurance and DBS checks to quotes and complaints.',
-		'content'     => <<<'HTML'
-<p>The most useful questions to ask a cleaning company cover four areas: trust (insurance, DBS checks and keys), scope (what's included and what isn't), people (who will clean and what happens when they're off) and the agreement itself (how the price is set, notice periods and what happens if a clean isn't right). Ask the twelve questions below and you'll know in one phone call whether a company is worth trying.</p>
-<p>Good companies welcome these questions. Clear, confident answers are a sign of a well-run business, and vague ones usually tell you what you need to know.</p>
-<p>We hear these questions from customers across Hull and East Yorkshire all the time, so we've included what a good answer sounds like for each one.</p>
-<div class="cc-takeaways"><p class="cc-takeaways__title">Key takeaways</p><ul><li>Ask for proof of insurance and DBS checks, not just reassurance.</li><li>Get the scope in writing: what's in a standard visit and what counts as an extra.</li><li>Find out who your cleaner will be and what happens when they're ill or on holiday.</li><li>Make sure the price is fixed before work starts and you know how to raise a problem.</li></ul></div>
-<h2>Why ask questions before hiring a cleaning company?</h2>
-<p>A cleaner will be in your home regularly, often when you're not. A few minutes of questions up front avoids the two most common frustrations: a clean that doesn't cover what you expected, and a problem nobody seems responsible for fixing.</p>
-<p>Keep notes as you go and ask the same questions of each company you call. Comparing answers side by side makes the decision much easier. For the broader picture of what to check, see our guide on <a href="{{guide:how-to-choose-a-cleaner}}">how to choose a cleaner you can trust</a>.</p>
-<h2>Questions about trust and security</h2>
-<h3>1. Are you insured, and can I see the certificate?</h3>
-<p>You want public liability insurance that covers accidental damage to your home, plus employer's liability insurance if the company employs staff. A good answer is a simple "yes, we'll email it over".</p>
-<h3>2. Are your cleaners DBS-checked and vetted?</h3>
-<p>Ask whether every cleaner is checked, not just the owner, and how cleaners are recruited. Our cleaners are DBS-checked and vetted before they work in anyone's home.</p>
-<h3>3. How do you look after keys and alarm codes?</h3>
-<p>If you won't be in, ask how keys are stored, whether they're labelled with your address (they shouldn't be) and what happens if one is lost. Our guide to <a href="{{guide:giving-your-cleaner-a-key}}">giving your cleaner a key</a> explains key holding in more detail.</p>
-<h2>Questions about what's included in a clean</h2>
-<h3>4. What does a standard clean include?</h3>
-<p>Ask for a room-by-room list. A typical <a href="{{service:regular-house-cleaning}}">regular house clean</a> covers dusting, hoovering and mopping, kitchen worktops and surfaces, and bathrooms. Inside the oven, inside the fridge and inside windows are often extras. Our breakdown of <a href="{{guide:what-does-a-regular-cleaner-do}}">what a regular cleaner does and doesn't do</a> is a handy checklist to compare answers against.</p>
-<p>If your home needs a thorough reset first, ask whether they'd recommend a <a href="{{service:deep-cleaning}}">deep clean</a> before regular visits start. An honest company will tell you if routine visits won't shift months of build-up.</p>
-<h3>5. Do you bring your own equipment and products?</h3>
-<p>Some cleaners expect you to supply everything. Our cleaners bring their own equipment and products, which saves you buying and storing them.</p>
-<h3>6. Can you use eco-friendly products, or products I provide?</h3>
-<p>This matters if anyone in the house has sensitive skin, allergies or asthma, or if you have surfaces that need a specific product. We offer eco-friendly products on request, and our guide to <a href="{{guide:eco-friendly-cleaning-products}}">eco-friendly cleaning products that actually work</a> covers what to look for.</p>
-<div class="cc-callout"><p><strong>Tip:</strong> Mention pets, hard water or problem areas such as black mould on the first call. It helps the company send the right products and quote accurately.</p></div>
-<h2>Questions about your cleaner and scheduling</h2>
-<h3>7. Will I have the same cleaner each time?</h3>
-<p>Consistency matters. The same cleaner learns your home, your preferences and where everything goes. Ask how often cleaners change and whether you'll be told in advance.</p>
-<h3>8. What happens if my cleaner is ill or on holiday?</h3>
-<p>This is one of the biggest differences between a company and a sole trader. A company can usually send cover, while an independent cleaner may simply have to cancel. Our comparison of a <a href="{{guide:cleaning-company-vs-independent-cleaner}}">cleaning company vs a self-employed cleaner</a> goes into the trade-offs.</p>
-<h3>9. How long will each visit take, and which days are available?</h3>
-<p>Visit length depends on the size and condition of your home and what you want covered. Ask which days and times are available and whether they can work around shift patterns or the school run. We're open 7 days a week, which makes it easier to find a slot that suits.</p>
-<h2>Questions about price, contracts and complaints</h2>
-<h3>10. How is the price worked out, and is it fixed?</h3>
-<p>Price depends on the size of your home, its condition, how often you want visits and any extras. Ask whether the quote is fixed before work starts or whether it can change on the day. We agree a fixed quote first, so you know exactly where you stand.</p>
-<h3>11. Is there a contract or notice period?</h3>
-<p>Ask how much notice you need to give to skip a visit or stop altogether, and whether late cancellations are charged. You should be able to get these answers in writing.</p>
-<h3>12. What happens if I'm not happy with a clean?</h3>
-<p>The answer should be specific: who to contact, how quickly to report it and what they'll do about it. We offer a re-clean if something isn't right, as set out in <a href="{{page:our-guarantee}}">our guarantee</a>.</p>
-<h2>Answers that should make you think twice</h2>
-<ul>
-<li>Being told insurance isn't really needed for domestic work.</li>
-<li>No written quote, just a promise to work out the price once they've seen the job.</li>
-<li>No idea who your cleaner will be from one week to the next.</li>
-<li>A suggestion to leave the key under the mat or in a plant pot.</li>
-<li>Hesitation or irritation at being asked at all.</li>
-</ul>
-<p>Also listen for whether they ask you questions. A company that wants to know about pets, access, parking and priorities is thinking about doing the job properly. If you have animals, our guide to <a href="{{guide:cleaning-with-pets}}">cleaning a home with pets</a> lists what's worth mentioning.</p>
-<h2>Ask us anything before you book</h2>
-<p>We're happy to answer every one of these questions before you commit. Our team provides <a href="{{local:regular-house-cleaning-hull}}">regular house cleaning in Hull</a> and across East Yorkshire, including <a href="{{area:hessle}}">Hessle</a> and <a href="{{area:anlaby-willerby-kirk-ella}}">Anlaby, Willerby and Kirk Ella</a>. Our cleaners are insured and DBS-checked, bring their own equipment and work to a fixed quote.</p>
-<p>To find out more about our <a href="{{service:regular-house-cleaning}}">weekly and fortnightly cleaning service</a> or to arrange a quote, <a href="{{page:contact}}">contact our team</a>.</p>
-HTML,
-		'faqs'        => [
-			[ 'What should I ask a cleaner before hiring them?', 'Ask whether they’re insured, whether they’re DBS-checked, what a standard clean includes, who will clean your home, how the price is set and what happens if you’re unhappy with a clean.' ],
-			[ 'Do cleaners bring their own cleaning products?', 'It depends on the cleaner. Many companies, including ours, bring their own equipment and products, while some self-employed cleaners expect you to supply them. Always ask before the first visit.' ],
-			[ 'Should I get a cleaning quote in writing?', 'Yes. A written, fixed quote that lists what’s included protects both sides and avoids disagreements about the price or what should have been cleaned.' ],
-			[ 'Can I have the same cleaner every week?', 'Most companies aim to send the same cleaner for regular visits, as it helps them learn your home. Ask how cover works when your usual cleaner is ill or on holiday.' ],
 		],
 	],
 	[
@@ -161,7 +94,7 @@ HTML,
 		'description' => 'Cleaning company vs self-employed cleaner: honest pros and cons on insurance, vetting, sickness cover, flexibility and cost, so you can choose the right fit.',
 		'category'    => 'hiring-a-cleaner',
 		'service'     => 'regular-house-cleaning',
-		'related'     => [ 'how-to-choose-a-cleaner', 'questions-to-ask-a-cleaning-company', 'what-does-a-regular-cleaner-do' ],
+		'related'     => [ 'how-to-choose-a-cleaner', 'how-to-choose-a-cleaner', 'what-one-off-cleaning-includes' ],
 		'image'       => 'cleaning supplies caddy',
 		'excerpt'     => 'An honest comparison of hiring a cleaning company or a self-employed cleaner, covering insurance, vetting, sickness cover, flexibility and cost.',
 		'content'     => <<<'HTML'
@@ -231,7 +164,7 @@ HTML,
 <li>Your needs change week to week and you want lots of flexibility.</li>
 <li>You're comfortable checking insurance and references yourself and can manage without sickness cover.</li>
 </ul>
-<p>Whichever route you take, agree a clear list of tasks. Our breakdown of <a href="{{guide:what-does-a-regular-cleaner-do}}">what a regular cleaner does</a> and our <a href="{{guide:weekly-cleaning-schedule}}">realistic weekly cleaning schedule</a> are useful starting points. It's also worth running through our <a href="{{guide:questions-to-ask-a-cleaning-company}}">questions to ask a cleaning company</a>, as most of them work just as well for an independent cleaner.</p>
+<p>Whichever route you take, agree a clear list of tasks. Our breakdown of <a href="{{guide:what-one-off-cleaning-includes}}">what a regular cleaner does</a> and our <a href="{{guide:daily-cleaning-habits-busy-homes}}">realistic weekly cleaning schedule</a> are useful starting points. It's also worth running through our <a href="{{guide:how-to-choose-a-cleaner}}">questions to ask a cleaning company</a>, as most of them work just as well for an independent cleaner.</p>
 <h2>Thinking about a cleaning company?</h2>
 <p>If a company sounds like the better fit, our team provides <a href="{{service:regular-house-cleaning}}">weekly and fortnightly house cleaning</a> across <a href="{{area:hull}}">Hull</a> and East Yorkshire. Our cleaners are insured, DBS-checked and vetted, bring their own equipment and products, and work to a fixed quote agreed before the first visit.</p>
 <p>If you'd like to talk it through before deciding, <a href="{{page:contact}}">get in touch with our team</a> and we'll give you a straight answer.</p>
@@ -250,7 +183,7 @@ HTML,
 		'description' => 'Preparing for your first professional clean: what to tidy, what to tell your cleaner, and how to sort keys, pets and parking so the first visit goes smoothly.',
 		'category'    => 'hiring-a-cleaner',
 		'service'     => 'one-off-cleaning',
-		'related'     => [ 'what-does-a-regular-cleaner-do', 'giving-your-cleaner-a-key', 'deep-clean-vs-regular-clean' ],
+		'related'     => [ 'what-one-off-cleaning-includes', 'giving-your-cleaner-a-key', 'deep-clean-vs-regular-clean' ],
 		'image'       => 'tidy kitchen worktop',
 		'excerpt'     => 'What to tidy, what to tell your cleaner and how to sort access, pets and parking so your first professional clean goes smoothly.',
 		'content'     => <<<'HTML'
@@ -311,13 +244,13 @@ HTML,
 		],
 	],
 	[
-		'slug'        => 'what-does-a-regular-cleaner-do',
+		'slug'        => 'what-one-off-cleaning-includes',
 		'title'       => 'What Does a Regular Cleaner Do? (And What They Don’t)',
 		'seo_title'   => 'What Does a Regular Cleaner Do? A Room-by-Room Guide',
 		'description' => 'What does a regular cleaner do? A room-by-room guide to what’s included in a regular clean, what’s usually extra, and how often to book visits.',
 		'category'    => 'hiring-a-cleaner',
 		'service'     => 'regular-house-cleaning',
-		'related'     => [ 'deep-clean-vs-regular-clean', 'weekly-cleaning-schedule', 'preparing-for-your-first-clean' ],
+		'related'     => [ 'deep-clean-vs-regular-clean', 'daily-cleaning-habits-busy-homes', 'preparing-for-your-first-clean' ],
 		'image'       => 'vacuum cleaner living room',
 		'excerpt'     => 'A room-by-room look at what a regular cleaner does on each visit, what’s usually extra, and how to get the most from your cleaner.',
 		'content'     => <<<'HTML'
@@ -346,10 +279,10 @@ HTML,
 <li>Loading or unloading the dishwasher</li>
 <li>Rotating jobs, such as one room's skirting boards each visit or the inside of the fridge once a month</li>
 </ul>
-<p>Laundry and ironing vary a lot between cleaners and companies, so ask directly rather than assuming. Many people find that a <a href="{{guide:weekly-cleaning-schedule}}">realistic weekly cleaning schedule</a> helps them decide what the cleaner covers and what the household keeps on top of between visits.</p>
+<p>Laundry and ironing vary a lot between cleaners and companies, so ask directly rather than assuming. Many people find that a <a href="{{guide:daily-cleaning-habits-busy-homes}}">realistic weekly cleaning schedule</a> helps them decide what the cleaner covers and what the household keeps on top of between visits.</p>
 <h2>What a regular cleaner doesn't usually do</h2>
 <h3>Deep and specialist cleaning</h3>
-<p>Regular visits are about maintenance. Heavy grease, thick limescale or years of build-up need more time and different products than a routine visit allows. That's the job of a <a href="{{service:deep-cleaning}}">deep clean</a>, which many people book once before regular visits begin. Our guide to <a href="{{guide:deep-clean-vs-regular-clean}}">deep cleaning vs regular cleaning</a> explains the difference, and our advice on <a href="{{guide:how-often-should-you-deep-clean}}">how often you should deep clean</a> helps you plan it.</p>
+<p>Regular visits are about maintenance. Heavy grease, thick limescale or years of build-up need more time and different products than a routine visit allows. That's the job of a <a href="{{service:deep-cleaning}}">deep clean</a>, which many people book once before regular visits begin. Our guide to <a href="{{guide:deep-clean-vs-regular-clean}}">deep cleaning vs regular cleaning</a> explains the difference, and our advice on <a href="{{guide:when-to-book-a-deep-clean}}">how often you should deep clean</a> helps you plan it.</p>
 <h3>Ovens and carpets</h3>
 <p>Cleaning inside an oven properly takes time and the right products. We offer fume-free, non-caustic <a href="{{service:oven-cleaning}}">oven cleaning</a> as a separate service. Carpets and rugs are hoovered on regular visits but not shampooed; that needs hot water extraction equipment and is booked separately.</p>
 <h3>Heavy, hazardous or unsafe work</h3>
@@ -394,7 +327,7 @@ HTML,
 		'description' => 'Giving your cleaner a key: how key holding works, key safes and smart locks, alarm codes, home insurance and what to do if a key goes missing.',
 		'category'    => 'hiring-a-cleaner',
 		'service'     => 'regular-house-cleaning',
-		'related'     => [ 'how-to-choose-a-cleaner', 'questions-to-ask-a-cleaning-company', 'holiday-let-changeover-checklist' ],
+		'related'     => [ 'how-to-choose-a-cleaner', 'how-to-choose-a-cleaner', 'holiday-let-changeover-checklist' ],
 		'image'       => 'house keys front door',
 		'excerpt'     => 'How to give your cleaner a key safely: key holding procedures, key safes and smart locks, alarm codes, insurance and getting keys back.',
 		'content'     => <<<'HTML'
@@ -413,7 +346,7 @@ HTML,
 <li><strong>Signed handover and return</strong> – a simple note of when the key was given and when it came back.</li>
 <li><strong>A plan if it's lost</strong> – including whether their insurance covers changing locks.</li>
 </ul>
-<p>Ask how each of these is handled. Our list of <a href="{{guide:questions-to-ask-a-cleaning-company}}">questions to ask a cleaning company</a> includes key holding alongside the other essentials.</p>
+<p>Ask how each of these is handled. Our list of <a href="{{guide:how-to-choose-a-cleaner}}">questions to ask a cleaning company</a> includes key holding alongside the other essentials.</p>
 <h2>Key safe, smart lock or handing over a key?</h2>
 <h3>Handing over a key</h3>
 <p>Simple and familiar. It works best with a company that has a proper key holding procedure, or with an independent cleaner you've known and trusted for some time.</p>

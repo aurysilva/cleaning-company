@@ -143,4 +143,49 @@ final class Checkout {
 			Db::update( 'payments', $payment['id'], [ 'status' => $status ] );
 		}
 	}
+
+	/**
+	 * Stripe Checkout was paid but the webhook hasn't created the booking yet (misconfigured webhook, delay, etc.).
+	 * Called when the customer returns with ?checkout=success. Idempotent via Bookings::confirm_payment().
+	 *
+	 * @return int|false Booking id, or false if there is nothing to confirm.
+	 */
+	public static function sync_paid_session( array $quote ) {
+		if ( $quote['booking_id'] || ! $quote['stripe_session_id'] || ! Stripe::enabled() ) {
+			return false;
+		}
+		$session_id = (string) $quote['stripe_session_id'];
+		if ( ! str_starts_with( $session_id, 'cs_' ) || str_starts_with( $session_id, 'cs_sim_' ) ) {
+			return false;
+		}
+
+		$session = Stripe::request( 'GET', 'checkout/sessions/' . rawurlencode( $session_id ) );
+		if ( is_wp_error( $session ) ) {
+			return false;
+		}
+		if ( 'paid' !== ( $session['payment_status'] ?? '' ) || 'complete' !== ( $session['status'] ?? '' ) ) {
+			return false;
+		}
+		if ( (int) ( $session['metadata']['quote_id'] ?? 0 ) !== (int) $quote['id'] ) {
+			return false;
+		}
+
+		$result = Stripe::handle_event( [
+			'id'       => 'evt_return_' . $quote['id'] . '_' . substr( hash( 'sha256', $session_id ), 0, 12 ),
+			'type'     => 'checkout.session.completed',
+			'livemode' => ! Stripe::test_mode(),
+			'data'     => [ 'object' => $session ],
+		] );
+		if ( is_wp_error( $result ) ) {
+			Events::log( 'quote', (int) $quote['id'], 'checkout_sync_failed', $result->get_error_message(), [ 'session' => $session_id ], 'system' );
+			return false;
+		}
+
+		$quote = Quotes::get( (int) $quote['id'] );
+		if ( $quote['booking_id'] ) {
+			Events::log( 'quote', (int) $quote['id'], 'checkout_synced', 'Booking confirmed after Stripe return (webhook did not run in time)', [ 'session' => $session_id ], 'system' );
+			return (int) $quote['booking_id'];
+		}
+		return false;
+	}
 }

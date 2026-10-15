@@ -18,6 +18,26 @@ function cc_brand_name(): string {
 	return (string) cc_option( 'brand_name', get_bloginfo( 'name' ) );
 }
 
+function cc_tagline(): string {
+	return trim( (string) cc_option( 'tagline', '' ) );
+}
+
+/**
+ * Logo from Business Settings. Footer prefers logo (white) when uploaded.
+ *
+ * @return array<string, mixed>|null Attachment array from SCF.
+ */
+function cc_business_logo( string $context = 'header' ): ?array {
+	if ( 'footer' === $context ) {
+		$white = cc_option( 'logo_white' );
+		if ( is_array( $white ) && ! empty( $white['url'] ) ) {
+			return $white;
+		}
+	}
+	$logo = cc_option( 'logo' );
+	return ( is_array( $logo ) && ! empty( $logo['url'] ) ) ? $logo : null;
+}
+
 /**
  * Prices are hidden from visitors unless switched on in Business Settings > Booking & CTAs.
  */

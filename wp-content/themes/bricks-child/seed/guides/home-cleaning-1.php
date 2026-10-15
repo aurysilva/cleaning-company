@@ -11,7 +11,7 @@ return [
 		'description' => 'Deep clean vs regular clean explained: what each includes, how long they take, how often you need them and which to book for your Hull or East Yorkshire home.',
 		'category'    => 'home-cleaning',
 		'service'     => 'deep-cleaning',
-		'related'     => [ 'how-often-should-you-deep-clean', 'what-does-a-regular-cleaner-do', 'spring-cleaning-checklist' ],
+		'related'     => [ 'when-to-book-a-deep-clean', 'what-one-off-cleaning-includes', 'wardrobe-and-linen-cupboard-clean' ],
 		'image'       => 'cleaning kitchen worktop',
 		'excerpt'     => 'Deep clean or regular clean? We explain what each one includes, how long they take and which your home needs right now.',
 		'content'     => <<<'HTML'
@@ -30,7 +30,7 @@ return [
 <li>Emptying bins and general tidying</li>
 <li>Making beds or changing bedding if requested</li>
 </ul>
-<p>Because a regular cleaner visits the same home week after week, they get to know how you like things done and which rooms need the most attention. Our guide to <a href="{{guide:what-does-a-regular-cleaner-do}}">what a regular cleaner does (and doesn't do)</a> covers this in more detail.</p>
+<p>Because a regular cleaner visits the same home week after week, they get to know how you like things done and which rooms need the most attention. Our guide to <a href="{{guide:what-one-off-cleaning-includes}}">what a regular cleaner does (and doesn't do)</a> covers this in more detail.</p>
 <h2>What is a deep clean?</h2>
 <p>A deep clean is a top-to-bottom clean that deals with build-up rather than day-to-day mess. It covers everything in a regular clean, then goes into the corners, edges and fittings that slowly collect dust, grease and limescale over months.</p>
 <p>Our <a href="{{service:deep-cleaning}}">deep cleaning service</a> typically adds tasks like these:</p>
@@ -79,7 +79,7 @@ return [
 <li><strong>When life has got on top of you.</strong> A new baby, a long-term illness, a demanding job or caring responsibilities can all push cleaning down the list. There's no judgement; that's exactly what deep cleans are for.</li>
 <li><strong>Older homes with condensation.</strong> Terraces and older semis often need regular attention to mould on window frames and bathroom ceilings.</li>
 </ul>
-<p>If you're unsure how often your home needs this level of attention, our guide on <a href="{{guide:how-often-should-you-deep-clean}}">how often you should deep clean</a> breaks it down by household.</p>
+<p>If you're unsure how often your home needs this level of attention, our guide on <a href="{{guide:when-to-book-a-deep-clean}}">how often you should deep clean</a> breaks it down by household.</p>
 <h2>How long does a deep clean take compared with a regular clean?</h2>
 <p>A regular clean of an average family home usually takes a few hours. A deep clean of the same home takes considerably longer, often a full day for one cleaner or a shorter visit from a small team.</p>
 <p>The exact time depends on:</p>
@@ -97,7 +97,7 @@ return [
 <div class="cc-callout"><p><strong>Tip:</strong> Before your first professional clean, clear clutter from worktops and floors so the cleaner can spend their time cleaning rather than moving things. Our guide to <a href="{{guide:preparing-for-your-first-clean}}">preparing for your first professional clean</a> has a short checklist.</p></div>
 <h2>Deep clean or regular clean: which should you book?</h2>
 <p>Ask yourself one question: would a couple of hours of cleaning make the home feel properly clean? If yes, a regular clean is enough. If you'd still see limescale on the taps, dust on the skirting boards and grease on the cupboards afterwards, start with a deep clean.</p>
-<p>For most homes the answer is a combination: a deep clean to start, regular cleaning every week or fortnight, and another deep clean every few months or with the seasons. Our <a href="{{guide:spring-cleaning-checklist}}">room-by-room spring cleaning checklist</a> is a good guide to what a seasonal deep clean should cover.</p>
+<p>For most homes the answer is a combination: a deep clean to start, regular cleaning every week or fortnight, and another deep clean every few months or with the seasons. Our <a href="{{guide:wardrobe-and-linen-cupboard-clean}}">room-by-room spring cleaning checklist</a> is a good guide to what a seasonal deep clean should cover.</p>
 <h2>Booking a deep clean in Hull and East Yorkshire</h2>
 <p>Our team carries out deep cleans across the region, from Victorian terraces on the Avenues to family homes in <a href="{{area:beverley}}">Beverley</a> and the surrounding villages. Our cleaners are DBS-checked and insured, bring their own equipment and products, and eco-friendly products are available on request. If anything isn't right, we'll come back and re-clean it.</p>
 <p>Find out more about <a href="{{local:deep-cleaning-hull}}">deep cleaning in Hull</a> or read about our full <a href="{{service:deep-cleaning}}">deep cleaning service</a>. When you're ready, <a href="{{page:contact}}">get in touch</a> for a fixed quote, and we'll help you decide whether a deep clean, regular cleaning or a mix of both suits your home.</p>
@@ -110,13 +110,13 @@ HTML,
 		],
 	],
 	[
-		'slug'        => 'how-often-should-you-deep-clean',
+		'slug'        => 'when-to-book-a-deep-clean',
 		'title'       => 'How Often Should You Deep Clean Your Home?',
 		'seo_title'   => 'How Often Should You Deep Clean Your Home?',
 		'description' => 'How often should you deep clean your home? Our task-by-task schedule shows what to do monthly, quarterly and yearly, plus signs it’s time for a deep clean.',
 		'category'    => 'home-cleaning',
 		'service'     => 'deep-cleaning',
-		'related'     => [ 'deep-clean-vs-regular-clean', 'spring-cleaning-checklist', 'weekly-cleaning-schedule' ],
+		'related'     => [ 'deep-clean-vs-regular-clean', 'wardrobe-and-linen-cupboard-clean', 'daily-cleaning-habits-busy-homes' ],
 		'image'       => 'tidy living room sofa',
 		'excerpt'     => 'A practical deep cleaning schedule for real homes: what to do monthly, quarterly and yearly, and what changes the timing.',
 		'content'     => <<<'HTML'
@@ -139,7 +139,7 @@ HTML,
 <h3>Children</h3>
 <p>Sticky fingerprints on doors and switches, crumbs down the sofa and spills on carpets all add up quickly. Family homes generally need more frequent deep cleans of kitchens, living rooms and soft furnishings.</p>
 <h3>Allergies and asthma</h3>
-<p>Dust mites, pet dander and mould spores collect in mattresses, curtains and carpets. If someone in the house has allergies, regular deep cleaning of these areas can make a noticeable difference. See our guide on <a href="{{guide:cleaning-for-allergies}}">cleaning for allergies and asthma</a>.</p>
+<p>Dust mites, pet dander and mould spores collect in mattresses, curtains and carpets. If someone in the house has allergies, regular deep cleaning of these areas can make a noticeable difference. See our guide on <a href="{{guide:bedroom-dust-mite-reduction}}">cleaning for allergies and asthma</a>.</p>
 <h3>Hard water</h3>
 <p>Much of Hull and East Yorkshire has hard water, so limescale builds up quickly on taps, shower screens and kettles. Our <a href="{{guide:hard-water-limescale-east-yorkshire}}">hard water and limescale guide</a> explains how to keep it under control.</p>
 <h3>Older homes and condensation</h3>
@@ -157,7 +157,7 @@ HTML,
 </ul>
 <h3>Every three months</h3>
 <ul>
-<li>Clean the oven, hob and extractor filters (more often if you cook a lot; see <a href="{{guide:how-often-clean-oven}}">how often to clean your oven</a>)</li>
+<li>Clean the oven, hob and extractor filters (more often if you cook a lot; see <a href="{{guide:signs-oven-needs-professional-clean}}">how often to clean your oven</a>)</li>
 <li>Pull out and clean behind the fridge, cooker and washing machine where it's safe to do so</li>
 <li>Wipe kitchen cupboard doors and clean inside the fridge thoroughly</li>
 <li>Deep clean bathroom grout and silicone</li>
@@ -194,7 +194,7 @@ HTML,
 <p>If you recognise several of these, a full deep clean will get you back to a standard that's easy to maintain.</p>
 <h2>Does regular cleaning mean you can deep clean less often?</h2>
 <p>Yes, to a point. A good weekly routine stops grime building up, so deep cleans are quicker and can be spaced further apart. Homes with a <a href="{{service:regular-house-cleaning}}">regular cleaner</a> often find a deep clean two or three times a year is plenty.</p>
-<p>What regular cleaning won't do is reach everything. Behind appliances, inside cupboards, high-level dust and heavy limescale tend to fall outside a standard visit. Pairing a <a href="{{guide:weekly-cleaning-schedule}}">realistic weekly cleaning schedule</a> with planned deep cleans is the easiest way to keep the whole home in good shape.</p>
+<p>What regular cleaning won't do is reach everything. Behind appliances, inside cupboards, high-level dust and heavy limescale tend to fall outside a standard visit. Pairing a <a href="{{guide:daily-cleaning-habits-busy-homes}}">realistic weekly cleaning schedule</a> with planned deep cleans is the easiest way to keep the whole home in good shape.</p>
 <h2>Planning deep cleans around the year</h2>
 <p>Timing deep cleans with the seasons makes them easier to remember and more useful:</p>
 <ul>
@@ -216,13 +216,13 @@ HTML,
 		],
 	],
 	[
-		'slug'        => 'spring-cleaning-checklist',
+		'slug'        => 'wardrobe-and-linen-cupboard-clean',
 		'title'       => 'Spring Cleaning Checklist: Room by Room',
 		'seo_title'   => 'Spring Cleaning Checklist 2026: Room by Room',
 		'description' => 'A room-by-room spring cleaning checklist for the kitchen, bathroom, bedrooms and living areas, with tips on where to start and how to plan the work.',
 		'category'    => 'home-cleaning',
 		'service'     => 'deep-cleaning',
-		'related'     => [ 'how-often-should-you-deep-clean', 'kitchen-deep-clean-checklist', 'christmas-cleaning-checklist' ],
+		'related'     => [ 'when-to-book-a-deep-clean', 'kitchen-deep-clean-checklist', 'guest-ready-home-quick-clean' ],
 		'image'       => 'spring cleaning open window',
 		'excerpt'     => 'A room-by-room spring cleaning checklist that works top to bottom through every room, so nothing gets missed after a long winter.',
 		'content'     => <<<'HTML'
@@ -233,7 +233,7 @@ HTML,
 <h2>Before you start: how to plan your spring clean</h2>
 <ol>
 <li><strong>Declutter first.</strong> Clear surfaces, sort cupboards and bag up donations. Cleaning around clutter takes much longer.</li>
-<li><strong>Gather your supplies.</strong> Microfibre cloths, a multi-purpose cleaner, a descaler, a degreaser, glass cleaner, a mop, a hoover with attachments, rubber gloves and a step stool. Our guide to <a href="{{guide:eco-friendly-cleaning-products}}">eco-friendly cleaning products</a> explains which gentler options actually work.</li>
+<li><strong>Gather your supplies.</strong> Microfibre cloths, a multi-purpose cleaner, a descaler, a degreaser, glass cleaner, a mop, a hoover with attachments, rubber gloves and a step stool. Our guide to <a href="{{guide:gentle-cleaning-hard-water-homes}}">eco-friendly cleaning products</a> explains which gentler options actually work.</li>
 <li><strong>Work top to bottom.</strong> Dust light fittings and cornicing before surfaces, and surfaces before floors.</li>
 <li><strong>Clean dry before wet.</strong> Dust and hoover before you wipe or mop, so you're not turning dust into smears.</li>
 <li><strong>Open the windows.</strong> Fresh air helps surfaces dry and clears any fumes from cleaning products.</li>
@@ -296,7 +296,7 @@ HTML,
 <li>Clean windows, sills and blinds</li>
 <li>Wipe skirting boards, doors and switches</li>
 </ul>
-<p>Spring is also when pollen arrives. If anyone in your home has hay fever or asthma, our guide to <a href="{{guide:cleaning-for-allergies}}">cleaning for allergies</a> covers bedding, dust mites and keeping pollen out.</p>
+<p>Spring is also when pollen arrives. If anyone in your home has hay fever or asthma, our guide to <a href="{{guide:bedroom-dust-mite-reduction}}">cleaning for allergies</a> covers bedding, dust mites and keeping pollen out.</p>
 <h2>Hallways, stairs and the rest of the house</h2>
 <ul>
 <li>Wipe the front and back doors, letterbox, handles and doorbell</li>
@@ -326,7 +326,7 @@ HTML,
 		'description' => 'How to remove limescale from taps, showers, kettles and toilets, why Hull and East Yorkshire water is so hard, and simple ways to stop it coming back.',
 		'category'    => 'home-cleaning',
 		'service'     => 'deep-cleaning',
-		'related'     => [ 'bathroom-deep-clean-guide', 'kitchen-deep-clean-checklist', 'eco-friendly-cleaning-products' ],
+		'related'     => [ 'bathroom-deep-clean-guide', 'kitchen-deep-clean-checklist', 'gentle-cleaning-hard-water-homes' ],
 		'image'       => 'chrome tap water',
 		'excerpt'     => 'Safe, practical ways to remove limescale from taps, showers, kettles and toilets, plus how to stop it building up in a hard water area.',
 		'content'     => <<<'HTML'
@@ -347,7 +347,7 @@ HTML,
 <li><strong>Lemon juice:</strong> fine for light marks on taps.</li>
 <li><strong>Branded limescale removers:</strong> faster on thick deposits. Follow the label, ventilate the room and wear gloves.</li>
 </ul>
-<p>Our guide to <a href="{{guide:eco-friendly-cleaning-products}}">eco-friendly cleaning products</a> covers which natural options are genuinely effective.</p>
+<p>Our guide to <a href="{{guide:gentle-cleaning-hard-water-homes}}">eco-friendly cleaning products</a> covers which natural options are genuinely effective.</p>
 <h3>What to avoid</h3>
 <ul>
 <li><strong>Mixing products.</strong> Never mix acidic descalers or vinegar with bleach; the combination can release harmful chlorine gas.</li>
@@ -411,7 +411,7 @@ HTML,
 		'description' => 'Black mould and condensation in an older Hull home? Learn what causes damp, how to clean mould safely, how to stop it coming back and when to get help.',
 		'category'    => 'home-cleaning',
 		'service'     => 'deep-cleaning',
-		'related'     => [ 'cleaning-for-allergies', 'bathroom-deep-clean-guide', 'seaside-property-cleaning' ],
+		'related'     => [ 'bedroom-dust-mite-reduction', 'bathroom-deep-clean-guide', 'seaside-property-cleaning' ],
 		'image'       => 'window condensation droplets',
 		'excerpt'     => 'Why older terraces and semis get condensation and black mould, how to clean it safely and the everyday habits that stop it coming back.',
 		'content'     => <<<'HTML'
@@ -466,7 +466,7 @@ HTML,
 <div class="cc-callout"><p><strong>Tip:</strong> An inexpensive hygrometer shows the humidity in a room. If it reads high most of the time, a dehumidifier in the worst-affected room can make a real difference.</p></div>
 <h2>Mould on carpets, sofas and soft furnishings</h2>
 <p>Mould spores and musty smells settle into carpets, curtains, mattresses and sofas, especially in rooms with cold outside walls. Hoovering alone won't remove them, and they can leave a room smelling damp even after the walls are clean.</p>
-<p>Professional <a href="{{service:carpet-upholstery-cleaning}}">carpet and upholstery cleaning</a> with hot water extraction lifts embedded dirt and odours, and our <a href="{{guide:sofa-upholstery-cleaning-guide}}">sofa cleaning guide</a> explains what you can safely do at home. If anyone in the household has asthma or allergies, our guide to <a href="{{guide:cleaning-for-allergies}}">cleaning for allergies and asthma</a> is worth reading too.</p>
+<p>Professional <a href="{{service:carpet-upholstery-cleaning}}">carpet and upholstery cleaning</a> with hot water extraction lifts embedded dirt and odours, and our <a href="{{guide:sofa-upholstery-cleaning-guide}}">sofa cleaning guide</a> explains what you can safely do at home. If anyone in the household has asthma or allergies, our guide to <a href="{{guide:bedroom-dust-mite-reduction}}">cleaning for allergies and asthma</a> is worth reading too.</p>
 <h2>Renting with damp and mould: who is responsible?</h2>
 <p>If you rent, your landlord is responsible for repairs to the structure of the property, including leaks, faulty extractor fans and damp caused by building defects. Serious damp and mould is a hazard landlords must deal with. If they don't, you can contact Hull City Council or East Riding of Yorkshire Council for help. The government's guide to <a href="https://www.gov.uk/private-renting" rel="noopener">private renting</a> sets out your rights.</p>
 <p>Report problems in writing, with dated photos, as soon as you notice them. Tenants are expected to heat and ventilate the home reasonably and to wipe down small patches of condensation mould.</p>
@@ -565,13 +565,13 @@ HTML,
 		],
 	],
 	[
-		'slug'        => 'weekly-cleaning-schedule',
+		'slug'        => 'daily-cleaning-habits-busy-homes',
 		'title'       => 'A Realistic Weekly Cleaning Schedule for Busy Households',
 		'seo_title'   => 'Weekly Cleaning Schedule: A Realistic Plan for Busy Homes',
 		'description' => 'A realistic weekly cleaning schedule for busy households: daily habits, one focus job a day and a simple table to follow, plus tips to make it stick.',
 		'category'    => 'home-cleaning',
 		'service'     => 'regular-house-cleaning',
-		'related'     => [ 'what-does-a-regular-cleaner-do', 'how-often-should-you-deep-clean', 'cleaning-with-pets' ],
+		'related'     => [ 'what-one-off-cleaning-includes', 'when-to-book-a-deep-clean', 'cleaning-with-pets' ],
 		'image'       => 'cleaning supplies caddy',
 		'excerpt'     => 'A simple, realistic weekly cleaning schedule built around short daily habits and one focus job a day, with a table you can follow.',
 		'content'     => <<<'HTML'
@@ -626,8 +626,8 @@ HTML,
 <li>Clean the washing machine drawer and seal, and the dishwasher filter</li>
 <li>Wash pillows and throws</li>
 </ul>
-<p>For bigger jobs, such as behind appliances, inside cupboards and carpets, see our guide on <a href="{{guide:how-often-should-you-deep-clean}}">how often you should deep clean</a>. Many households keep on top of the week themselves and book a professional <a href="{{service:deep-cleaning}}">deep clean</a> a few times a year. If the oven is the job that always gets skipped, our <a href="{{service:oven-cleaning}}">oven cleaning service</a> takes it off your list.</p>
-<div class="cc-callout"><p><strong>Tip:</strong> Keep a small caddy of the products you use most, along with cloths and gloves, and carry it from room to room. You'll waste far less time hunting for things. For gentler options, see our guide to <a href="{{guide:eco-friendly-cleaning-products}}">eco-friendly cleaning products that actually work</a>.</p></div>
+<p>For bigger jobs, such as behind appliances, inside cupboards and carpets, see our guide on <a href="{{guide:when-to-book-a-deep-clean}}">how often you should deep clean</a>. Many households keep on top of the week themselves and book a professional <a href="{{service:deep-cleaning}}">deep clean</a> a few times a year. If the oven is the job that always gets skipped, our <a href="{{service:oven-cleaning}}">oven cleaning service</a> takes it off your list.</p>
+<div class="cc-callout"><p><strong>Tip:</strong> Keep a small caddy of the products you use most, along with cloths and gloves, and carry it from room to room. You'll waste far less time hunting for things. For gentler options, see our guide to <a href="{{guide:gentle-cleaning-hard-water-homes}}">eco-friendly cleaning products that actually work</a>.</p></div>
 <h2>Why cleaning schedules fail, and how to make yours stick</h2>
 <ul>
 <li><strong>Too ambitious.</strong> A plan with an hour of jobs a day won't survive a busy week. Start small and add tasks once the habit sticks.</li>
@@ -638,7 +638,7 @@ HTML,
 <li><strong>Starting from a dirty house.</strong> A schedule maintains a standard; it can't create one. If the house has got away from you, start with a one-off deep clean and use the schedule from there.</li>
 </ul>
 <h2>When a regular cleaner makes sense</h2>
-<p>If the schedule keeps slipping, or you'd simply rather spend your evenings and weekends elsewhere, a regular cleaner can take on the weekly focus jobs and leave you with just the daily basics. Our guide to <a href="{{guide:what-does-a-regular-cleaner-do}}">what a regular cleaner does</a> explains what's usually covered, and <a href="{{guide:how-to-choose-a-cleaner}}">how to choose a cleaner you can trust</a> covers insurance, DBS checks and reviews.</p>
+<p>If the schedule keeps slipping, or you'd simply rather spend your evenings and weekends elsewhere, a regular cleaner can take on the weekly focus jobs and leave you with just the daily basics. Our guide to <a href="{{guide:what-one-off-cleaning-includes}}">what a regular cleaner does</a> explains what's usually covered, and <a href="{{guide:how-to-choose-a-cleaner}}">how to choose a cleaner you can trust</a> covers insurance, DBS checks and reviews.</p>
 <p>Our <a href="{{service:regular-house-cleaning}}">regular house cleaning</a> can be weekly or fortnightly, with DBS-checked, insured cleaners who bring their own equipment and products. Key holding is available if you're out at work. We cover <a href="{{local:regular-house-cleaning-hull}}">regular house cleaning in Hull</a> and nearby towns such as <a href="{{area:hessle}}">Hessle</a>. <a href="{{page:contact}}">Get in touch</a> for a fixed quote, and we'll help you work out a schedule that suits your household.</p>
 HTML,
 		'faqs'        => [

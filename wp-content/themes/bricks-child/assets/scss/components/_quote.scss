@@ -733,6 +733,15 @@
 			font-weight: 800;
 			color: var(--cc-color-ink);
 		}
+
+		&--no-line-prices tbody td {
+			padding-right: 0;
+		}
+
+		&--no-line-prices tfoot th,
+		&--no-line-prices tfoot td {
+			border-top: 1px solid var(--cc-color-border);
+		}
 	}
 
 	&__item--adjustment td:first-child,

@@ -46,7 +46,7 @@ return [
 <li>Bicarbonate of soda for making a gentle scrubbing paste</li>
 <li>Rubber gloves, a bucket and a sturdy step stool</li>
 </ul>
-<p>If you'd rather avoid harsh chemicals, our guide to <a href="{{guide:eco-friendly-cleaning-products}}">eco-friendly cleaning products that actually work</a> covers which gentler options cope with a bathroom and which don't.</p>
+<p>If you'd rather avoid harsh chemicals, our guide to <a href="{{guide:gentle-cleaning-hard-water-homes}}">eco-friendly cleaning products that actually work</a> covers which gentler options cope with a bathroom and which don't.</p>
 <div class="cc-callout"><p><strong>Tip:</strong> Never mix bleach-based products with limescale removers, vinegar or other acids. The combination releases chlorine gas. Use one, rinse thoroughly, then use the other, and keep the window open throughout.</p></div>
 <h2>How to deep clean a bathroom step by step</h2>
 <ol>
@@ -77,7 +77,7 @@ return [
 </ul>
 <p>Acid-based products etch natural stone such as marble and travertine, and can damage some brushed or coloured tap finishes. Use a pH-neutral cleaner on those surfaces.</p>
 <h2>How often should you deep clean a bathroom?</h2>
-<p>For most homes, a full bathroom deep clean every few months is enough, with a regular clean in between. Busy family bathrooms and homes with very hard water benefit from more frequent descaling. For the whole house, see <a href="{{guide:how-often-should-you-deep-clean}}">how often you should deep clean your home</a>.</p>
+<p>For most homes, a full bathroom deep clean every few months is enough, with a regular clean in between. Busy family bathrooms and homes with very hard water benefit from more frequent descaling. For the whole house, see <a href="{{guide:when-to-book-a-deep-clean}}">how often you should deep clean your home</a>.</p>
 <table>
 <thead><tr><th>Task</th><th>How often</th></tr></thead>
 <tbody>
@@ -108,7 +108,7 @@ HTML,
 		'description' => 'Cleaning with pets made easier: how to remove pet hair, tackle odours and stop muddy paws taking over, plus pet-safe products and a routine that works.',
 		'category'    => 'home-cleaning',
 		'service'     => 'regular-house-cleaning',
-		'related'     => [ 'how-to-remove-carpet-stains', 'cleaning-for-allergies', 'weekly-cleaning-schedule' ],
+		'related'     => [ 'how-to-remove-carpet-stains', 'bedroom-dust-mite-reduction', 'daily-cleaning-habits-busy-homes' ],
 		'image'       => 'dog on clean sofa',
 		'excerpt'     => 'Practical ways to keep on top of pet hair, smells and muddy paw prints, with pet-safe products and a simple routine for busy pet owners.',
 		'content'     => <<<'HTML'
@@ -163,7 +163,7 @@ HTML,
 <li>Avoid sprays and diffusers containing essential oils such as tea tree, which can be harmful to pets, particularly cats. Ask your vet if you're unsure.</li>
 <li>Store all cleaning products in a closed cupboard pets can't get into.</li>
 </ul>
-<p>Our guide to <a href="{{guide:eco-friendly-cleaning-products}}">eco-friendly cleaning that actually works</a> covers gentler options, and our cleaners can use eco-friendly products on request.</p>
+<p>Our guide to <a href="{{guide:gentle-cleaning-hard-water-homes}}">eco-friendly cleaning that actually works</a> covers gentler options, and our cleaners can use eco-friendly products on request.</p>
 <div class="cc-callout"><p><strong>Tip:</strong> If you use a cleaner, let them know about your pets in advance: whether they'll be loose or shut in a room, which doors need to stay closed, and any areas to avoid. It makes the visit smoother for everyone, pets included.</p></div>
 <h2>A simple routine for cleaning with pets</h2>
 <p>Pets add mess every day, so a light daily routine beats one big blitz at the weekend.</p>
@@ -174,7 +174,7 @@ HTML,
 <li><strong>Monthly:</strong> vacuum under furniture, wash cushion covers, clean the vacuum's filter and brush roll.</li>
 <li><strong>Once or twice a year:</strong> professional carpet and upholstery cleaning.</li>
 </ul>
-<p>To fit this around the rest of the house, see our <a href="{{guide:weekly-cleaning-schedule}}">realistic weekly cleaning schedule</a>. If someone in the household reacts to pet dander, our guide to <a href="{{guide:cleaning-for-allergies}}">cleaning for allergies and asthma</a> has extra steps worth adding.</p>
+<p>To fit this around the rest of the house, see our <a href="{{guide:daily-cleaning-habits-busy-homes}}">realistic weekly cleaning schedule</a>. If someone in the household reacts to pet dander, our guide to <a href="{{guide:bedroom-dust-mite-reduction}}">cleaning for allergies and asthma</a> has extra steps worth adding.</p>
 <h2>Help keeping a pet-friendly home clean</h2>
 <p>Pets make a house a home, but keeping on top of the hair and mud is relentless. Our <a href="{{service:regular-house-cleaning}}">regular cleaning service</a> sends DBS-checked, insured cleaners who bring their own equipment and know to ask about your pets before they start. You can find out more about <a href="{{local:regular-house-cleaning-hull}}">regular house cleaning in Hull</a>.</p>
 <p>If things have got on top of you, a one-off <a href="{{service:deep-cleaning}}">deep clean</a> gets the house back to a fresh starting point, and then little-and-often keeps it there. <a href="{{page:contact}}">Contact our team</a> for a fixed quote.</p>
@@ -187,13 +187,13 @@ HTML,
 		],
 	],
 	[
-		'slug'        => 'christmas-cleaning-checklist',
+		'slug'        => 'guest-ready-home-quick-clean',
 		'title'       => 'Pre-Christmas Cleaning Checklist: Get Your Home Guest-Ready',
 		'seo_title'   => 'Pre-Christmas Cleaning Checklist 2026: Get Guest-Ready',
 		'description' => 'A pre-Christmas cleaning checklist to get your home guest-ready: what to clean and when, from the guest room to the oven, without a last-minute panic.',
 		'category'    => 'home-cleaning',
 		'service'     => 'one-off-cleaning',
-		'related'     => [ 'kitchen-deep-clean-checklist', 'how-to-clean-an-oven', 'spring-cleaning-checklist' ],
+		'related'     => [ 'kitchen-deep-clean-checklist', 'how-to-clean-an-oven', 'wardrobe-and-linen-cupboard-clean' ],
 		'image'       => 'christmas living room',
 		'excerpt'     => 'A week-by-week Christmas cleaning checklist covering the guest room, kitchen, oven, living areas and bathroom, so your home is ready before the visitors arrive.',
 		'content'     => <<<'HTML'
@@ -286,13 +286,13 @@ HTML,
 		],
 	],
 	[
-		'slug'        => 'eco-friendly-cleaning-products',
+		'slug'        => 'gentle-cleaning-hard-water-homes',
 		'title'       => 'Eco-Friendly Cleaning Products: What Actually Works',
 		'seo_title'   => 'Eco-Friendly Cleaning Products: What Actually Works',
 		'description' => 'Eco-friendly cleaning products that actually work: what vinegar, bicarb and citric acid can and can’t do, and which eco labels are worth trusting.',
 		'category'    => 'home-cleaning',
 		'service'     => 'regular-house-cleaning',
-		'related'     => [ 'cleaning-with-pets', 'cleaning-for-allergies', 'hard-water-limescale-east-yorkshire' ],
+		'related'     => [ 'cleaning-with-pets', 'bedroom-dust-mite-reduction', 'hard-water-limescale-east-yorkshire' ],
 		'image'       => 'natural cleaning products',
 		'excerpt'     => 'An honest look at eco-friendly cleaning: the green products that genuinely work, the swaps that fall short, and how to avoid common myths.',
 		'content'     => <<<'HTML'
@@ -338,7 +338,7 @@ HTML,
 <li><strong>More product means cleaner:</strong> overdosing leaves sticky residue that attracts dirt. Follow the dilution on the label.</li>
 </ul>
 <h2>Are eco-friendly products better for allergies and asthma?</h2>
-<p>Some people find that strong fragrances and aerosol sprays make their symptoms worse, so fragrance-free products, pouring onto a cloth rather than spraying into the air, and good ventilation can help. "Eco" doesn't automatically mean gentle, though: plant-based fragrances can also be irritants. If you or someone at home has allergies or asthma, our guide to <a href="{{guide:cleaning-for-allergies}}">cleaning for allergies and asthma</a> has practical steps, and it's worth talking to your GP or pharmacist about specific triggers.</p>
+<p>Some people find that strong fragrances and aerosol sprays make their symptoms worse, so fragrance-free products, pouring onto a cloth rather than spraying into the air, and good ventilation can help. "Eco" doesn't automatically mean gentle, though: plant-based fragrances can also be irritants. If you or someone at home has allergies or asthma, our guide to <a href="{{guide:bedroom-dust-mite-reduction}}">cleaning for allergies and asthma</a> has practical steps, and it's worth talking to your GP or pharmacist about specific triggers.</p>
 <h2>Simple swaps to make your cleaning greener</h2>
 <ol>
 <li>Buy concentrates and refill the same spray bottles.</li>
@@ -351,7 +351,7 @@ HTML,
 <div class="cc-callout"><p><strong>Tip:</strong> A squeegee after every shower prevents most limescale on glass, which means far less descaler needed later. Prevention is the greenest clean there is.</p></div>
 <h2>Eco-friendly cleaning from our team</h2>
 <p>If you'd like your home cleaned with greener products, just ask when you book. Our <a href="{{service:regular-house-cleaning}}">regular cleaning service</a> sends DBS-checked cleaners who bring their own equipment, and eco-friendly products are available. You can read more about <a href="{{local:regular-house-cleaning-hull}}">regular house cleaning in Hull</a>, and we also cover <a href="{{area:pocklington}}">Pocklington</a> and towns across East Yorkshire.</p>
-<p>Not sure what's included in a visit? Our guide to <a href="{{guide:what-does-a-regular-cleaner-do}}">what a regular cleaner does</a> explains. For a bigger reset first, a <a href="{{service:deep-cleaning}}">deep clean</a> can be done with eco products too. <a href="{{page:contact}}">Get in touch</a> for a fixed quote.</p>
+<p>Not sure what's included in a visit? Our guide to <a href="{{guide:what-one-off-cleaning-includes}}">what a regular cleaner does</a> explains. For a bigger reset first, a <a href="{{service:deep-cleaning}}">deep clean</a> can be done with eco products too. <a href="{{page:contact}}">Get in touch</a> for a fixed quote.</p>
 HTML,
 		'faqs'        => [
 			[ 'Do eco-friendly cleaning products actually work?', 'Yes, for most everyday cleaning. Microfibre cloths, washing-up liquid, bicarbonate of soda and citric acid handle dust, grime and limescale well. They’re less effective for disinfecting and heavy baked-on grease.' ],
@@ -361,7 +361,7 @@ HTML,
 		],
 	],
 	[
-		'slug'        => 'cleaning-for-allergies',
+		'slug'        => 'bedroom-dust-mite-reduction',
 		'title'       => 'Cleaning for Allergies and Asthma: Dust Mites, Pollen and Mould',
 		'seo_title'   => 'Cleaning for Allergies & Asthma: Dust Mites and Mould',
 		'description' => 'Cleaning for allergies and asthma: practical ways to cut dust mites, pollen, pet dander and mould at home, room by room, with a simple weekly routine.',
@@ -424,7 +424,7 @@ HTML,
 </ul>
 <div class="cc-callout"><p><strong>Tip:</strong> Leave shoes and outdoor coats in the hallway. It stops pollen, dust and dirt being carried through the house, and it keeps carpets cleaner too.</p></div>
 <h2>A cleaning schedule for allergies and asthma</h2>
-<p>Regular, light cleaning keeps allergen levels lower than an occasional blitz. Fit these tasks into your <a href="{{guide:weekly-cleaning-schedule}}">weekly cleaning schedule</a>:</p>
+<p>Regular, light cleaning keeps allergen levels lower than an occasional blitz. Fit these tasks into your <a href="{{guide:daily-cleaning-habits-busy-homes}}">weekly cleaning schedule</a>:</p>
 <table>
 <thead><tr><th>Task</th><th>How often</th><th>Why it helps</th></tr></thead>
 <tbody>
@@ -437,7 +437,7 @@ HTML,
 <tr><td>Professional carpet and upholstery clean</td><td>Once or twice a year</td><td>Lifts allergens from deep in the fibres</td></tr>
 </tbody>
 </table>
-<p>For more on timing bigger cleans, see <a href="{{guide:how-often-should-you-deep-clean}}">how often you should deep clean your home</a>.</p>
+<p>For more on timing bigger cleans, see <a href="{{guide:when-to-book-a-deep-clean}}">how often you should deep clean your home</a>.</p>
 <h2>Choosing products that won't make symptoms worse</h2>
 <ul>
 <li>Choose fragrance-free products where you can.</li>
@@ -445,7 +445,7 @@ HTML,
 <li>Ventilate the room while you clean and keep the person with asthma away from strong fumes.</li>
 <li>Never mix products, especially bleach with acidic limescale removers.</li>
 </ul>
-<p>Our guide to <a href="{{guide:eco-friendly-cleaning-products}}">eco-friendly cleaning products that actually work</a> covers gentler options, though "eco" doesn't always mean fragrance-free, so read the label.</p>
+<p>Our guide to <a href="{{guide:gentle-cleaning-hard-water-homes}}">eco-friendly cleaning products that actually work</a> covers gentler options, though "eco" doesn't always mean fragrance-free, so read the label.</p>
 <h2>Getting help with an allergy-friendly deep clean</h2>
 <p>If dusting high shelves or vacuuming mattresses sets off your symptoms, it makes sense to hand the job to someone else. Our <a href="{{service:deep-cleaning}}">deep cleaning service</a> covers high and hidden areas, soft furnishings and every room, and eco-friendly products are available on request. Find out more about <a href="{{local:deep-cleaning-hull}}">deep cleaning in Hull</a>, and we also cover <a href="{{area:hessle}}">Hessle</a> and towns across East Yorkshire.</p>
 <p>To keep allergens down afterwards, <a href="{{service:regular-house-cleaning}}">regular house cleaning</a> takes care of the weekly vacuuming and dusting. <a href="{{page:contact}}">Contact us</a> to talk through what you need and get a fixed quote.</p>
@@ -464,7 +464,7 @@ HTML,
 		'description' => 'Kitchen deep clean checklist: cupboards, appliances, extractor filters, worktops and floors, step by step, plus the jobs that make the biggest difference.',
 		'category'    => 'kitchen-oven',
 		'service'     => 'deep-cleaning',
-		'related'     => [ 'how-to-clean-an-oven', 'bathroom-deep-clean-guide', 'christmas-cleaning-checklist' ],
+		'related'     => [ 'how-to-clean-an-oven', 'bathroom-deep-clean-guide', 'guest-ready-home-quick-clean' ],
 		'image'       => 'clean modern kitchen',
 		'excerpt'     => 'A step-by-step kitchen deep clean checklist covering cupboards, the extractor, oven, fridge, dishwasher, worktops and floor, with tips for hard water areas.',
 		'content'     => <<<'HTML'
@@ -500,7 +500,7 @@ HTML,
 <li>Refit the filters only once they're completely dry.</li>
 </ol>
 <h2>Oven, hob and microwave</h2>
-<p>The oven is usually the dirtiest job in the kitchen, and the one that takes longest. Our guide on <a href="{{guide:how-to-clean-an-oven}}">how to clean an oven</a> compares DIY methods with professional cleaning, and <a href="{{guide:how-often-clean-oven}}">how often to clean your oven</a> covers the signs it's overdue. Many people book <a href="{{service:oven-cleaning}}">professional oven cleaning</a>, which uses fume-free, non-caustic products, alongside their own kitchen clean. Range cookers have their own quirks, covered in our <a href="{{guide:aga-range-cooker-cleaning}}">AGA and range cooker cleaning guide</a>.</p>
+<p>The oven is usually the dirtiest job in the kitchen, and the one that takes longest. Our guide on <a href="{{guide:how-to-clean-an-oven}}">how to clean an oven</a> compares DIY methods with professional cleaning, and <a href="{{guide:signs-oven-needs-professional-clean}}">how often to clean your oven</a> covers the signs it's overdue. Many people book <a href="{{service:oven-cleaning}}">professional oven cleaning</a>, which uses fume-free, non-caustic products, alongside their own kitchen clean. Range cookers have their own quirks, covered in our <a href="{{guide:aga-range-cooker-cleaning}}">AGA and range cooker cleaning guide</a>.</p>
 <ul>
 <li><strong>Ceramic and induction hobs:</strong> lift burnt-on spills with a hob scraper held flat, then clean with a hob cleaner and buff dry.</li>
 <li><strong>Gas hobs:</strong> soak pan supports and burner caps in hot soapy water, scrub, and dry completely before refitting so the burners light properly.</li>
@@ -545,7 +545,7 @@ HTML,
 </ul>
 <div class="cc-callout"><p><strong>Tip:</strong> Only pull out freestanding appliances if you can do it safely without damaging the floor or the pipes and cables behind. The dust and grease behind a cooker or fridge is often the worst in the room.</p></div>
 <h2>How often should you deep clean your kitchen?</h2>
-<p>A full kitchen deep clean every three to six months suits most homes, with a weekly clean in between. Busy family kitchens and homes where a lot of frying happens need it more often. Extractor filters, the fridge and the dishwasher filter benefit from a monthly clean. Not sure where the line falls? Our guide to the <a href="{{guide:deep-clean-vs-regular-clean}}">difference between a deep clean and a regular clean</a> explains. Many people time a kitchen deep clean before hosting, and our <a href="{{guide:christmas-cleaning-checklist}}">pre-Christmas cleaning checklist</a> builds it into a countdown.</p>
+<p>A full kitchen deep clean every three to six months suits most homes, with a weekly clean in between. Busy family kitchens and homes where a lot of frying happens need it more often. Extractor filters, the fridge and the dishwasher filter benefit from a monthly clean. Not sure where the line falls? Our guide to the <a href="{{guide:deep-clean-vs-regular-clean}}">difference between a deep clean and a regular clean</a> explains. Many people time a kitchen deep clean before hosting, and our <a href="{{guide:guest-ready-home-quick-clean}}">pre-Christmas cleaning checklist</a> builds it into a countdown.</p>
 <h2>Book a professional kitchen deep clean</h2>
 <p>If you'd rather spend the day doing something else, our team can take the whole kitchen on. A <a href="{{service:deep-cleaning}}">kitchen deep clean</a> covers cupboards inside and out, appliances, the extractor, worktops and floors, carried out by insured, DBS-checked cleaners who bring their own equipment, at a fixed price agreed before we start. Learn more about <a href="{{local:deep-cleaning-hull}}">deep cleaning in Hull</a>; we also cover <a href="{{area:driffield}}">Driffield</a> and the rest of East Yorkshire.</p>
 <p>To keep the kitchen in shape afterwards, <a href="{{service:regular-house-cleaning}}">regular house cleaning</a> handles the weekly jobs. <a href="{{page:contact}}">Contact us</a> for a fixed quote.</p>

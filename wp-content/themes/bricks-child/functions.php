@@ -16,13 +16,19 @@ foreach ( [
 	'rewrites',
 	'bricks',
 	'components',
+	'branding',
 	'media',
 	'pricing',
+	'menus',
 	'guides',
+	'legal-content',
 	'dynamic-tags',
 	'seo',
+	'rank-math',
+	'rank-math-guides',
 	'schema',
 	'performance',
+	'analytics',
 ] as $cc_file ) {
 	require_once CC_THEME_DIR . "/inc/{$cc_file}.php";
 }

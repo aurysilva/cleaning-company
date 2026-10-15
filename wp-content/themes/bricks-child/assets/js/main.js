@@ -335,4 +335,186 @@
 			}
 		});
 	});
+
+	/* Cookie banner + analytics ------------------------------------------ */
+
+	const consent = document.getElementById('cc-consent');
+	if (consent) {
+		const KEY = 'cc-consent';
+
+		const stored = () => {
+			try {
+				return localStorage.getItem(KEY);
+			} catch {
+				return null;
+			}
+		};
+
+		const showConsent = (fromSettings) => {
+			consent.hidden = false;
+			consent.classList.toggle('is-settings', Boolean(fromSettings));
+		};
+
+		const hideConsent = () => {
+			consent.hidden = true;
+			consent.classList.remove('is-settings');
+		};
+
+		const loadAnalytics = () => {
+			const id = consent.dataset.ga;
+			if (!id || window.gtag) {
+				return;
+			}
+			window.dataLayer = window.dataLayer || [];
+			window.gtag = function () {
+				window.dataLayer.push(arguments);
+			};
+			window.gtag('js', new Date());
+			window.gtag('config', id);
+			const script = document.createElement('script');
+			script.async = true;
+			script.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(id)}`;
+			document.head.appendChild(script);
+		};
+
+		const clearAnalytics = () => {
+			const host = location.hostname;
+			const bare = host.replace(/^www\./, '');
+			document.cookie.split(';')
+				.map((c) => c.split('=')[0].trim())
+				.filter((name) => name.startsWith('_ga'))
+				.forEach((name) => {
+					document.cookie = `${name}=; Max-Age=0; path=/`;
+					[host, bare, `.${bare}`].forEach((domain) => {
+						document.cookie = `${name}=; Max-Age=0; path=/; domain=${domain}`;
+					});
+				});
+		};
+
+		if (stored() === 'granted') {
+			loadAnalytics();
+		} else if (!stored()) {
+			showConsent(false);
+		}
+
+		if (location.hash === '#cookie-settings') {
+			showConsent(true);
+		}
+
+		consent.addEventListener('click', (e) => {
+			const button = e.target.closest('[data-consent]');
+			if (!button) {
+				return;
+			}
+			const previous = stored();
+			try {
+				localStorage.setItem(KEY, button.dataset.consent);
+			} catch {
+				// The choice then only lasts for this page view
+			}
+			hideConsent();
+			if (button.dataset.consent === 'granted') {
+				loadAnalytics();
+			} else if (previous === 'granted') {
+				clearAnalytics();
+				location.reload();
+			}
+		});
+
+		document.addEventListener('click', (e) => {
+			if (!e.target.closest('a[href="#cookie-settings"]')) {
+				return;
+			}
+			e.preventDefault();
+			showConsent(true);
+			history.replaceState(null, '', '#cookie-settings');
+			consent.querySelector('[data-consent]')?.focus();
+		});
+	}
+
+	/* Guides hub instant search ---------------------------------------- */
+
+	const guideHub = document.querySelector('.cc-guide-hub');
+	if (guideHub) {
+		const input = guideHub.querySelector('.cc-guide-search__input');
+		const clearBtn = guideHub.querySelector('.cc-guide-search__clear');
+		const status = guideHub.querySelector('.cc-guide-search__status');
+		const empty = guideHub.querySelector('.cc-guide-search__empty');
+		const cards = Array.from(guideHub.querySelectorAll('.cc-card--guide'));
+		const clusters = Array.from(guideHub.querySelectorAll('.cc-guide-cluster'));
+		const navItems = Array.from(guideHub.querySelectorAll('.cc-guide-nav li'));
+		const total = Number(guideHub.dataset.ccGuideCount) || cards.length;
+
+		const normalize = (value) => value
+			.toLowerCase()
+			.normalize('NFD')
+			.replace(/\p{M}/gu, '')
+			.trim();
+
+		const applyFilter = () => {
+			if (!input) {
+				return;
+			}
+			const query = normalize(input.value);
+			let visible = 0;
+
+			cards.forEach((card) => {
+				const haystack = card.dataset.ccGuideSearch || '';
+				const match = !query || haystack.includes(query);
+				card.classList.toggle('is-search-hidden', !match);
+				if (match) {
+					visible += 1;
+				}
+			});
+
+			clusters.forEach((cluster) => {
+				const hasMatch = cluster.querySelector('.cc-card--guide:not(.is-search-hidden)');
+				cluster.classList.toggle('is-search-hidden', query && !hasMatch);
+			});
+
+			navItems.forEach((item) => {
+				const link = item.querySelector('a[href^="#"]');
+				const id = link?.getAttribute('href')?.slice(1);
+				const cluster = id ? guideHub.querySelector(`#${CSS.escape(id)}`) : null;
+				const show = !query || (cluster && !cluster.classList.contains('is-search-hidden'));
+				item.classList.toggle('is-search-hidden', !show);
+			});
+
+			guideHub.classList.toggle('is-searching', Boolean(query));
+
+			if (clearBtn) {
+				clearBtn.hidden = !query;
+			}
+			if (status) {
+				if (query) {
+					status.textContent = visible === 1 ? 'Showing 1 guide' : `Showing ${visible} of ${total} guides`;
+					status.hidden = false;
+				} else {
+					status.hidden = true;
+					status.textContent = '';
+				}
+			}
+			if (empty) {
+				empty.hidden = !query || visible > 0;
+			}
+		};
+
+		const resetSearch = () => {
+			if (!input) {
+				return;
+			}
+			input.value = '';
+			applyFilter();
+			input.focus();
+		};
+
+		input?.addEventListener('input', applyFilter);
+		input?.addEventListener('search', applyFilter);
+		clearBtn?.addEventListener('click', resetSearch);
+		input?.addEventListener('keydown', (e) => {
+			if (e.key === 'Escape') {
+				resetSearch();
+			}
+		});
+	}
 })();

@@ -263,6 +263,14 @@
  * Contents list
  * ---------------------------------------------------------------------- */
 
+.cc-further-reading {
+	margin-top: var(--cc-space-l);
+	padding: var(--cc-space-s) var(--cc-space-m);
+	border-left: 3px solid var(--cc-color-primary);
+	background: var(--cc-color-surface-alt);
+	font-size: var(--cc-text-s);
+}
+
 .cc-toc {
 	padding: var(--cc-space-s) var(--cc-space-m);
 	border: 1px solid var(--cc-color-border);
@@ -413,6 +421,99 @@
 
 .cc-section--hub {
 	padding-top: var(--cc-space-xl);
+}
+
+.cc-guide-search {
+	margin-bottom: var(--cc-space-l);
+
+	&__label {
+		@include visually-hidden;
+	}
+
+	&__field {
+		position: relative;
+		max-width: 32rem;
+	}
+
+	&__input {
+		width: 100%;
+		padding: 0.85rem 2.75rem 0.85rem 2.75rem;
+		border: 1px solid var(--cc-color-border);
+		border-radius: var(--cc-radius-pill);
+		background: var(--cc-color-surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' fill='none' stroke='%2364748b' stroke-width='2' viewBox='0 0 24 24'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M20 20l-3-3'/%3E%3C/svg%3E") 1rem center no-repeat;
+		font: inherit;
+		font-size: 1rem;
+		color: var(--cc-color-ink);
+		transition: border-color var(--cc-transition), box-shadow var(--cc-transition);
+
+		&::placeholder {
+			color: var(--cc-color-text-muted);
+		}
+
+		&:focus {
+			outline: none;
+			border-color: var(--cc-color-primary);
+			box-shadow: 0 0 0 3px var(--cc-color-primary-light);
+		}
+	}
+
+	&__clear {
+		position: absolute;
+		top: 50%;
+		right: 0.65rem;
+		transform: translateY(-50%);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 2rem;
+		height: 2rem;
+		padding: 0;
+		border: 0;
+		border-radius: 50%;
+		background: var(--cc-color-primary-light);
+		font-size: 1.35rem;
+		line-height: 1;
+		color: var(--cc-color-primary-dark);
+		cursor: pointer;
+
+		&:hover {
+			background: var(--cc-color-primary);
+			color: #fff;
+		}
+	}
+
+	&__status {
+		margin: 0.5rem 0 0;
+		font-size: 0.9rem;
+		color: var(--cc-color-text-muted);
+	}
+
+	&__empty {
+		margin: var(--cc-space-xl) 0 0;
+		padding: var(--cc-space-l);
+		border: 1px dashed var(--cc-color-border);
+		border-radius: var(--cc-radius);
+		text-align: center;
+		color: var(--cc-color-text-muted);
+	}
+}
+
+.cc-guide-hub.is-searching {
+	.cc-guide-nav {
+		opacity: 0.65;
+	}
+
+	.cc-guide-cluster.is-search-hidden {
+		display: none;
+	}
+
+	.cc-card--guide.is-search-hidden {
+		display: none;
+	}
+
+	.cc-guide-nav li.is-search-hidden {
+		display: none;
+	}
 }
 
 .cc-guide-nav {
