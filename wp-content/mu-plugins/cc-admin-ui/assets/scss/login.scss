@@ -1,0 +1,387 @@
+// Branded wp-login.php: brand panel left (top band on phones), sign-in card right.
+@use "brand" as b;
+
+@include b.font-face("../fonts/");
+
+$split: 900px;
+
+body.login.cc-ui-login {
+	@include b.tokens;
+
+	display: block;
+	min-height: 100vh;
+	background: var(--ccui-bg);
+	color: var(--ccui-text);
+	font-family: var(--ccui-font-body);
+	-webkit-font-smoothing: antialiased;
+
+	a {
+		color: var(--ccui-primary);
+	}
+
+	a:hover,
+	a:active {
+		color: var(--ccui-primary-active);
+	}
+
+	a:focus {
+		border-radius: var(--ccui-radius-s);
+		box-shadow: var(--ccui-ring);
+		color: var(--ccui-primary-active);
+	}
+
+	// Brand is shown in the panel; the core logo heading stays for screen readers only.
+	h1 {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
+	}
+
+	#login {
+		width: min(380px, calc(100% - 40px));
+		margin: 0 auto;
+		padding: 12vh 0 40px;
+	}
+
+	form {
+		margin-top: 0;
+		padding: 30px 28px 26px;
+		border: 1px solid var(--ccui-border);
+		border-radius: var(--ccui-radius-xl);
+		background: var(--ccui-surface);
+		box-shadow: var(--ccui-shadow-m);
+	}
+
+	&.login-action-login #loginform::before,
+	&.login-action-lostpassword #lostpasswordform::before,
+	&.login-action-rp #resetpassform::before,
+	&.login-action-resetpass #resetpassform::before {
+		display: block;
+		margin: 0 0 20px;
+		color: var(--ccui-ink);
+		font-family: var(--ccui-font-heading);
+		font-size: 22px;
+		font-weight: 800;
+		letter-spacing: -0.02em;
+		line-height: 1.25;
+	}
+
+	&.login-action-login #loginform::before {
+		content: "Sign in to your workspace";
+	}
+
+	&.login-action-lostpassword #lostpasswordform::before {
+		content: "Reset your password";
+	}
+
+	&.login-action-rp #resetpassform::before,
+	&.login-action-resetpass #resetpassform::before {
+		content: "Choose a new password";
+	}
+
+	label {
+		color: var(--ccui-ink);
+		font-size: 13px;
+		font-weight: 600;
+	}
+
+	input[type="text"],
+	input[type="email"],
+	input[type="password"] {
+		min-height: 44px;
+		margin: 4px 0 18px;
+		padding: 0 14px;
+		border: 1px solid var(--ccui-border-strong);
+		border-radius: var(--ccui-radius-m);
+		background: var(--ccui-surface);
+		box-shadow: none;
+		font-size: 15px;
+	}
+
+	input[type="text"]:focus,
+	input[type="email"]:focus,
+	input[type="password"]:focus {
+		border-color: var(--ccui-primary);
+		box-shadow: 0 0 0 1px var(--ccui-primary), 0 0 0 4px rgba(var(--ccui-primary-rgb), 0.14);
+	}
+
+	input[type="checkbox"] {
+		border-color: var(--ccui-control);
+		border-radius: 4px;
+	}
+
+	input[type="checkbox"]:checked {
+		border-color: var(--ccui-primary);
+		background: var(--ccui-primary);
+	}
+
+	.button.wp-hide-pw {
+		min-height: 44px;
+		margin-top: 4px;
+		color: var(--ccui-muted);
+	}
+
+	.button.wp-hide-pw:focus {
+		border-color: var(--ccui-primary);
+		box-shadow: 0 0 0 1px var(--ccui-primary);
+	}
+
+	.forgetmenot {
+		float: none;
+		margin-bottom: 18px;
+	}
+
+	.submit {
+		clear: both;
+	}
+
+	.button-primary {
+		float: none;
+		width: 100%;
+		min-height: 46px;
+		border: 0;
+		border-radius: var(--ccui-radius-m);
+		background: var(--ccui-primary);
+		box-shadow: 0 6px 16px rgba(var(--ccui-primary-rgb), 0.25);
+		color: #fff;
+		font-size: 15px;
+		font-weight: 700;
+	}
+
+	.button-primary:hover,
+	.button-primary:focus {
+		background: var(--ccui-primary-hover);
+		color: #fff;
+	}
+
+	.button-primary:focus {
+		box-shadow: var(--ccui-ring);
+	}
+
+	#nav,
+	#backtoblog {
+		margin: 16px 0 0;
+		padding: 0 4px;
+		font-size: 13px;
+	}
+
+	#nav a,
+	#backtoblog a {
+		color: var(--ccui-muted);
+	}
+
+	#nav a:hover,
+	#backtoblog a:hover {
+		color: var(--ccui-primary-active);
+	}
+
+	.message,
+	.notice,
+	.success,
+	#login_error {
+		border: 1px solid var(--ccui-border);
+		border-left: 4px solid var(--ccui-primary);
+		border-radius: var(--ccui-radius-l);
+		background: var(--ccui-surface);
+		box-shadow: var(--ccui-shadow-s);
+	}
+
+	#login_error,
+	.notice-error {
+		border-left-color: var(--ccui-danger);
+	}
+
+	.success {
+		border-left-color: var(--ccui-success);
+	}
+
+	.privacy-policy-page-link {
+		margin: 28px 0 0;
+		text-align: left;
+	}
+
+	.language-switcher {
+		padding-bottom: 40px;
+	}
+}
+
+// Brand panel
+.cc-ui-login-aside {
+	display: none;
+}
+
+body.login.cc-ui-login .cc-ui-login-aside {
+	display: flex;
+	box-sizing: border-box;
+	flex-direction: column;
+	gap: 28px;
+	padding: 22px 24px;
+	background: linear-gradient(120deg, b.c("ink") 0%, b.c("primary-dark") 55%, b.c("primary") 100%);
+	color: #fff;
+}
+
+.cc-ui-login-brand {
+	display: inline-flex;
+	gap: 12px;
+	align-items: center;
+	text-decoration: none;
+
+	&,
+	&:hover,
+	&:focus {
+		color: #fff !important;
+	}
+}
+
+.cc-ui-login-logo {
+	flex: none;
+
+	.cc-ui-login--text-logo &::before {
+		@include b.brand-mark(36px);
+	}
+
+	.cc-ui-login--has-logo & {
+		width: 168px;
+		height: 44px;
+		padding: 6px 10px;
+		border-radius: var(--ccui-radius-m);
+		background-color: #fff;
+		background-position: center;
+		background-repeat: no-repeat;
+		background-size: contain;
+		background-origin: content-box;
+	}
+}
+
+.cc-ui-login-name {
+	font-family: var(--ccui-font-heading);
+	font-size: 19px;
+	font-weight: 800;
+	letter-spacing: -0.01em;
+
+	.cc-ui-login--has-logo & {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip-path: inset(50%);
+	}
+}
+
+.cc-ui-login-pitch,
+.cc-ui-login-foot {
+	display: none;
+}
+
+@media screen and (min-width: $split) {
+	body.login.cc-ui-login {
+		padding-left: 44vw;
+	}
+
+	body.login.cc-ui-login .cc-ui-login-aside {
+		position: fixed;
+		inset: 0 auto 0 0;
+		justify-content: space-between;
+		width: 44vw;
+		padding: 44px clamp(32px, 5vw, 72px);
+		overflow: hidden;
+
+		&::after {
+			position: absolute;
+			right: -18vw;
+			bottom: -22vw;
+			width: 46vw;
+			height: 46vw;
+			border-radius: 50%;
+			background: radial-gradient(circle, rgb(23 182 123 / 0.35) 0%, transparent 65%);
+			content: "";
+			pointer-events: none;
+		}
+	}
+
+	.cc-ui-login-pitch,
+	.cc-ui-login-foot {
+		display: block;
+		position: relative;
+		z-index: 1;
+	}
+
+	.cc-ui-login-pitch {
+		max-width: 30rem;
+
+		ul {
+			margin: 22px 0 0;
+			padding: 0;
+			list-style: none;
+		}
+
+		li {
+			position: relative;
+			margin: 0 0 10px;
+			padding-left: 28px;
+			color: rgb(255 255 255 / 0.86);
+			font-size: 15px;
+			line-height: 1.5;
+		}
+
+		li::before {
+			position: absolute;
+			top: 2px;
+			left: 0;
+			display: grid;
+			place-items: center;
+			width: 18px;
+			height: 18px;
+			border-radius: 50%;
+			background: rgb(255 255 255 / 0.16);
+			color: b.c("highlight");
+			content: "\2713";
+			font-size: 11px;
+			font-weight: 700;
+		}
+	}
+
+	.cc-ui-login-kicker {
+		margin: 0 0 10px;
+		color: b.c("highlight");
+		font-size: 12px;
+		font-weight: 700;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+	}
+
+	.cc-ui-login-headline {
+		margin: 0;
+		font-family: var(--ccui-font-heading);
+		font-size: clamp(28px, 2.6vw, 40px);
+		font-weight: 800;
+		letter-spacing: -0.025em;
+		line-height: 1.15;
+	}
+
+	.cc-ui-login-foot {
+		margin: 0;
+		color: rgb(255 255 255 / 0.6);
+		font-size: 13px;
+	}
+
+	body.login.cc-ui-login #login {
+		padding-top: 18vh;
+	}
+}
+
+// Session-expired modal inside wp-admin: card only.
+body.login.cc-ui-login.interim-login {
+	padding-left: 0;
+
+	.cc-ui-login-aside {
+		display: none;
+	}
+
+	#login {
+		padding-top: 24px;
+	}
+}

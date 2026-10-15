@@ -170,9 +170,10 @@ body.cc-ui.wp-responsive-open #wpadminbar #wp-admin-bar-menu-toggle .ab-icon::be
 	color: var(--ccui-primary);
 }
 
-// Desktop with the sidebar expanded: the brand item sits in a dark "logo zone" above the sidebar.
+// Desktop with the sidebar expanded (and not hidden by the full-screen editor): the brand item sits in a
+// dark "logo zone" above the sidebar.
 @media screen and (min-width: 961px) {
-	body.cc-ui:not(.folded) #wpadminbar #wp-admin-bar-site-name > .ab-item {
+	body.cc-ui:not(.folded):not(.is-fullscreen-mode) #wpadminbar #wp-admin-bar-site-name > .ab-item {
 		box-sizing: border-box;
 		width: var(--ccui-menu-w);
 		padding-left: 18px;
@@ -183,9 +184,9 @@ body.cc-ui.wp-responsive-open #wpadminbar #wp-admin-bar-menu-toggle .ab-icon::be
 		white-space: nowrap;
 	}
 
-	body.cc-ui:not(.folded) #wpadminbar #wp-admin-bar-site-name:hover > .ab-item,
-	body.cc-ui:not(.folded) #wpadminbar #wp-admin-bar-site-name.hover > .ab-item,
-	body.cc-ui:not(.folded) #wpadminbar #wp-admin-bar-site-name > .ab-item:focus {
+	body.cc-ui:not(.folded):not(.is-fullscreen-mode) #wpadminbar #wp-admin-bar-site-name:hover > .ab-item,
+	body.cc-ui:not(.folded):not(.is-fullscreen-mode) #wpadminbar #wp-admin-bar-site-name.hover > .ab-item,
+	body.cc-ui:not(.folded):not(.is-fullscreen-mode) #wpadminbar #wp-admin-bar-site-name > .ab-item:focus {
 		background: var(--ccui-sidebar);
 		color: #fff;
 	}
@@ -473,6 +474,13 @@ body.cc-ui {
 		}
 
 		@include pills(10px);
+	}
+}
+
+// Small laptops: give list tables back some width.
+@media screen and (min-width: 961px) and (max-width: 1279px) {
+	body.cc-ui.wp-admin {
+		--ccui-menu-w: 188px;
 	}
 }
 

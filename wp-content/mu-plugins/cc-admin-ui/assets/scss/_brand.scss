@@ -2,14 +2,20 @@
 // Using the module also prints the theme's --cc-* custom properties on :root (only in files that @use this one).
 @use "sass:color";
 @use "sass:map";
+@use "sass:math";
 @use "../../../../themes/bricks-child/assets/scss/abstracts/tokens" as theme;
+
+// Rounds computed shades back to plain sRGB so they print as hex.
+@function tidy($c) {
+	@return rgb(math.round(color.channel($c, "red", $space: rgb)), math.round(color.channel($c, "green", $space: rgb)), math.round(color.channel($c, "blue", $space: rgb)));
+}
 
 @function c($name) {
 	@return map.get(theme.$colors, $name);
 }
 
 $primary: c("primary");
-$primary-hover: color.scale($primary, $lightness: -14%);
+$primary-hover: tidy(color.scale($primary, $lightness: -14%));
 $primary-active: c("primary-dark");
 $font-heading: theme.$font-heading;
 
@@ -37,22 +43,24 @@ $font-heading: theme.$font-heading;
 	--ccui-text: #{c("text")};
 	--ccui-muted: #{c("text-muted")};
 	--ccui-border: #{c("border")};
-	--ccui-border-strong: #{color.scale(c("border"), $lightness: -12%)};
-	--ccui-divider: #{color.mix(c("border"), #fff, 45%)};
+	--ccui-border-strong: #{tidy(color.scale(c("border"), $lightness: -12%))};
+	--ccui-border-hover: #{tidy(color.scale(c("border"), $lightness: -30%))};
+	--ccui-control: #{tidy(color.mix(c("text-muted"), c("border"), 70%))};
+	--ccui-divider: #{tidy(color.mix(c("border"), #fff, 45%))};
 	--ccui-bg: #f3f6f8;
 	--ccui-surface: #{c("surface")};
 	--ccui-surface-alt: #f8fafb;
-	--ccui-hover: #{color.mix(c("primary-light"), #fff, 45%)};
+	--ccui-hover: #{tidy(color.mix(c("primary-light"), #fff, 45%))};
 	--ccui-success: #{c("success")};
-	--ccui-success-text: #{color.scale(c("success"), $lightness: -38%)};
+	--ccui-success-text: #{tidy(color.scale(c("success"), $lightness: -38%))};
 	--ccui-warning: #{c("warning")};
 	--ccui-warning-text: #8a5a00;
 	--ccui-danger: #{c("danger")};
-	--ccui-danger-text: #{color.scale(c("danger"), $lightness: -22%)};
+	--ccui-danger-text: #{tidy(color.scale(c("danger"), $lightness: -22%))};
 	--ccui-info: #{$primary};
 
 	--ccui-sidebar: #{c("ink")};
-	--ccui-sidebar-raised: #{color.mix(c("primary-dark"), c("ink"), 55%)};
+	--ccui-sidebar-raised: #{tidy(color.mix(c("primary-dark"), c("ink"), 55%))};
 	--ccui-sidebar-text: rgb(255 255 255 / 0.82);
 	--ccui-sidebar-muted: rgb(255 255 255 / 0.6);
 	--ccui-sidebar-hover: rgb(255 255 255 / 0.07);
@@ -92,7 +100,8 @@ $font-heading: theme.$font-heading;
 	width: $size;
 	height: $size;
 	border-radius: $size * 0.3;
-	background: linear-gradient(135deg, c("primary") 0%, c("accent") 100%);
+	// !important: core's admin bar forces background-image: none !important on every .ab-item::before.
+	background: linear-gradient(135deg, c("primary") 0%, c("accent") 100%) !important;
 	color: #fff;
 	content: "\2726";
 	font-family: var(--ccui-font-body);

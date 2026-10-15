@@ -13,6 +13,7 @@ final class Login {
 		add_filter( 'login_headerurl', [ self::class, 'header_url' ] );
 		add_filter( 'login_headertext', [ self::class, 'header_text' ] );
 		add_filter( 'login_title', [ self::class, 'title' ], 10, 2 );
+		add_filter( 'login_site_html_link', [ self::class, 'back_link' ] );
 		add_action( 'login_header', [ self::class, 'aside' ] );
 	}
 
@@ -49,6 +50,13 @@ final class Login {
 
 	public static function title( $title, $action_title ) {
 		return self::enabled() ? $action_title . ' ‹ ' . Plugin::brand() : $title;
+	}
+
+	public static function back_link( $html ) {
+		if ( ! self::enabled() ) {
+			return $html;
+		}
+		return sprintf( '<a href="%s">&larr; %s</a>', esc_url( home_url( '/' ) ), esc_html( 'Back to ' . Plugin::brand() ) );
 	}
 
 	public static function aside(): void {

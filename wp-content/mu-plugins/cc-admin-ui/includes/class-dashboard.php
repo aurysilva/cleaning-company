@@ -55,7 +55,7 @@ final class Dashboard {
 					<p class="cc-ui-today__date"><?php echo esc_html( wp_date( 'l j F' ) ); ?></p>
 					<h1 id="cc-ui-today-title" class="cc-ui-today__title"><?php echo esc_html( $greet . ', ' . $name ); ?></h1>
 					<p class="cc-ui-today__lede">
-						<?php echo esc_html( $data ? 'Here’s the day at a glance for ' . Plugin::brand() . '.' : 'Welcome back to ' . Plugin::brand() . '.' ); ?>
+						<?php echo esc_html( ( $data ? 'Here’s the day at a glance for ' : 'Welcome back to ' ) . rtrim( Plugin::brand(), '.' ) . '.' ); ?>
 					</p>
 				</div>
 				<nav class="cc-ui-today__actions" aria-label="Quick actions">
