@@ -75,7 +75,7 @@ final class Bookings {
 	/**
 	 * The one confirmation path. Idempotent per Stripe session id, serialised with a MySQL lock.
 	 *
-	 * @param array $args quote_id, session_id, payment_intent, amount (pence), currency, provider (stripe|simulated|manual)
+	 * @param array $args quote_id, session_id, payment_intent, amount (pence), currency, provider (stripe|simulated|manual), customer (Stripe customer id, optional)
 	 * @return int|\WP_Error Booking id.
 	 */
 	public static function confirm_payment( array $args ) {
@@ -129,7 +129,7 @@ final class Bookings {
 				'currency'              => strtolower( (string) ( $args['currency'] ?? 'gbp' ) ),
 				'stripe_session_id'     => $session,
 				'stripe_payment_intent' => (string) ( $args['payment_intent'] ?? '' ),
-				'meta'                  => [ 'consent' => $quote['consent'], 'provider' => $provider, 'photos' => $quote['photos'] ],
+				'meta'                  => array_filter( [ 'consent' => $quote['consent'], 'provider' => $provider, 'photos' => $quote['photos'], 'stripe_customer' => (string) ( $args['customer'] ?? '' ) ], fn( $v ) => '' !== $v ),
 				'confirmed_at'          => Db::now(),
 			];
 			$booking_id = Db::insert( 'bookings', $data );

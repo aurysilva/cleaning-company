@@ -13,7 +13,7 @@ final class Checkout {
 	}
 
 	/**
-	 * @param array $input terms (bool), early_start (bool), token (the customer's link token, reused for Stripe's return URLs)
+	 * @param array $input terms (bool), early_start (bool), recurring (bool, regular-clean card authority), token (the customer's link token, reused for Stripe's return URLs)
 	 * @return array{mode: string, url?: string, message?: string}|\WP_Error
 	 */
 	public static function start( array $quote, array $input ) {
@@ -51,12 +51,16 @@ final class Checkout {
 			return new \WP_Error( 'slot_taken', 'Sorry, that date and time is no longer available. Please change your details to pick another.', [ 'status' => 409, 'change' => true ] );
 		}
 
-		$consent = [
+		$extra = apply_filters( 'cc_bookings_checkout_consent', [], $quote, $input );
+		if ( is_wp_error( $extra ) ) {
+			return $extra;
+		}
+		$consent = array_merge( [
 			'terms_at'    => Db::now(),
 			'terms_url'   => Settings::terms_url(),
 			'early_start' => $early ? true : null,
 			'ip_hash'     => Security::ip_hash(),
-		];
+		], (array) $extra );
 		Db::update( 'quotes', $quote['id'], [ 'consent' => $consent ] );
 		Events::log( 'quote', $quote['id'], 'accepted_terms', $early ? 'Agreed to terms and asked to start within 14 days' : 'Agreed to terms', $consent, 'customer' );
 

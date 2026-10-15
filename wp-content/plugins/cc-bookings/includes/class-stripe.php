@@ -102,6 +102,7 @@ final class Stripe {
 				'metadata'      => [ 'quote_ref' => $quote['ref'] ],
 			],
 		];
+		$params = (array) apply_filters( 'cc_bookings_checkout_params', $params, $quote, $urls );
 		return self::request( 'POST', 'checkout/sessions', $params, 'cc-checkout-' . $quote['id'] . '-' . $urls['expires_at'] );
 	}
 
@@ -209,7 +210,11 @@ final class Stripe {
 	 * @return string|\WP_Error What was done.
 	 */
 	public static function handle_event( array $event ) {
-		$object = $event['data']['object'] ?? [];
+		$object  = $event['data']['object'] ?? [];
+		$handled = apply_filters( 'cc_bookings_stripe_event', null, $event );
+		if ( null !== $handled ) {
+			return $handled;
+		}
 		switch ( $event['type'] ) {
 			case 'checkout.session.completed':
 			case 'checkout.session.async_payment_succeeded':
@@ -228,6 +233,7 @@ final class Stripe {
 					'payment_intent' => is_array( $object['payment_intent'] ?? null ) ? (string) $object['payment_intent']['id'] : (string) ( $object['payment_intent'] ?? '' ),
 					'amount'         => (int) ( $object['amount_total'] ?? 0 ),
 					'currency'       => (string) ( $object['currency'] ?? 'gbp' ),
+					'customer'       => is_array( $object['customer'] ?? null ) ? (string) $object['customer']['id'] : (string) ( $object['customer'] ?? '' ),
 					'provider'       => str_starts_with( (string) $object['id'], 'cs_sim_' ) ? 'simulated' : 'stripe',
 					'livemode'       => ! empty( $event['livemode'] ),
 				] );

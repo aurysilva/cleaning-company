@@ -74,7 +74,7 @@ final class Rest {
 		if ( ! Security::rate_limit( 'price', 120, 10 * MINUTE_IN_SECONDS ) ) {
 			return self::error( 'Too many requests. Please wait a few minutes.', 429 );
 		}
-		[ $service, , $price ] = self::job( $request );
+		[ $service, $answers, $price ] = self::job( $request );
 		if ( ! $service ) {
 			return self::error( 'Unknown service.', 400 );
 		}
@@ -82,6 +82,7 @@ final class Rest {
 		if ( $request->get_param( 'postcode' ) && ! Postcodes::is_covered( (string) $request->get_param( 'postcode' ) ) ) {
 			$preview = Pricing::public_preview( [ 'bespoke' => true, 'reasons' => [ 'Outside our usual area' ], 'items' => [], 'total' => null ] + $price );
 		}
+		$preview = (array) apply_filters( 'cc_bookings_price_preview', $preview, $service, $answers, $price );
 		return new \WP_REST_Response( [ 'ok' => true ] + $preview );
 	}
 
@@ -161,6 +162,7 @@ final class Rest {
 		$result = Checkout::start( $quote, [
 			'terms'       => rest_sanitize_boolean( $request->get_param( 'terms' ) ),
 			'early_start' => rest_sanitize_boolean( $request->get_param( 'early_start' ) ),
+			'recurring'   => rest_sanitize_boolean( $request->get_param( 'recurring' ) ),
 			'token'       => (string) $request->get_param( 'token' ),
 		] );
 		return is_wp_error( $result ) ? self::from_wp_error( $result ) : new \WP_REST_Response( [ 'ok' => true ] + $result );

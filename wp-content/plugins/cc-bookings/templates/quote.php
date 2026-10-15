@@ -104,9 +104,10 @@ get_header();
 							<?php if ( $duration = Pricing::duration_label( (float) $quote['hours'], (int) $quote['cleaners'] ) ) : ?>
 								<p class="cc-small"><?php echo esc_html( $duration ); ?>. Fixed price — no hidden extras.</p>
 							<?php endif; ?>
-							<?php if ( 'regular' === ( $service['profile'] ?? '' ) && ( $note = Settings::get( 'quotes.regular_note' ) ) ) : ?>
+							<?php if ( 'regular' === ( $service['profile'] ?? '' ) && ( $note = apply_filters( 'cc_bookings_quote_regular_note', Settings::get( 'quotes.regular_note' ), $quote ) ) ) : ?>
 								<p class="cc-small"><?php echo esc_html( $note ); ?></p>
 							<?php endif; ?>
+							<?php do_action( 'cc_bookings_quote_price_after', $quote ); ?>
 						</section>
 					<?php endif; ?>
 
@@ -151,7 +152,7 @@ get_header();
 				<aside class="cc-private__aside">
 					<?php if ( $payable ) : ?>
 						<form class="cc-panel cc-private__pay" novalidate data-cc-accept data-ref="<?php echo esc_attr( $quote['ref'] ); ?>" data-token="<?php echo esc_attr( $token ); ?>">
-							<p class="cc-private__total-label">Total to pay</p>
+							<p class="cc-private__total-label"><?php echo esc_html( apply_filters( 'cc_bookings_quote_pay_label', 'Total to pay', $quote ) ); ?></p>
 							<p class="cc-private__total"><?php echo esc_html( Money::format( (int) $quote['total_pence'] ) ); ?></p>
 							<p class="cc-small">Quote held until <?php echo esc_html( wp_date( 'l j F', CC\Bookings\Db::timestamp( $quote['expires_at'] ) ) ); ?>.</p>
 							<label class="cc-quote__check">
@@ -164,6 +165,7 @@ get_header();
 									<span>I ask you to start the service within the 14-day cancellation period. I understand that if I cancel after the clean has started, I'll pay for the work already done.</span>
 								</label>
 							<?php endif; ?>
+							<?php do_action( 'cc_bookings_quote_pay_fields', $quote ); ?>
 							<p class="cc-quote__error" role="alert" data-error hidden></p>
 							<?php if ( CC\Bookings\Stripe::enabled() ) : ?>
 								<button type="submit" class="cc-btn cc-btn--primary cc-btn--block" data-pay>Accept &amp; pay</button>

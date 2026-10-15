@@ -281,6 +281,7 @@
 				+ `<ul class="cc-quote__lines">${p.items.map((i) => `<li><span>${esc(i.label)}</span><span>${esc(i.amount)}</span></li>`).join('')}</ul>`
 				+ `<p class="cc-quote__total"><span>Total</span><strong>${esc(p.total)}</strong></p>`
 				+ (p.duration ? `<p class="cc-quote__duration">${esc(p.duration)}</p>` : '')
+				+ (p.note ? `<p class="cc-quote__small">${esc(p.note)}</p>` : '')
 				+ (!state.date ? '<p class="cc-quote__small">Weekend or short-notice dates may add a small surcharge.</p>' : '');
 		};
 
@@ -667,17 +668,18 @@
 		const error = form.querySelector('[data-error]');
 		form.addEventListener('submit', async (e) => {
 			e.preventDefault();
-			const terms = form.elements.terms;
 			const early = form.elements.early_start;
-			if (!terms.checked || (early && !early.checked)) {
-				error.textContent = early ? 'Please tick both boxes above to continue.' : 'Please tick the box above to continue.';
+			const recurring = form.elements.recurring;
+			const boxes = [...form.querySelectorAll('input[type="checkbox"][required]')];
+			if (boxes.some((box) => !box.checked)) {
+				error.textContent = boxes.length > 1 ? 'Please tick all the boxes above to continue.' : 'Please tick the box above to continue.';
 				error.hidden = false;
 				return;
 			}
 			error.hidden = true;
 			button.disabled = true;
 			button.textContent = 'Please wait…';
-			const res = await api(base, `quotes/${encodeURIComponent(form.dataset.ref)}/accept`, { body: { token: form.dataset.token, terms: true, early_start: !!(early && early.checked) } });
+			const res = await api(base, `quotes/${encodeURIComponent(form.dataset.ref)}/accept`, { body: { token: form.dataset.token, terms: true, early_start: !!(early && early.checked), recurring: !!(recurring && recurring.checked) } });
 			if (res.ok && res.url) {
 				window.location.href = res.url;
 				return;

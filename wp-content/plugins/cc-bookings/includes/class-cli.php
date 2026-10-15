@@ -42,6 +42,7 @@ final class Cli {
 					'amount_total'   => $amount,
 					'currency'       => 'gbp',
 					'payment_intent' => 'pi_sim_' . $quote['id'],
+					'customer'       => 'cus_sim_' . $quote['id'],
 					'metadata'       => [ 'type' => 'booking', 'quote_id' => (string) $quote['id'], 'quote_ref' => $quote['ref'] ],
 				],
 			],

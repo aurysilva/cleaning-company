@@ -1,6 +1,7 @@
 <?php
 /**
- * Customer booking page: /booking/{ref}/{token}/. Phase 3 adds reschedule / cancel here.
+ * Customer booking page: /booking/{ref}/{token}/. Phase 3 adds reschedule / cancel here; phase 4 adds the
+ * regular-plan panel and the status notice for plan visits (filter cc_bookings_booking_page_notice).
  * Override with {theme}/cc-bookings/booking.php.
  *
  * @var array  $booking
@@ -31,7 +32,9 @@ get_header();
 				<p class="cc-lead"><?php echo esc_html( Bookings::start_label( $booking ) ); ?></p>
 			</header>
 
-			<?php if ( 'cancelled' === $booking['status'] ) : ?>
+			<?php if ( $notice = apply_filters( 'cc_bookings_booking_page_notice', '', $booking ) ) : ?>
+				<?php echo wp_kses_post( $notice ); ?>
+			<?php elseif ( 'cancelled' === $booking['status'] ) : ?>
 				<div class="cc-notice cc-notice--warning"><strong>This booking has been cancelled.</strong></div>
 			<?php elseif ( 'completed' === $booking['status'] ) : ?>
 				<div class="cc-notice cc-notice--success"><strong>This clean is complete. Thank you for choosing us!</strong></div>

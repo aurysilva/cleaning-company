@@ -53,7 +53,7 @@ final class Reports_Screen {
 		global $wpdb;
 		$sql = 'SELECT ' . $group . ' AS k, COUNT(*) AS bookings, SUM(status = \'cancelled\') AS cancelled, SUM(status = \'completed\') AS completed,'
 			. ' SUM(parent_id > 0 AND total_pence = 0) AS recleans, SUM(paid_pence) AS paid, SUM(refunded_pence) AS refunded'
-			. ' FROM ' . Schema::table( 'bookings' ) . ' WHERE job_date BETWEEN %s AND %s' . ( $r['test'] ? '' : ' AND is_test = 0' )
+			. ' FROM ' . Schema::table( 'bookings' ) . " WHERE job_date BETWEEN %s AND %s AND status NOT IN ('scheduled','payment_due','skipped')" . ( $r['test'] ? '' : ' AND is_test = 0' )
 			. ' GROUP BY k ORDER BY k';
 		return $wpdb->get_results( $wpdb->prepare( $sql, $r['from'], $r['to'] ), ARRAY_A ) ?: []; // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 	}
